@@ -21,7 +21,7 @@ void Monster::update(sf::Vector2f targetPosition, float deltaTime) {
 }
 
 // draw 함수 구현
-void Monster::draw(sf::RenderTarget& target) {
+void Monster::draw(sf::RenderTarget& target)const {
     target.draw(shape);
 }
 
