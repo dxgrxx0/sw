@@ -7,7 +7,7 @@ public:
     Character(const std::string& textureFile, float x, float y, float scale, float speed);
     void handleInput(float deltaTime);
     void updateAnimation(float deltaTime);
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderTarget& target);
     sf::Vector2f getPosition();
 
 private:
