@@ -38,6 +38,7 @@ void Character::handleInput(float deltaTime) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isSwinging) {
         startSwinging();
     }
+    
 }
 
 void Character::updateAnimation(float deltaTime) {
