@@ -22,4 +22,12 @@ private:
     float animationSpeed;
     float timeSinceLastFrame;
     void startSwinging();
+    int hanseo_number_git_tmp;
+    int hanseo_number_git_tmp1;
+    int hanseo_number_git_tmp2;
+    int hanseo_number_git_tmp3;
+    int hanseo_number_git_tmp4;
+    int hanseo_number_git_tmp5;
+    int hanseo_number_git_tmp6;
+
 };
