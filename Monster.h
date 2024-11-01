@@ -5,24 +5,24 @@
 
 class Monster {
 public:
-    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // »ý¼ºÀÚ
     Monster(float x, float y, float speed);
 
-    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ô¼ï¿½ (ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ìµï¿½)
+    // ¸ó½ºÅÍ ¾÷µ¥ÀÌÆ® ÇÔ¼ö (¸ñÇ¥ À§Ä¡·Î ÀÌµ¿)
     void update(sf::Vector2f targetPosition, float deltaTime);
 
-    // ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ì¿¡ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
-    void draw(sf::RenderTarget& target)const;
+    // ¸ó½ºÅÍ¸¦ À©µµ¿ì¿¡ ±×¸®´Â ÇÔ¼ö
+    void draw(sf::RenderTarget& target);
 
-    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½È¯ ï¿½Ô¼ï¿½
+    // ¸ó½ºÅÍÀÇ ÇöÀç À§Ä¡ ¹ÝÈ¯ ÇÔ¼ö
     sf::Vector2f getPosition();
 
-    // Æ¯ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½ (ï¿½Ì´Ï¸ï¿½ È°ï¿½ï¿½ ï¿½ï¿½)
+    // Æ¯Á¤ À§Ä¡ ±ÙÃ³¿¡ ÀÖ´ÂÁö È®ÀÎÇÏ´Â ÇÔ¼ö (¹Ì´Ï¸Ê È°¿ë µî)
     bool isNear(sf::Vector2f position, float radius) const;
 
 private:
-    sf::RectangleShape shape; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
-    float movementSpeed; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½Óµï¿½
+    sf::RectangleShape shape; // ¸ó½ºÅÍÀÇ ¸ð¾ç
+    float movementSpeed; // ¸ó½ºÅÍÀÇ ÀÌµ¿ ¼Óµµ
 };
 
 #endif // MONSTER_H
