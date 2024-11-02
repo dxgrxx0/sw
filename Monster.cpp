@@ -7,6 +7,7 @@ Monster::Monster(float x, float y, float speed)
     shape.setSize(sf::Vector2f(30.0f, 30.0f));
     shape.setFillColor(sf::Color::Blue);
     shape.setPosition(x, y);
+	healthPoint = 100.0f;
 }
 
 // update 함수 구현
@@ -21,11 +22,20 @@ void Monster::update(sf::Vector2f targetPosition, float deltaTime) {
 }
 
 // draw 함수 구현
-void Monster::draw(sf::RenderWindow& window) {
-    window.draw(shape);
+void Monster::draw(sf::RenderTarget& target)const {
+    target.draw(shape);
 }
 
 // getPosition 함수 구현
 sf::Vector2f Monster::getPosition() {
     return shape.getPosition();
+}
+// 특정 위치 근처에 있는지 확인
+bool Monster::isNear(sf::Vector2f position, float radius) const {
+    sf::Vector2f distanceVec = position - shape.getPosition();
+    float distance = std::sqrt(distanceVec.x * distanceVec.x + distanceVec.y * distanceVec.y);
+    return distance <= radius;
+}
+void Monster::takeDamage(float attackDamage) {
+    healthPoint -= attackDamage;
 }

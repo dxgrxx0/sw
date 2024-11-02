@@ -3,8 +3,8 @@
 #include <cmath>  // If needed for calculations
 
 Character::Character(const std::string& textureFile, float x, float y, float scale, float speed)
-    : movementSpeed(speed), animationSpeed(0.2f), timeSinceLastFrame(0.0f),
-    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5) {
+    : movementSpeed(speed), animationSpeed(0.1f), timeSinceLastFrame(0.0f),
+    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(30),attackDamage(50) {
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Failed to load texture" << std::endl;
         throw std::runtime_error("Failed to load texture");
@@ -38,6 +38,9 @@ void Character::handleInput(float deltaTime) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isSwinging) {
         startSwinging();
     }
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
+		sprite.setPosition(700, 700);
+	}
 }
 
 void Character::updateAnimation(float deltaTime) {
@@ -62,8 +65,8 @@ void Character::updateAnimation(float deltaTime) {
     }
 }
 
-void Character::draw(sf::RenderWindow& window) {
-    window.draw(sprite);
+void Character::draw(sf::RenderTarget& target) {
+    target.draw(sprite);
 }
 
 sf::Vector2f Character::getPosition() {
@@ -73,5 +76,6 @@ sf::Vector2f Character::getPosition() {
 void Character::startSwinging() {
     currentFrame.top += 128;
     isSwinging = true;
+    attackApplied = false;
     currentFrameIndex = 0;
 }
