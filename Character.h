@@ -10,7 +10,10 @@ public:
     void draw(sf::RenderTarget& target);
     sf::Vector2f getPosition();
     bool getAttackApplied();
-
+    bool getIsSwinging();
+    float getAttackRange();
+    float getAttackDamage();
+	void setAttackApplied(bool applied);
 
 private:
     sf::Sprite sprite;

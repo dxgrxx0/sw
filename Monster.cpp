@@ -39,3 +39,6 @@ bool Monster::isNear(sf::Vector2f position, float radius) const {
 void Monster::takeDamage(float attackDamage) {
     healthPoint -= attackDamage;
 }
+float Monster:: getHealthPoint()const {
+    return healthPoint;
+}

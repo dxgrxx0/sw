@@ -79,3 +79,18 @@ void Character::startSwinging() {
     attackApplied = false;
     currentFrameIndex = 0;
 }
+bool Character::getAttackApplied() {
+	return attackApplied;
+}
+bool Character::getIsSwinging() {
+    return isSwinging;
+}
+float Character::getAttackRange() {
+    return attackRange;
+}
+float Character::getAttackDamage() {
+    return attackDamage;
+}
+void Character::setAttackApplied(bool applied) {
+	attackApplied = applied;
+}

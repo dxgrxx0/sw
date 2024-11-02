@@ -44,7 +44,7 @@ void Game::update() {
     warrior.handleInput(deltaTime);
     warrior.updateAnimation(deltaTime);
 
-    if (warrior.isAttacking() && !warrior.attackApplied) {
+    if (warrior.getIsSwinging() && !warrior.getAttackApplied()) {
         for (auto& monster : monsters) {
             float distance = calculateDistance(warrior.getPosition(), monster.getPosition());
             if (distance <= warrior.getAttackRange()) {
@@ -55,11 +55,11 @@ void Game::update() {
         // 체력이 0 이하인 몬스터들을 한 번에 제거
         monsters.erase(std::remove_if(monsters.begin(), monsters.end(),
             [](const Monster& monster) {
-                return monster.getHealth() <= 0;
+                return monster.getHealthPoint() <= 0;
             }),
             monsters.end());
 
-        warrior.attackApplied = true;  // 공격 적용 완료 플래그 설정
+        warrior.setAttackApplied(true);  // 공격 적용 완료 플래그 설정
     }
 
 

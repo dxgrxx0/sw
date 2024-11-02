@@ -21,6 +21,7 @@ public:
     bool isNear(sf::Vector2f position, float radius) const;
     
     void takeDamage(float attackDamage);
+    float getHealthPoint()const;
 private:
     sf::RectangleShape shape; // ������ ���
     float movementSpeed; // ������ �̵� �ӵ�
