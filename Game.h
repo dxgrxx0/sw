@@ -6,6 +6,7 @@
 #include "Character.h"
 #include "Monster.h"
 #include "MiniMap.h"
+#include "Timer.h"
 
 class Game {
 public:
@@ -28,6 +29,9 @@ private:
     std::vector<Monster> monsters;
     float spawnInterval;
     float monsterSpeed;
+    
+    //수정부분
+    Timer Timer;
 };
 
 #endif // GAME_H

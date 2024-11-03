@@ -10,6 +10,7 @@ Game::Game() :
     towerView(sf::FloatRect(500, 400, 600, 600)),
     spawnInterval(1.0f),
     monsterSpeed(50.0f)
+    ,Timer(750, 30)
 {
     if (!mainTowerTexture.loadFromFile("tower.PNG")) {
         throw std::runtime_error("Failed to load tower image");
@@ -51,6 +52,9 @@ void Game::update() {
     minimap.update(towerView, towerSprite, monsters, warrior);
     minimap.setPosition(mainView.getCenter().x - mainView.getSize().x / 2 + 3,
         mainView.getCenter().y - mainView.getSize().y / 2 + 3);
+    
+    Timer.update();
+
 }
 
 void Game::render() {
@@ -64,6 +68,8 @@ void Game::render() {
 
     // 미니맵 그리기
     minimap.draw(window);
+
+    Timer.draw(window);
 
     window.display();
 }

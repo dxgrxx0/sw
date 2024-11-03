@@ -22,5 +22,4 @@ private:
     float animationSpeed;
     float timeSinceLastFrame;
     void startSwinging();
-    int why_no_sujung;
 };
