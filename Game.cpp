@@ -9,13 +9,9 @@ Game::Game() :
     mainView(sf::FloatRect(0, 0, 1600, 1000)),
     towerView(sf::FloatRect(500, 400, 600, 600)),
     spawnInterval(1.0f),
-    monsterSpeed(50.0f)
+    monsterSpeed(50.0f),
+    mainTower(sf::Vector2f(650.0f, 500.0f)) // MainTower 위치 설정
 {
-    if (!mainTowerTexture.loadFromFile("tower.PNG")) {
-        throw std::runtime_error("Failed to load tower image");
-    }
-    towerSprite.setTexture(mainTowerTexture);
-    towerSprite.setPosition(650, 500);
     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정
 }
 
@@ -45,12 +41,7 @@ void Game::update() {
     warrior.updateAnimation(deltaTime);
 
     if (warrior.getIsSwinging() && !warrior.getAttackApplied()) {
-        for (auto& monster : monsters) {
-            float distance = calculateDistance(warrior.getPosition(), monster.getPosition());
-            if (distance <= warrior.getAttackRange()) {
-                monster.takeDamage(warrior.getAttackDamage());  // 몬스터에게 피해 입히기
-            }
-        }
+        warrior.basicAttack(monsters);
 
         // 체력이 0 이하인 몬스터들을 한 번에 제거
         monsters.erase(std::remove_if(monsters.begin(), monsters.end(),
@@ -68,7 +59,7 @@ void Game::update() {
         monster.update(warriorPosition, deltaTime);
     }
     mainView.setCenter(warriorPosition);
-    minimap.update(towerView, towerSprite, monsters, warrior);
+    minimap.update(towerView, mainTower, monsters, warrior);
     minimap.setPosition(mainView.getCenter().x - mainView.getSize().x / 2 + 3,
         mainView.getCenter().y - mainView.getSize().y / 2 + 3);
 }
@@ -77,6 +68,7 @@ void Game::render() {
     window.clear();
     window.setView(mainView);
     window.draw(towerSprite);
+    mainTower.draw(window);
     for (auto& monster : monsters) {
         monster.draw(window);
     }

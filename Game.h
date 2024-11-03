@@ -7,6 +7,7 @@
 #include "Monster.h"
 #include "Minimap.h"
 #include "Utility.h"
+#include "MainTower.h"
 class Game {
 public:
     Game();
@@ -28,6 +29,7 @@ private:
     std::vector<Monster> monsters;
     float spawnInterval;
     float monsterSpeed;
+    MainTower mainTower;
 };
 
 #endif // GAME_H
