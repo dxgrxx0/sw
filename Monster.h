@@ -1,4 +1,5 @@
 #ifndef MONSTER_H
+
 #define MONSTER_H
 
 #include <SFML/Graphics.hpp>
@@ -20,9 +21,18 @@ public:
     // Ư�� ��ġ ��ó�� �ִ��� Ȯ���ϴ� �Լ� (�̴ϸ� Ȱ�� ��)
     bool isNear(sf::Vector2f position, float radius) const;
 
+    
+    void takeDamage(float attackDamage);
+    float getHealthPoint()const;
 private:
     sf::RectangleShape shape; // ������ ���
     float movementSpeed; // ������ �̵� �ӵ�
+    float healthPoint;
+    float damageTaken; // 최근 피해량
+    bool isTakingDamage; // 피해를 표시해야 하는지 여부
+    float damageDisplayDuration; // 피해 표시 지속 시간
+    float damageDisplayTime; // 피해 표시 경과 시간
+
 };
 
 #endif // MONSTER_H
