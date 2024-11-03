@@ -7,6 +7,7 @@ Monster::Monster(float x, float y, float speed)
     shape.setSize(sf::Vector2f(30.0f, 30.0f));
     shape.setFillColor(sf::Color::Blue);
     shape.setPosition(x, y);
+    shape.setOrigin(shape.getGlobalBounds().width / 2, shape.getGlobalBounds().height / 2); // 원점을 중앙으로 설정
 	healthPoint = 100.0f;
 }
 

@@ -4,7 +4,7 @@
 
 Game::Game() :
     window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),
-    warrior("knightbg.png", 700, 700, 2.0f, 100.0f),
+    warrior("knightbg.png", 700, 700, 3.0f, 100.0f),
     minimap(600, 600, 0.4f),
     mainView(sf::FloatRect(0, 0, 1600, 1000)),
     towerView(sf::FloatRect(500, 400, 600, 600)),

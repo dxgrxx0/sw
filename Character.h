@@ -17,6 +17,8 @@ public:
     float getAttackDamage();
 	void setAttackApplied(bool applied);
     void heal(float healAmount);
+    bool isMonsterInAttackRange(const sf::Vector2f& characterPosition, const sf::Vector2f& monsterPosition,
+        float attackRange, float attackAngle, float characterRotation);
 private:
     sf::Sprite sprite;
     sf::Texture texture;
@@ -26,11 +28,12 @@ private:
     int totalFrames;
     bool isSwinging;
     bool attackApplied;
-
+    sf::Sprite slashSprite; // 슬래시 이미지를 위한 스프라이트
+    sf::Texture slashTexture; // 슬래시 텍스처
     float animationSpeed;
     float timeSinceLastFrame;
     void startSwinging();
-
+    float facingDirection; // 캐릭터가 바라보는 방향 (각도)
     //능력치
     float movementSpeed;
     float attackRange;

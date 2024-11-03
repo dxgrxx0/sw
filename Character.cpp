@@ -12,35 +12,51 @@ Character::Character(const std::string& textureFile, float x, float y, float sca
 
     sprite.setTexture(texture);
     sprite.setPosition(x, y);
+    sprite.setOrigin(frameWidth / 2, frameHeight / 2); // 원점을 중앙으로 설정
+    sprite.setPosition(x + sprite.getGlobalBounds().width / 2, y + sprite.getGlobalBounds().height / 2);
     sprite.setScale(scale, scale);
+    // 슬래시 텍스처 로드
+    if (!slashTexture.loadFromFile("slash.png")) {
+        throw std::runtime_error("Failed to load slash texture");
+    }
+    slashSprite.setTexture(slashTexture);
+    slashSprite.setOrigin(48, 48);
     currentFrame = sf::IntRect(0, 0, frameWidth, frameHeight);
     sprite.setTextureRect(currentFrame);
 }
 
 void Character::handleInput(float deltaTime) {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !isSwinging) {
-        currentFrame.top = 32;
+    // 방향 입력 처리
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+        if (!isSwinging) { currentFrame.top = 32; facingDirection = 270.0f; } // 북쪽
         sprite.move(0, -movementSpeed * deltaTime);
+        
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !isSwinging) {
-        currentFrame.top = 0;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+        if (!isSwinging) { currentFrame.top = 0; facingDirection = 90.0f; }// 남쪽
         sprite.move(0, movementSpeed * deltaTime);
+        
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && !isSwinging) {
-        currentFrame.top = 64;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+        if (!isSwinging) { currentFrame.top = 64; facingDirection = 180.0f; } // 서쪽
         sprite.move(-movementSpeed * deltaTime, 0);
+        
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && !isSwinging) {
-        currentFrame.top = 96;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+        if (!isSwinging) { currentFrame.top = 96; facingDirection = 0.0f; } // 동쪽
         sprite.move(movementSpeed * deltaTime, 0);
     }
 
+    // 스페이스바 입력 처리
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !isSwinging) {
         startSwinging();
+        slashSprite.setRotation(facingDirection - 90.f); // 캐릭터의 바라보는 방향으로 회전
+        // 슬래시의 위치 설정
+        
     }
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
-		sprite.setPosition(700, 700);
-	}
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
+        sprite.setPosition(700, 700);
+    }
 }
 
 void Character::updateAnimation(float deltaTime) {
@@ -51,12 +67,21 @@ void Character::updateAnimation(float deltaTime) {
         sprite.setTextureRect(currentFrame);
 
         if (isSwinging) {
-            if (currentFrameIndex == totalFrames / 2)attackApplied = false;
-            if (currentFrameIndex >= totalFrames-1) {
+            if (currentFrameIndex == totalFrames / 2) attackApplied = false;
+            if (currentFrameIndex >= totalFrames - 1) {
                 currentFrameIndex = 0;
                 isSwinging = false;
-                currentFrame.top -= 128;
+                currentFrame.top -= 128; // 다음 애니메이션 프레임으로 이동
             }
+            // 슬래시 스프라이트 위치는 스윙 시 고정
+            slashSprite.setTextureRect(sf::IntRect(0, 0, 96, 96));
+            float angleInRadians = degreesToRadians(facingDirection);
+            slashSprite.setPosition(
+                sprite.getPosition().x + attackRange * cos(angleInRadians)*0.2f*currentFrameIndex,
+                sprite.getPosition().y + attackRange * sin(angleInRadians)*0.2f * currentFrameIndex
+            );
+            slashSprite.setScale(currentFrameIndex, currentFrameIndex);
+            // 슬래시의 위치는 공격이 진행 중일 때만 설정됨
             currentFrameIndex++;
         }
         else {
@@ -68,6 +93,9 @@ void Character::updateAnimation(float deltaTime) {
 
 void Character::draw(sf::RenderTarget& target) {
     target.draw(sprite);
+    if (isSwinging) {
+        target.draw(slashSprite); // 슬래시 이미지 그리기
+    }
 }
 
 sf::Vector2f Character::getPosition() {
@@ -94,7 +122,7 @@ float Character::getAttackDamage() {
 void Character::setAttackApplied(bool applied) {
 	attackApplied = applied;
 }
-void Character::basicAttack(std::vector<Monster>& monsters) {
+/*void Character::basicAttack(std::vector<Monster>& monsters) {
     for (auto& monster : monsters) {
         float distance = calculateDistance(this->getPosition(), monster.getPosition());
         if (distance <= this->getAttackRange()) {
@@ -102,8 +130,40 @@ void Character::basicAttack(std::vector<Monster>& monsters) {
         }
     }
     attackApplied = true;
+}*/
+void Character::basicAttack(std::vector<Monster>& monsters) {
+    float attackRange = this->getAttackRange();
+    float attackAngle = 90.0f; // 부채꼴 각도
+
+    for (auto& monster : monsters) {
+        if (isMonsterInAttackRange(this->getPosition(), monster.getPosition(), attackRange, attackAngle, facingDirection)) {
+            monster.takeDamage(this->getAttackDamage());
+        }
+    }
+    attackApplied = true;
 }
 void Character::heal(float healAmount) {
     this->health += healAmount;
     if (health > maxHealth)health = maxHealth;
+}
+
+bool Character:: isMonsterInAttackRange(const sf::Vector2f& characterPosition, const sf::Vector2f& monsterPosition,
+    float attackRange, float attackAngle, float characterRotation) {
+    // 캐릭터와 몬스터 간의 벡터 계산
+    sf::Vector2f direction = monsterPosition - characterPosition;
+
+    // 거리 계산
+    float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    if (distance < 10)return true;
+    // 거리가 공격 범위 이내인지 체크
+    if (distance > attackRange) {
+        return false; // 공격 범위를 초과함
+    }
+
+    // 방향 각도 계산
+    float monsterAngle = std::atan2(direction.y, direction.x) * 180 / 3.141592f; // radian을 degree로 변환
+    float angleDiff = fmod((monsterAngle - characterRotation + 360), 360); // 각도 차이를 계산하여 0-360 범위로 맞춤
+
+    // 공격 범위의 각도 체크
+    return angleDiff <= attackAngle / 2 || angleDiff >= 360 - (attackAngle / 2);
 }
