@@ -31,6 +31,7 @@ void Monster::update(sf::Vector2f targetPosition, float deltaTime) {
 // draw 함수 구현
 void Monster::draw(sf::RenderTarget& target)const {
     target.draw(shape);
+
     if (isTakingDamage) {
         sf::Font font;
         font.loadFromFile("arial.ttf"); // 폰트 로드 (폰트 파일이 필요합니다)
@@ -43,6 +44,7 @@ void Monster::draw(sf::RenderTarget& target)const {
 
         target.draw(damageText); // 피해량 텍스트 그리기
     }
+
 }
 
 // getPosition 함수 구현
@@ -55,6 +57,7 @@ bool Monster::isNear(sf::Vector2f position, float radius) const {
     float distance = std::sqrt(distanceVec.x * distanceVec.x + distanceVec.y * distanceVec.y);
     return distance <= radius;
 }
+
 void Monster::takeDamage(float attackDamage) {
     healthPoint -= attackDamage;
     if (attackDamage>0) {
@@ -68,3 +71,4 @@ void Monster::takeDamage(float attackDamage) {
 float Monster:: getHealthPoint()const {
     return healthPoint;
 }
+

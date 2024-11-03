@@ -4,7 +4,9 @@
 
 Character::Character(const std::string& textureFile, float x, float y, float scale, float speed)
     : movementSpeed(speed), animationSpeed(0.1f), timeSinceLastFrame(0.0f),
+
     currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(200),attackDamage(30),attackApplied(true),facingDirection(90.0f){
+
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Failed to load texture" << std::endl;
         throw std::runtime_error("Failed to load texture");
@@ -93,9 +95,11 @@ void Character::updateAnimation(float deltaTime) {
 
 void Character::draw(sf::RenderTarget& target) {
     target.draw(sprite);
+
     if (isSwinging) {
         target.draw(slashSprite); // 슬래시 이미지 그리기
     }
+
 }
 
 sf::Vector2f Character::getPosition() {

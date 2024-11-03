@@ -40,6 +40,7 @@ void Game::update() {
     warrior.handleInput(deltaTime);
     warrior.updateAnimation(deltaTime);
 
+
     if (warrior.getIsSwinging() && !warrior.getAttackApplied()) {
         warrior.basicAttack(monsters);
 
@@ -54,12 +55,15 @@ void Game::update() {
     }
 
 
+
     sf::Vector2f warriorPosition = warrior.getPosition();
     for (auto& monster : monsters) {
         monster.update(warriorPosition, deltaTime);
     }
     mainView.setCenter(warriorPosition);
+
     minimap.update(towerView, mainTower, monsters, warrior);
+
     minimap.setPosition(mainView.getCenter().x - mainView.getSize().x / 2 + 3,
         mainView.getCenter().y - mainView.getSize().y / 2 + 3);
 }
@@ -68,7 +72,9 @@ void Game::render() {
     window.clear();
     window.setView(mainView);
     window.draw(towerSprite);
+
     mainTower.draw(window);
+
     for (auto& monster : monsters) {
         monster.draw(window);
     }

@@ -1,5 +1,6 @@
 #include "Minimap.h"
 
+
 MiniMap::MiniMap(float width, float height, float scale) {
     minimapTexture.create(static_cast<unsigned int>(width), static_cast<unsigned int>(height));
     minimapSprite.setScale(scale, scale);
@@ -14,11 +15,13 @@ void MiniMap::setPosition(float x, float y) {
     minimapBorder.setPosition(x, y);
 }
 
+
 void MiniMap::update(const sf::View& towerView, MainTower mainTower,
     const std::vector<Monster>& monsters, Character& warrior) {
     minimapTexture.clear();
     minimapTexture.setView(towerView);
     minimapTexture.draw(mainTower.getSprite()); // MainTower의 스프라이트 그리기
+
     for (auto& monster : monsters) {
         if (monster.isNear(sf::Vector2f(750, 650), 500)) {
             monster.draw(minimapTexture);
