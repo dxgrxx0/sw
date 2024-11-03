@@ -37,7 +37,7 @@ void Monster::draw(sf::RenderTarget& target)const {
         sf::Text damageText;
         damageText.setFont(font);
         damageText.setString(std::to_string(static_cast<int>(damageTaken))); // 피해량을 문자열로 변환
-        damageText.setCharacterSize(12);
+        damageText.setCharacterSize(15);
         damageText.setFillColor(sf::Color::White);
         damageText.setPosition(shape.getPosition().x, shape.getPosition().y - 30); // 위치 조정
 

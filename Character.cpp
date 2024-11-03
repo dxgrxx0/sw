@@ -4,7 +4,7 @@
 
 Character::Character(const std::string& textureFile, float x, float y, float scale, float speed)
     : movementSpeed(speed), animationSpeed(0.1f), timeSinceLastFrame(0.0f),
-    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(100),attackDamage(30),attackApplied(true) {
+    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(200),attackDamage(30),attackApplied(true),facingDirection(90.0f){
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Failed to load texture" << std::endl;
         throw std::runtime_error("Failed to load texture");
@@ -78,7 +78,7 @@ void Character::updateAnimation(float deltaTime) {
             float angleInRadians = degreesToRadians(facingDirection);
             slashSprite.setPosition(
                 sprite.getPosition().x + attackRange * cos(angleInRadians)*0.2f*currentFrameIndex,
-                sprite.getPosition().y + attackRange * sin(angleInRadians)*0.2f * currentFrameIndex
+                sprite.getPosition().y + attackRange * sin(angleInRadians)*0.2f*currentFrameIndex
             );
             slashSprite.setScale(currentFrameIndex, currentFrameIndex);
             // 슬래시의 위치는 공격이 진행 중일 때만 설정됨
@@ -122,15 +122,7 @@ float Character::getAttackDamage() {
 void Character::setAttackApplied(bool applied) {
 	attackApplied = applied;
 }
-/*void Character::basicAttack(std::vector<Monster>& monsters) {
-    for (auto& monster : monsters) {
-        float distance = calculateDistance(this->getPosition(), monster.getPosition());
-        if (distance <= this->getAttackRange()) {
-            monster.takeDamage(this->getAttackDamage());  // 몬스터에게 피해 입히기
-        }
-    }
-    attackApplied = true;
-}*/
+
 void Character::basicAttack(std::vector<Monster>& monsters) {
     float attackRange = this->getAttackRange();
     float attackAngle = 90.0f; // 부채꼴 각도
@@ -154,7 +146,7 @@ bool Character:: isMonsterInAttackRange(const sf::Vector2f& characterPosition, c
 
     // 거리 계산
     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-    if (distance < 10)return true;
+    if (distance < 40)return true;
     // 거리가 공격 범위 이내인지 체크
     if (distance > attackRange) {
         return false; // 공격 범위를 초과함
