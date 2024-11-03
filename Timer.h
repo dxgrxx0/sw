@@ -6,16 +6,12 @@
 
 class Timer {
 public:
-    // 생성자
     Timer(float x, float y, int fontSize = 24);
 
-    // 타이머 초기화
     void reset();
 
-    // 타이머 업데이트
-    void update();
+    void update(float x, float y);
 
-    // 타이머 그리기
     void draw(sf::RenderWindow& window);
 
 private:
@@ -24,4 +20,5 @@ private:
     sf::Clock clock;
     float positionX, positionY;
     int fontSize;
+    float getWidth() const;
 };

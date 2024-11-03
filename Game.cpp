@@ -52,9 +52,8 @@ void Game::update() {
     minimap.update(towerView, towerSprite, monsters, warrior);
     minimap.setPosition(mainView.getCenter().x - mainView.getSize().x / 2 + 3,
         mainView.getCenter().y - mainView.getSize().y / 2 + 3);
-    
-    Timer.update();
 
+    Timer.update(mainView.getCenter().x+20, mainView.getCenter().y - 550);
 }
 
 void Game::render() {
