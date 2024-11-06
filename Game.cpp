@@ -10,7 +10,7 @@ Game::Game() :
     towerView(sf::FloatRect(500, 400, 600, 600)),
     spawnInterval(1.0f),
     monsterSpeed(50.0f)
-    ,Timer(750, 30)
+    ,Timer(0, 0)
 {
     if (!mainTowerTexture.loadFromFile("tower.PNG")) {
         throw std::runtime_error("Failed to load tower image");
