@@ -5,7 +5,7 @@
 Character::Character(const std::string& textureFile, float x, float y, float scale, float speed)
     : movementSpeed(speed), animationSpeed(0.1f), timeSinceLastFrame(0.0f),
 
-    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(200),attackDamage(30),attackApplied(true),facingDirection(90.0f){
+    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(200),attackDamage(50),attackApplied(true),facingDirection(90.0f){
 
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Failed to load texture" << std::endl;
