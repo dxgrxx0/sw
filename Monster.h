@@ -1,7 +1,7 @@
 #ifndef MONSTER_H
 
 #define MONSTER_H
-
+#include"Character.h"
 #include <SFML/Graphics.hpp>
 
 enum class MonsterType {
@@ -30,7 +30,9 @@ public:
     // Ư�� ��ġ ��ó�� �ִ��� Ȯ���ϴ� �Լ� (�̴ϸ� Ȱ�� ��)
     bool isNear(sf::Vector2f position, float radius) const;
 
-    
+    bool isCharacterInAttackRange(const sf::Vector2f& characterPosition, const sf::Vector2f& monsterPosition);
+    float AttackDamage();
+
     void takeDamage(float attackDamage);
     float getHealthPoint()const;
 private:

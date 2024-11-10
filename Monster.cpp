@@ -24,8 +24,8 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         attackPower = 30.0f; // 추가 공격력
         shape.setFillColor(sf::Color::Red);
         break;
-    case MonsterType::Defense: //방어력3배,체력2배
-        movementSpeed = 50.0f;
+    case MonsterType::Defense: //방어력3배,체력2배,이속 2/5배
+        movementSpeed = 20.0f;
         healthPoint = 200.0f;
         attackPower = 10.0f;
         defense = 30.0f; // 방어력 추가
@@ -41,7 +41,21 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         break;
     }
 }
-
+//bool Monster::getAttackApplied() {
+//    return attackApplied;
+//}
+//bool Monster::getIsSwinging() {
+//    return isSwinging;
+//}
+//float Monster::getAttackRange() {
+//    return attackPower;
+//}
+float Monster::AttackDamage() {
+    return attackPower;
+}
+//void Monster::setAttackApplied(bool applied) {
+//    attackApplied = applied;
+//}
 // update 함수 구현
 void Monster::update(sf::Vector2f targetPosition, float deltaTime) {
     sf::Vector2f direction = targetPosition - shape.getPosition();
@@ -105,3 +119,25 @@ float Monster:: getHealthPoint()const {
     return healthPoint;
 }
 
+bool Monster::isCharacterInAttackRange(const sf::Vector2f& characterPosition, const sf::Vector2f& monsterPosition) {
+    // 캐릭터와 몬스터 간의 벡터 계산
+    sf::Vector2f direction = characterPosition - monsterPosition;
+
+    // 거리 계산
+    float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+    if (distance < 10) {
+        takeDamage_ch(attackPower);
+    }
+}
+
+void Monster::basicAttack(std::vector<Character>& characters) {
+
+    for (auto& character : characters) {
+        if (isCharacterInAttackRange(this->getPosition(), character.getPosition())) {
+            character.takeDamage_ch();
+        }
+        
+    }
+    attackApplied = true;
+}
