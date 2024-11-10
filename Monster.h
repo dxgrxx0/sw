@@ -1,8 +1,10 @@
 #ifndef MONSTER_H
 
 #define MONSTER_H
-#include"Character.h"
+
 #include <SFML/Graphics.hpp>
+
+class Character;
 
 enum class MonsterType {
     Basic,
@@ -15,23 +17,15 @@ enum class MonsterType {
 
 class Monster {
 public:
-    // ������
     Monster(float x, float y, float speed, MonsterType type);
 
-    // ���� ������Ʈ �Լ� (��ǥ ��ġ�� �̵�)
-    void update(sf::Vector2f targetPosition, float deltaTime);
+    void update(sf::Vector2f targetPosition, float deltaTime, Character& character);
 
-    // ���͸� �����쿡 �׸��� �Լ�
     void draw(sf::RenderTarget& target)const;
 
-    // ������ ���� ��ġ ��ȯ �Լ�
     sf::Vector2f getPosition();
-
-    // Ư�� ��ġ ��ó�� �ִ��� Ȯ���ϴ� �Լ� (�̴ϸ� Ȱ�� ��)
+   
     bool isNear(sf::Vector2f position, float radius) const;
-
-    bool isCharacterInAttackRange(const sf::Vector2f& characterPosition, const sf::Vector2f& monsterPosition);
-    float AttackDamage();
 
     void takeDamage(float attackDamage);
     float getHealthPoint()const;
@@ -45,6 +39,9 @@ private:
     float damageDisplayTime; // 피해 표시 경과 시간
     float attackPower; //공격력
     float defense;  //방어력
+
+    sf::Clock attackTimer; // 공격 타이머 추가
+    float attackCooldown = 1.0f; // 1초 주기
 };
 
 #endif // MONSTER_H

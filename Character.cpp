@@ -1,11 +1,12 @@
 #include "Character.h"
+#include"Monster.h"
 #include <iostream>
 #include <cmath>  // If needed for calculations
 
 Character::Character(const std::string& textureFile, float x, float y, float scale, float speed)
     : movementSpeed(speed), animationSpeed(0.1f), timeSinceLastFrame(0.0f),
 
-    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(200),attackDamage(30),attackApplied(true),facingDirection(90.0f){
+    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5), attackRange(200), attackDamage(30), attackApplied(true), facingDirection(90.0f) {
 
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Failed to load texture" << std::endl;
@@ -32,17 +33,17 @@ void Character::handleInput(float deltaTime) {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
         if (!isSwinging) { currentFrame.top = 32; facingDirection = 270.0f; } // 북쪽
         sprite.move(0, -movementSpeed * deltaTime);
-        
+
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
         if (!isSwinging) { currentFrame.top = 0; facingDirection = 90.0f; }// 남쪽
         sprite.move(0, movementSpeed * deltaTime);
-        
+
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
         if (!isSwinging) { currentFrame.top = 64; facingDirection = 180.0f; } // 서쪽
         sprite.move(-movementSpeed * deltaTime, 0);
-        
+
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
         if (!isSwinging) { currentFrame.top = 96; facingDirection = 0.0f; } // 동쪽
@@ -54,12 +55,12 @@ void Character::handleInput(float deltaTime) {
         startSwinging();
         slashSprite.setRotation(facingDirection - 90.f); // 캐릭터의 바라보는 방향으로 회전
         // 슬래시의 위치 설정
-        
+
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
         sprite.setPosition(700, 700);
     }
-    
+
 }
 
 void Character::updateAnimation(float deltaTime) {
@@ -80,8 +81,8 @@ void Character::updateAnimation(float deltaTime) {
             slashSprite.setTextureRect(sf::IntRect(0, 0, 96, 96));
             float angleInRadians = degreesToRadians(facingDirection);
             slashSprite.setPosition(
-                sprite.getPosition().x + attackRange * cos(angleInRadians)*0.2f*currentFrameIndex,
-                sprite.getPosition().y + attackRange * sin(angleInRadians)*0.2f*currentFrameIndex
+                sprite.getPosition().x + attackRange * cos(angleInRadians) * 0.2f * currentFrameIndex,
+                sprite.getPosition().y + attackRange * sin(angleInRadians) * 0.2f * currentFrameIndex
             );
             slashSprite.setScale(currentFrameIndex, currentFrameIndex);
             // 슬래시의 위치는 공격이 진행 중일 때만 설정됨
@@ -113,7 +114,7 @@ void Character::startSwinging() {
     currentFrameIndex = 0;
 }
 bool Character::getAttackApplied() {
-	return attackApplied;
+    return attackApplied;
 }
 bool Character::getIsSwinging() {
     return isSwinging;
@@ -125,7 +126,7 @@ float Character::getAttackDamage() {
     return attackDamage;
 }
 void Character::setAttackApplied(bool applied) {
-	attackApplied = applied;
+    attackApplied = applied;
 }
 
 void Character::basicAttack(std::vector<Monster>& monsters) {
@@ -144,7 +145,7 @@ void Character::heal(float healAmount) {
     if (health > maxHealth)health = maxHealth;
 }
 
-bool Character:: isMonsterInAttackRange(const sf::Vector2f& characterPosition, const sf::Vector2f& monsterPosition,
+bool Character::isMonsterInAttackRange(const sf::Vector2f& characterPosition, const sf::Vector2f& monsterPosition,
     float attackRange, float attackAngle, float characterRotation) {
     // 캐릭터와 몬스터 간의 벡터 계산
     sf::Vector2f direction = monsterPosition - characterPosition;
@@ -163,4 +164,11 @@ bool Character:: isMonsterInAttackRange(const sf::Vector2f& characterPosition, c
 
     // 공격 범위의 각도 체크
     return angleDiff <= attackAngle / 2 || angleDiff >= 360 - (attackAngle / 2);
+}
+
+void Character::takeDamage(float damageAmount) {
+    health -= damageAmount;
+    if (health < 0) {
+        health = 0;  // 체력은 0 이하로 내려가지 않음
+    }
 }

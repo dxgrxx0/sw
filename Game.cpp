@@ -56,9 +56,10 @@ void Game::update() {
 
 
 
+
     sf::Vector2f warriorPosition = warrior.getPosition();
     for (auto& monster : monsters) {
-        monster.update(warriorPosition, deltaTime);
+        monster.update(warriorPosition, deltaTime, warrior);
     }
     mainView.setCenter(warriorPosition);
 

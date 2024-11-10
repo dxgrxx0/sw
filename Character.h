@@ -3,6 +3,9 @@
 #include <string>
 #include "Monster.h"
 #include "Utility.h"
+
+class Monster;
+
 class Character {
 public:
     Character(const std::string& textureFile, float x, float y, float scale, float speed);
@@ -17,10 +20,12 @@ public:
     bool getIsSwinging();
     float getAttackRange();
     float getAttackDamage();
-	void setAttackApplied(bool applied);
+    void setAttackApplied(bool applied);
     void heal(float healAmount);
     bool isMonsterInAttackRange(const sf::Vector2f& characterPosition, const sf::Vector2f& monsterPosition,
         float attackRange, float attackAngle, float characterRotation);
+    void takeDamage(float damageAmount);
+
 private:
     sf::Sprite sprite;
     sf::Texture texture;
