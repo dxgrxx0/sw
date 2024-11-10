@@ -2,13 +2,44 @@
 #include <cmath>
 
 // 생성자
-Monster::Monster(float x, float y, float speed)
-    : movementSpeed(speed),damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f) {
+Monster::Monster(float x, float y, float speed,MonsterType type)
+    : damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f), attackPower(0),defense(0){
     shape.setSize(sf::Vector2f(30.0f, 30.0f));
-    shape.setFillColor(sf::Color::Blue);
+    //shape.setFillColor(sf::Color::Blue);
     shape.setPosition(x, y);
     shape.setOrigin(shape.getGlobalBounds().width / 2, shape.getGlobalBounds().height / 2); // 원점을 중앙으로 설정
 	healthPoint = 100.0f;
+    switch (type) {
+    case MonsterType::Speed:  //이속 3배,체력 1/2배
+        movementSpeed = 150.0f;
+        healthPoint = 50.0f;
+        attackPower = 10.0f;
+        defense = 10.0f;
+        shape.setFillColor(sf::Color::Cyan);
+        break;
+    case MonsterType::Attack: //공격력 3배
+        movementSpeed = 50.0f;
+        healthPoint = 100.0f;
+        defense = 10.0f;
+        attackPower = 30.0f; // 추가 공격력
+        shape.setFillColor(sf::Color::Red);
+        break;
+    case MonsterType::Defense: //방어력3배,체력2배
+        movementSpeed = 50.0f;
+        healthPoint = 200.0f;
+        attackPower = 10.0f;
+        defense = 30.0f; // 방어력 추가
+        shape.setFillColor(sf::Color::Magenta);
+        break;
+    case MonsterType::Basic:
+    default:
+        movementSpeed = 50.0f;
+        healthPoint = 100.0f;
+        attackPower = 10.0f;
+        defense = 10.0f;
+        shape.setFillColor(sf::Color::White);
+        break;
+    }
 }
 
 // update 함수 구현
@@ -51,6 +82,7 @@ void Monster::draw(sf::RenderTarget& target)const {
 sf::Vector2f Monster::getPosition() {
     return shape.getPosition();
 }
+
 // 특정 위치 근처에 있는지 확인
 bool Monster::isNear(sf::Vector2f position, float radius) const {
     sf::Vector2f distanceVec = position - shape.getPosition();
@@ -68,6 +100,7 @@ void Monster::takeDamage(float attackDamage) {
 
     }
 }
+
 float Monster:: getHealthPoint()const {
     return healthPoint;
 }

@@ -32,7 +32,7 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-    float deltaTime = clock.restart().asSeconds();
+    float deltaTime = clock.restart().asSeconds(); //업데이트 ㅅ
     if (spawnClock.getElapsedTime().asSeconds() > spawnInterval) {
         spawnMonster();
         spawnClock.restart();
@@ -91,5 +91,8 @@ void Game::render() {
 void Game::spawnMonster() {
     float x = static_cast<float>(std::rand() % window.getSize().x);
     float y = static_cast<float>(std::rand() % window.getSize().y);
-    monsters.emplace_back(x, y, monsterSpeed);
+    
+    MonsterType type = static_cast<MonsterType>(std::rand() % 4);
+
+    monsters.emplace_back(x, y, monsterSpeed, type);
 }
