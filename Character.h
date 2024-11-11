@@ -17,6 +17,9 @@ public:
     bool getIsSwinging();
     float getAttackRange();
     float getAttackDamage();
+    float getHealth();
+    float getMaxHealth();
+    void takeDamage(float damageAmount);
 	void setAttackApplied(bool applied);
     void heal(float healAmount);
     bool isMonsterInAttackRange(const sf::Vector2f& characterPosition, const sf::Vector2f& monsterPosition,

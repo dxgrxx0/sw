@@ -5,7 +5,7 @@
 Character::Character(const std::string& textureFile, float x, float y, float scale, float speed)
     : movementSpeed(speed), animationSpeed(0.1f), timeSinceLastFrame(0.0f),
 
-    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(200),attackDamage(30),attackApplied(true),facingDirection(90.0f){
+    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(200),attackDamage(50),attackApplied(true),facingDirection(90.0f),attackCoolDown(1.0f),health(100),maxHealth(100){
 
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Failed to load texture" << std::endl;
@@ -69,11 +69,13 @@ void Character::updateAnimation(float deltaTime) {
         sprite.setTextureRect(currentFrame);
 
         if (isSwinging) {
+            if (currentFrameIndex == 0)animationSpeed = 0.1f * attackCoolDown;
             if (currentFrameIndex == totalFrames / 2) attackApplied = false;
             if (currentFrameIndex >= totalFrames - 1) {
                 currentFrameIndex = 0;
                 isSwinging = false;
                 currentFrame.top -= 128; // 다음 애니메이션 프레임으로 이동
+                animationSpeed = 0.1f;
             }
             // 슬래시 스프라이트 위치는 스윙 시 고정
             slashSprite.setTextureRect(sf::IntRect(0, 0, 96, 96));
@@ -126,6 +128,12 @@ float Character::getAttackDamage() {
 void Character::setAttackApplied(bool applied) {
 	attackApplied = applied;
 }
+float Character::getHealth() {
+    return health;
+}
+float Character::getMaxHealth() {
+    return maxHealth;
+}
 
 void Character::basicAttack(std::vector<Monster>& monsters) {
     float attackRange = this->getAttackRange();
@@ -162,4 +170,11 @@ bool Character:: isMonsterInAttackRange(const sf::Vector2f& characterPosition, c
 
     // 공격 범위의 각도 체크
     return angleDiff <= attackAngle / 2 || angleDiff >= 360 - (attackAngle / 2);
+}
+void Character::takeDamage(float damageAmount) {
+    damageAmount = damageAmount * (100 - defense) / 100;
+    health -= damageAmount;
+    if (health < 0) {
+        health = 0;  // 체력은 0 이하로 내려가지 않음
+    }
 }
