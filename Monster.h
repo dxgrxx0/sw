@@ -15,16 +15,20 @@ enum class MonsterType {
 class Monster {
 public:
     // ������
-    Monster(float x, float y, float speed,MonsterType type);
+    Monster(float x, float y, float speed, MonsterType type);
 
     // ���� ������Ʈ �Լ� (��ǥ ��ġ�� �̵�)
-    void update(const sf::Vector2f& CharacterPos,const sf::Vector2f& MainTowerPos, float deltaTime,Character& character);
+    void update(const sf::Vector2f& CharacterPos, const sf::Vector2f& MainTowerPos, float deltaTime, Character& character);
 
+    // ���͸� �����쿡 �׸��� �Լ�
     void draw(sf::RenderTarget& target)const;
 
+    // ������ ���� ��ġ ��ȯ �Լ�
     sf::Vector2f getPosition();
-   
+
+    // Ư�� ��ġ ��ó�� �ִ��� Ȯ���ϴ� �Լ� (�̴ϸ� Ȱ�� ��)
     bool isNear(sf::Vector2f position, float radius) const;
+
 
     void takeDamage(float attackDamage);
     float getHealthPoint()const;

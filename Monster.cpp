@@ -4,13 +4,13 @@
 #include "Character.h"
 
 // 생성자
-Monster::Monster(float x, float y, float speed,MonsterType type)
-    : movementSpeed(speed),damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f),attackPower(0),defense(0) {
+Monster::Monster(float x, float y, float speed, MonsterType type)
+    : movementSpeed(speed), damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f), attackPower(0), defense(0) {
     shape.setSize(sf::Vector2f(30.0f, 30.0f));
     shape.setFillColor(sf::Color::Blue);
     shape.setPosition(x, y);
     shape.setOrigin(shape.getGlobalBounds().width / 2, shape.getGlobalBounds().height / 2); // 원점을 중앙으로 설정
-	healthPoint = 100.0f;
+    healthPoint = 100.0f;
     switch (type) {
     case MonsterType::Speed:  //이속 3배,체력 1/2배
         movementSpeed = 150.0f;
@@ -45,7 +45,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
 }
 
 // update 함수 구현
-void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& towerPosition, float deltaTime,Character& character) {
+void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& towerPosition, float deltaTime, Character& character) {
     sf::Vector2f targetPosition;
     float distanceToHeroine = calculateDistance(shape.getPosition(), heroinePosition);
     float distanceToTower = calculateDistance(shape.getPosition(), towerPosition);
@@ -80,10 +80,9 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
     }
 }
 
-
 // draw 함수 구현
 void Monster::draw(sf::RenderTarget& target)const {
-    target.draw(sprite);
+    target.draw(shape);
 
     if (isTakingDamage) {
         sf::Font font;
@@ -93,7 +92,7 @@ void Monster::draw(sf::RenderTarget& target)const {
         damageText.setString(std::to_string(static_cast<int>(damageTaken))); // 피해량을 문자열로 변환
         damageText.setCharacterSize(15);
         damageText.setFillColor(sf::Color::White);
-        damageText.setPosition(sprite.getPosition().x, sprite.getPosition().y - 30); // 위치 조정
+        damageText.setPosition(shape.getPosition().x, shape.getPosition().y - 30); // 위치 조정
 
         target.draw(damageText); // 피해량 텍스트 그리기
     }
@@ -102,12 +101,11 @@ void Monster::draw(sf::RenderTarget& target)const {
 
 // getPosition 함수 구현
 sf::Vector2f Monster::getPosition() {
-    return sprite.getPosition();
+    return shape.getPosition();
 }
-
 // 특정 위치 근처에 있는지 확인
 bool Monster::isNear(sf::Vector2f position, float radius) const {
-    sf::Vector2f distanceVec = position - sprite.getPosition();
+    sf::Vector2f distanceVec = position - shape.getPosition();
     float distance = std::sqrt(distanceVec.x * distanceVec.x + distanceVec.y * distanceVec.y);
     return distance <= radius;
 }
@@ -123,7 +121,6 @@ void Monster::takeDamage(float attackDamage) {
 
     }
 }
-
 float Monster::getHealthPoint()const {
     return healthPoint;
 }
