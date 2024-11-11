@@ -4,8 +4,6 @@
 #include "Monster.h"
 #include "Utility.h"
 
-class Monster;
-
 class Character {
 public:
     Character(const std::string& textureFile, float x, float y, float scale, float speed);

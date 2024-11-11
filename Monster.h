@@ -4,8 +4,6 @@
 
 #include <SFML/Graphics.hpp>
 
-class Character;
-
 enum class MonsterType {
     Basic,
     Speed,
@@ -42,6 +40,9 @@ private:
 
     sf::Clock attackTimer; // 공격 타이머 추가
     float attackCooldown = 1.0f; // 1초 주기
+
+    sf::Sprite sprite; 
+    sf::Texture texture; 
 };
 
 #endif // MONSTER_H
