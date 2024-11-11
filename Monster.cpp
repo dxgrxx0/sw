@@ -1,31 +1,25 @@
 #include "Monster.h"
+#include "Utility.h"
 #include <cmath>
-#include"Character.h"
-#include<iostream>
+#include "Character.h"
 
 // 생성자
-Monster::Monster(float x, float y, float speed, MonsterType type)
-    : damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f), attackPower(0), defense(0) {
-    //shape.setSize(sf::Vector2f(30.0f, 30.0f));
-    ////shape.setFillColor(sf::Color::Blue);
-
-    std::string texturePath;
-
-    //shape.setPosition(x, y);
-    //shape.setOrigin(shape.getGlobalBounds().width / 2, shape.getGlobalBounds().height / 2); // 원점을 중앙으로 설정
-    healthPoint = 100.0f;
+Monster::Monster(float x, float y, float speed,MonsterType type)
+    : movementSpeed(speed),damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f),attackPower(0),defense(0) {
+    shape.setSize(sf::Vector2f(30.0f, 30.0f));
+    shape.setFillColor(sf::Color::Blue);
+    shape.setPosition(x, y);
+    shape.setOrigin(shape.getGlobalBounds().width / 2, shape.getGlobalBounds().height / 2); // 원점을 중앙으로 설정
+	healthPoint = 100.0f;
     switch (type) {
     case MonsterType::Speed:  //이속 3배,체력 1/2배
-        texturePath = "speed_Monster.png";
         movementSpeed = 150.0f;
         healthPoint = 50.0f;
         attackPower = 10.0f;
         defense = 10.0f;
-        shape.
-            setFillColor(sf::Color::Cyan);
+        shape.setFillColor(sf::Color::Cyan);
         break;
     case MonsterType::Attack: //공격력 3배
-        texturePath = "attack_Monster.png";
         movementSpeed = 50.0f;
         healthPoint = 100.0f;
         defense = 10.0f;
@@ -33,7 +27,6 @@ Monster::Monster(float x, float y, float speed, MonsterType type)
         shape.setFillColor(sf::Color::Red);
         break;
     case MonsterType::Defense: //방어력3배,체력2배
-        texturePath = "health_Monster.png";
         movementSpeed = 50.0f;
         healthPoint = 200.0f;
         attackPower = 10.0f;
@@ -42,29 +35,29 @@ Monster::Monster(float x, float y, float speed, MonsterType type)
         break;
     case MonsterType::Basic:
     default:
-        texturePath = "basic_Monster.png";
         movementSpeed = 50.0f;
         healthPoint = 100.0f;
         attackPower = 10.0f;
         defense = 10.0f;
         shape.setFillColor(sf::Color::White);
         break;
-
-    } 
-    if (!texture.loadFromFile(texturePath)) {
-        // 텍스처 로드 실패 시 처리
-        std::cerr << "Failed to load texture: " << texturePath << std::endl;
     }
-
-    sprite.setTexture(texture);
-    sprite.setPosition(x, y);
-    sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2); // 원점을 중앙으로 설정
 }
 
-void Monster::update(sf::Vector2f targetPosition, float deltaTime, Character& character) {
-    sf::Vector2f direction = targetPosition - sprite.getPosition();
-    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+// update 함수 구현
+void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& towerPosition, float deltaTime,Character& character) {
+    sf::Vector2f targetPosition;
+    float distanceToHeroine = calculateDistance(shape.getPosition(), heroinePosition);
+    float distanceToTower = calculateDistance(shape.getPosition(), towerPosition);
 
+    if (distanceToHeroine < distanceToTower) {
+        targetPosition = heroinePosition;
+    }
+    else {
+        targetPosition = towerPosition;
+    }
+    sf::Vector2f direction = targetPosition - shape.getPosition();
+    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
     // 특정 거리 이내로 접근했을 때 피해를 입힘
     float attackRange = 10.0f; // 공격 범위 (거리) (조정가능)
     if (length <= attackRange) {
@@ -76,10 +69,8 @@ void Monster::update(sf::Vector2f targetPosition, float deltaTime, Character& ch
     }
     else if (length != 0) {
         direction /= length; // 방향 정규화
-        sprite.move(direction * movementSpeed * deltaTime); // 몬스터 이동
+        shape.move(direction * movementSpeed * deltaTime); // 몬스터 이동
     }
-
-    // 피해 표시 갱신
     if (isTakingDamage) {
         damageDisplayTime += deltaTime;
         if (damageDisplayTime >= damageDisplayDuration) {
@@ -122,6 +113,7 @@ bool Monster::isNear(sf::Vector2f position, float radius) const {
 }
 
 void Monster::takeDamage(float attackDamage) {
+    attackDamage = attackDamage * (100 - defense) / 100;
     healthPoint -= attackDamage;
     if (attackDamage > 0) {
         // 피해량 저장

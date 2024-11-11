@@ -9,12 +9,13 @@
 #include "Minimap.h"
 #include "Utility.h"
 #include "MainTower.h"
-
+#include "UiManager.h"
+#include "WaveManager.h"
 class Game {
 public:
     Game();
     void run();
-
+    void addExp(float exp);
 private:
     void handleEvents();
     void update();
@@ -31,8 +32,14 @@ private:
     std::vector<Monster> monsters;
     float spawnInterval;
     float monsterSpeed;
+    int level;
+    float experience;
+    float experienceToNextLevel;
 
+    sf::Font font;
+    UIManager uiManager;
     MainTower mainTower;
+    WaveManager waveManager;
 
 };
 

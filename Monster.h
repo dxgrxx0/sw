@@ -3,7 +3,7 @@
 #define MONSTER_H
 
 #include <SFML/Graphics.hpp>
-
+class Character;
 enum class MonsterType {
     Basic,
     Speed,
@@ -12,12 +12,13 @@ enum class MonsterType {
     Mid_Boss,
     Main_Boss
 };
-
 class Monster {
 public:
-    Monster(float x, float y, float speed, MonsterType type);
+    // ������
+    Monster(float x, float y, float speed,MonsterType type);
 
-    void update(sf::Vector2f targetPosition, float deltaTime, Character& character);
+    // ���� ������Ʈ �Լ� (��ǥ ��ġ�� �̵�)
+    void update(const sf::Vector2f& CharacterPos,const sf::Vector2f& MainTowerPos, float deltaTime,Character& character);
 
     void draw(sf::RenderTarget& target)const;
 
@@ -40,9 +41,6 @@ private:
 
     sf::Clock attackTimer; // 공격 타이머 추가
     float attackCooldown = 1.0f; // 1초 주기
-
-    sf::Sprite sprite; 
-    sf::Texture texture; 
 };
 
 #endif // MONSTER_H

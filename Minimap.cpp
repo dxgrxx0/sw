@@ -23,7 +23,7 @@ void MiniMap::update(const sf::View& towerView, MainTower mainTower,
     minimapTexture.draw(mainTower.getSprite()); // MainTower의 스프라이트 그리기
 
     for (auto& monster : monsters) {
-        if (monster.isNear(sf::Vector2f(750, 650), 500)) {
+        if (monster.isNear(sf::Vector2f(650, 500), 500)) {
             monster.draw(minimapTexture);
         }
     }
