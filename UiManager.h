@@ -9,11 +9,10 @@ public:
     // UI 요소들
     //sf::RectangleShape characterHealthBar;
     sf::RectangleShape towerDurabilityBar;
-    sf::Text timerText;
     sf::Text waveNotificationText;
     sf::Text experienceText;
     sf::Text upgradeSelectionText; // 업그레이드 선택 창
-    sf::Text levelText;
+
     // 생성자 및 초기화
     UIManager(sf::Font& font,Character* character, sf::RenderWindow& window);
 
@@ -34,9 +33,13 @@ private:
     sf::RenderWindow& window;
     sf::RectangleShape characterHealthBarBackground;
     sf::RectangleShape characterHealthBarForeground;
-
+    sf::Text levelText;
     sf::RectangleShape levelBarBackground;
     sf::RectangleShape levelBarForeground;
+    sf::Text timerText;
+    sf::RectangleShape mainTowerHealthBarBackground;
+    sf::RectangleShape mainTowerHealthBarForeground;
+    sf::Text towerText;
 };
 
 #endif // UIMANAGER_H

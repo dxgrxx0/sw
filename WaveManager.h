@@ -14,7 +14,7 @@ private:
     float maxDistance;
     Character* heroine;
     MainTower* mainTower;
-    std::vector<Monster>* monsters;
+    std::vector<std::unique_ptr<Monster>>* monsters; // 포인터로 변경
 
     // 스폰 속도 관련 변수
     float spawnInterval;           // 현재 스폰 간격
@@ -23,7 +23,7 @@ private:
     float maxSpawnInterval = 2.0f; // 스폰 속도 하한 (예: 2초)
 
 public:
-    WaveManager(Character* heroine, MainTower* mainTower, std::vector<Monster>* monsters, float mapWidth, float mapHeight);
+    WaveManager(Character* heroine, MainTower* mainTower, std::vector<std::unique_ptr<Monster>>* monsters, float mapWidth, float mapHeight);
 
     void update(float deltaTime);           // 매 프레임마다 호출, 스폰 및 업데이트
     void drawMonsters(sf::RenderTarget& target); // 몬스터 그리기

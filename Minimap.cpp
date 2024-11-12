@@ -17,14 +17,14 @@ void MiniMap::setPosition(float x, float y) {
 
 
 void MiniMap::update(const sf::View& towerView, MainTower mainTower,
-    const std::vector<Monster>& monsters, Character& warrior) {
+    const std::vector<std::unique_ptr<Monster>>& monsters, Character& warrior) {
     minimapTexture.clear();
     minimapTexture.setView(towerView);
     minimapTexture.draw(mainTower.getSprite()); // MainTower의 스프라이트 그리기
 
     for (auto& monster : monsters) {
-        if (monster.isNear(sf::Vector2f(650, 500), 500)) {
-            monster.draw(minimapTexture);
+        if (monster->isNear(sf::Vector2f(650, 500), 500)) {
+            monster->draw(minimapTexture);
         }
     }
     warrior.draw(minimapTexture);

@@ -1,9 +1,8 @@
 #include "MainTower.h"
 //#include "SubTower.h"
 #include "Character.h"
-#include <iostream>
 MainTower::MainTower(const sf::Vector2f& position)
-    : healAmountPerSecond(5.0f),health(200.f),position(position) {
+    : healAmountPerSecond(5.0f),health(300.f),position(position),defense(0),maxHealth(300.0f) {
     if (!texture.loadFromFile("tower.png")) {
         throw std::runtime_error("Failed to load tower texture");
     }
@@ -16,9 +15,8 @@ void MainTower::draw(sf::RenderWindow& window) const {
 }
 void MainTower::healNearbyCharacter(float deltaTime, Character& character) {
     // 일정 범위 내에 있는지 확인 후 캐릭터 회복
-    if (calculateDistance(sprite.getPosition(), character.getPosition()) < 100.0f) {
+    if (calculateDistance(sprite.getPosition(), character.getPosition()) < 200.0f) {
         character.heal(healAmountPerSecond * deltaTime);
-		std::cout << "heal" << std::endl;
     }
 }
 const sf::Sprite& MainTower::getSprite() const {
@@ -36,4 +34,15 @@ void MainTower::upgrade(std::vector<SubTower>& subTowers) {
 }*/
 sf::Vector2f MainTower::getPosition() {
     return sprite.getPosition();
+}
+void MainTower::takeDamage(float attackPower) {
+    float damageAmount = attackPower * (100 - defense) / 100;
+    health -= damageAmount;
+    if (health < 0)health = 0;
+}
+float MainTower::getHealth() {
+    return health;
+}
+float MainTower::getMaxHealth() {
+    return maxHealth;
 }

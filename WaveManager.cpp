@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 
-WaveManager::WaveManager(Character* heroine, MainTower* mainTower,std::vector<Monster>*monsters, float mapWidth, float mapHeight)
+WaveManager::WaveManager(Character* heroine, MainTower* mainTower, std::vector<std::unique_ptr<Monster>>* monsters, float mapWidth, float mapHeight)
     : heroine(heroine), mainTower(mainTower), monsters(monsters){
     maxDistance = std::sqrt(mapWidth * mapWidth + mapHeight * mapHeight);
     spawnInterval = maxSpawnInterval; // 초기 스폰 간격은 최대값으로 설정
@@ -30,7 +30,7 @@ void WaveManager::update(float deltaTime) {
 
     // 몬스터 업데이트
     for (auto& monster : *monsters) {
-        monster.update(heroine->getPosition(), mainTower->getPosition(), deltaTime,*heroine);
+        monster->update(heroine->getPosition(), mainTower->getPosition(), deltaTime,*heroine,*mainTower);
     }
     //if (heroine->getIsSwinging())std::cout << spawnInterval;
 }
@@ -59,9 +59,8 @@ void WaveManager::spawnMonsterAtSpecificDistance() {
         validPosition = true;
     }
     MonsterType type = static_cast<MonsterType>(std::rand() % 4);
-    Monster monster(spawnPos.x, spawnPos.y,50.0f,type);
-    //monster.setPosition(spawnPos.x, spawnPos.y);
-    monsters->push_back(monster);
+    auto monster = std::make_unique<Monster>(spawnPos.x, spawnPos.y, 50.0f, type);
+    monsters->push_back(std::move(monster));
     std::cout << "Moster spawned!" << std::endl;
 }
 
@@ -72,6 +71,6 @@ float WaveManager::calculateDistance(const sf::Vector2f& pos1, const sf::Vector2
 void WaveManager::drawMonsters(sf::RenderTarget& target) {
     for (const auto& monster : *monsters) {
         //target.draw(monster.getSprite());
-        monster.draw(target);
+        monster->draw(target);
     }
 }
