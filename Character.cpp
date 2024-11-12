@@ -135,13 +135,13 @@ float Character::getMaxHealth() {
     return maxHealth;
 }
 
-void Character::basicAttack(std::vector<Monster>& monsters) {
+void Character::basicAttack(std::vector<std::unique_ptr<Monster>>& monsters) {
     float attackRange = this->getAttackRange();
     float attackAngle = 90.0f; // 부채꼴 각도
 
     for (auto& monster : monsters) {
-        if (isMonsterInAttackRange(this->getPosition(), monster.getPosition(), attackRange, attackAngle, facingDirection)) {
-            monster.takeDamage(this->getAttackDamage());
+        if (isMonsterInAttackRange(this->getPosition(), monster->getPosition(), attackRange, attackAngle, facingDirection)) {
+            monster->takeDamage(this->getAttackDamage());
         }
     }
     attackApplied = true;

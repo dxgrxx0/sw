@@ -15,9 +15,8 @@ public:
 
     void update(const sf::View& towerView,MainTower mainTower,
 
-        const std::vector<Monster>& monsters, Character& warrior);
+        const std::vector<std::unique_ptr<Monster>>& monsters, Character& warrior);
     void draw(sf::RenderWindow& window);
-
 private:
     sf::RenderTexture minimapTexture;
     sf::Sprite minimapSprite;

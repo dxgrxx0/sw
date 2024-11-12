@@ -4,6 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 class Character;
+class MainTower;
 enum class MonsterType {
     Basic,
     Speed,
@@ -18,7 +19,7 @@ public:
     Monster(float x, float y, float speed,MonsterType type);
 
     // ���� ������Ʈ �Լ� (��ǥ ��ġ�� �̵�)
-    void update(const sf::Vector2f& CharacterPos,const sf::Vector2f& MainTowerPos, float deltaTime,Character& character);
+    void update(const sf::Vector2f& CharacterPos,const sf::Vector2f& MainTowerPos, float deltaTime,Character& character,MainTower& mainTower);
 
     // ���͸� �����쿡 �׸��� �Լ�
     void draw(sf::RenderTarget& target)const;
@@ -45,6 +46,10 @@ private:
 
     sf::Clock attackTimer; // 공격 타이머 추가
     float attackCooldown = 1.0f; // 1초 주기
+
+    std::string texturePath;
+    sf::Texture texture;
+    sf::Sprite sprite;
 };
 
 #endif // MONSTER_H
