@@ -15,7 +15,9 @@ Game::Game() :
     experience(0),
     level(1),
     experienceToNextLevel(100),
-    waveManager(&warrior, &mainTower,&monsters, 1600, 1000)
+    waveManager(&warrior, &mainTower, &monsters, 1600, 1000),
+    upgradeManager(&warrior, &mainTower),
+    upgradeUI(font, sf::Vector2f(window.getSize()))
 {
     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정
     font.loadFromFile("arial.ttf");
@@ -38,6 +40,18 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
+    if (upgradeUI.getIsVisible()) {
+        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            int choice = upgradeUI.handleClick(mousePos);
+            if (choice != -1) {
+                upgradeManager.applyUpgrade(choice); // 선택된 업그레이드 적용
+                upgradeUI.hide(); // UI 숨기기 (업그레이드 완료)
+            }
+        }
+        return; // 업그레이드 UI가 활성화된 동안 다른 게임 업데이트 중단
+    }
+
     float deltaTime = clock.restart().asSeconds();
     /*if (spawnClock.getElapsedTime().asSeconds() > spawnInterval) {
         spawnMonster();
@@ -63,9 +77,7 @@ void Game::update() {
         warrior.setAttackApplied(true);  // 공격 적용 완료 플래그 설정
     }
     if (experience > experienceToNextLevel) {
-        experience -= experienceToNextLevel;
-        experienceToNextLevel *= 1.5f;
-        level += 1;
+        onLevelUp();
     }
 
     sf::Vector2f warriorPosition = warrior.getPosition();
@@ -88,21 +100,24 @@ void Game::update() {
 
 void Game::render() {
     window.clear();
-    window.setView(mainView);
-    window.draw(towerSprite);
+    if (upgradeUI.getIsVisible()) {
+        window.setView(window.getDefaultView());  // 기본 뷰로 변경
+        upgradeUI.draw(window); // UI가 활성화된 경우에만 그리기
+    }
+    else {
+        window.setView(mainView);
+        window.draw(towerSprite);
 
-    mainTower.draw(window);
+        mainTower.draw(window);
 
-    /*for (auto& monster : monsters) {
-        monster.draw(window);
-    }*/
+        waveManager.drawMonsters(window);
+        warrior.draw(window);
 
-    waveManager.drawMonsters(window);
-    warrior.draw(window);
-
-    // 미니맵 그리기
-    minimap.draw(window);
-	uiManager.draw(window);// UI 그리기
+        // 미니맵 그리기
+        minimap.draw(window);
+        uiManager.draw(window);// UI 그리기
+    }
+    
     window.display();
 }
 /*
@@ -113,4 +128,12 @@ void Game::spawnMonster() {
 }*/
 void Game::addExp(float exp) {
     experience += exp;
+}
+void Game::onLevelUp() {
+    experience -= experienceToNextLevel;
+    experienceToNextLevel *= 1.5f;
+    level += 1;
+    upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
+    std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
+    upgradeUI.showOptions(options); // UI에 업그레이드 옵션 표시
 }
