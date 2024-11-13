@@ -57,7 +57,8 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         sprite.setTexture(texture);
         sprite.setScale(0.1f, 0.1f);
         sprite.setPosition(x, y);
-        sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
+        //sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
+        sprite.setOrigin(500, 500);
     }
 }
 
@@ -76,7 +77,7 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
     sf::Vector2f direction = targetPosition - sprite.getPosition();
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
     // 특정 거리 이내로 접근했을 때 피해를 입힘
-    float attackRange = 10.0f; // 공격 범위 (거리) (조정가능)
+    float attackRange = 50.0f; // 공격 범위 (거리) (조정가능)
     if (length <= attackRange) {
         if (attackTimer.getElapsedTime().asSeconds() >= attackCooldown) {
             if (targetPosition == towerPosition) {
@@ -90,7 +91,7 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
             attackTimer.restart(); // 타이머 초기화
         }
     }
-    else if (length != 0) {
+    else if (length >=50) {
         direction /= length; // 방향 정규화
         sprite.move(direction * movementSpeed * deltaTime); // 몬스터 이동
     }
