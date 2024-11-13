@@ -15,7 +15,7 @@ Game::Game() :
     experience(0),
     level(1),
     experienceToNextLevel(100),
-    waveManager(&warrior, &mainTower,&monsters, 1600, 1000)
+    waveManager(&warrior, &mainTower, &monsters, 1600, 1000)
 {
     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정
     font.loadFromFile("arial.ttf");
@@ -101,7 +101,7 @@ void Game::render() {
 
     // 미니맵 그리기
     minimap.draw(window);
-	uiManager.draw(window);// UI 그리기
+    uiManager.draw(window);// UI 그리기
     window.display();
 }
 /*
