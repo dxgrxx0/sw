@@ -27,6 +27,7 @@ public:
     void increaseAttackPower(float power);
     void increaseMaxHealth(float hp);
     void reduceCooldown(float cooldown);
+	void increaseSpeed(float speed);
 private:
     sf::Sprite sprite;
     sf::Texture texture;

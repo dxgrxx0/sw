@@ -12,7 +12,7 @@ private:
     Character* character;
     MainTower* mainTower;
     std::map<std::string, UpgradeOption> upgradeOptions; // 업그레이드 상태 저장
-    std::vector<UpgradeOption> currentOptions;// 현재 표시할 옵션
+    std::vector<UpgradeOption*> currentOptions;// 현재 표시할 옵션
     std::mt19937 rng;
 
 public:

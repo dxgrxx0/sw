@@ -158,7 +158,7 @@ bool Character:: isMonsterInAttackRange(const sf::Vector2f& characterPosition, c
 
     // 거리 계산
     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-    if (distance < 40)return true;
+    if (distance <= 50)return true;
     // 거리가 공격 범위 이내인지 체크
     if (distance > attackRange) {
         return false; // 공격 범위를 초과함
@@ -185,5 +185,8 @@ void Character::increaseMaxHealth(float hp) {
     maxHealth += hp;
 }
 void Character::reduceCooldown(float cooldown) {
-    attackCoolDown += cooldown;
+    attackCoolDown -= cooldown;
+}
+void Character::increaseSpeed(float speed) {
+    movementSpeed += speed;
 }

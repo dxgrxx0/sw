@@ -23,7 +23,11 @@ UpgradeUI::UpgradeUI(sf::Font& font, const sf::Vector2f& windowSize)
 
 void UpgradeUI::showOptions(const std::vector<std::string>& options) {
     isVisible = true;
-    for (int i = 0; i < options.size(); ++i) {
+    for (int i = 0; i < 3; ++i) {
+        if (i >= options.size()) {
+            optionTexts[i].setString("");
+            continue;
+        }
         optionTexts[i].setString(options[i]); // 각 옵션 설명 설정
     }
 }

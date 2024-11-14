@@ -82,11 +82,11 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
         if (attackTimer.getElapsedTime().asSeconds() >= attackCooldown) {
             if (targetPosition == towerPosition) {
                 mainTower.takeDamage(attackPower);
-                printf("Tower takeDamage!");
+                //printf("Tower takeDamage!");
             }
             else { 
                 character.takeDamage(attackPower);
-                printf("character takeDamage!");
+                //printf("character takeDamage!");
             } // 캐릭터에 피해 입힘
             attackTimer.restart(); // 타이머 초기화
         }
@@ -118,7 +118,7 @@ void Monster::draw(sf::RenderTarget& target)const {
         damageText.setFillColor(sf::Color::White);
 
 
-        damageText.setPosition(sprite.getPosition().x+30, sprite.getPosition().y - 30); // 위치 조정
+        damageText.setPosition(sprite.getPosition().x, sprite.getPosition().y - 70); // 위치 조정
 
         target.draw(damageText); // 피해량 텍스트 그리기
     }

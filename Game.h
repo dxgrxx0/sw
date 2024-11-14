@@ -38,7 +38,7 @@ private:
     int level;
     float experience;
     float experienceToNextLevel;
-
+    float deltaTime;
     sf::Font font;
     UIManager uiManager;
     MainTower mainTower;

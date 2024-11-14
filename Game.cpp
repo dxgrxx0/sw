@@ -1,7 +1,7 @@
 #include "Game.h"
 #include <cstdlib>
 #include <ctime>
-
+#include <iostream>
 Game::Game() :
     window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),
     warrior("knightbg.png", 700, 700, 3.0f, 100.0f),
@@ -47,12 +47,13 @@ void Game::update() {
             if (choice != -1) {
                 upgradeManager.applyUpgrade(choice); // 선택된 업그레이드 적용
                 upgradeUI.hide(); // UI 숨기기 (업그레이드 완료)
+                clock.restart();
             }
         }
         return; // 업그레이드 UI가 활성화된 동안 다른 게임 업데이트 중단
     }
 
-    float deltaTime = clock.restart().asSeconds();
+    deltaTime = clock.restart().asSeconds();
     /*if (spawnClock.getElapsedTime().asSeconds() > spawnInterval) {
         spawnMonster();
         spawnClock.restart();
@@ -68,7 +69,7 @@ void Game::update() {
         monsters.erase(std::remove_if(monsters.begin(), monsters.end(),
             [this](const std::unique_ptr<Monster>& monster) {
                 if (monster->getHealthPoint() <= 0) {
-                    addExp(10);
+                    addExp(100);
                 }
                 return monster->getHealthPoint() <= 0;
             }),
