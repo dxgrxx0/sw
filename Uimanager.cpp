@@ -21,6 +21,14 @@ UIManager::UIManager(sf::Font& font,Character* character, sf::RenderWindow& wind
     levelText.setFillColor(sf::Color::White);
     levelText.setPosition(0, 0);
 
+    mainTowerHealthBarBackground.setSize(sf::Vector2f(window.getSize().x /2, 30));
+    mainTowerHealthBarBackground.setFillColor(sf::Color(50, 50, 50));
+    mainTowerHealthBarBackground.setOutlineThickness(2);
+    mainTowerHealthBarBackground.setOutlineColor(sf::Color(101, 67, 33));
+    towerText.setFont(font);
+    towerText.setCharacterSize(20);
+    towerText.setFillColor(sf::Color::White);
+    towerText.setString("Main tower HP");
     currentTime = 0;
     elapsedTime = 0;
 
@@ -40,21 +48,25 @@ void UIManager::updateCharacterHealth() {
     characterHealthBarForeground.setPosition(characterHealthBarBackground.getPosition().x + 1, characterHealthBarBackground.getPosition().y + 1);
 }
 void UIManager::updateLevelBar(int level,float experience,float experienceToNextLevel) {
-    levelBarBackground.setPosition(window.mapPixelToCoords(sf::Vector2i(window.getSize().x / 2, 5)));
+    levelBarBackground.setPosition(window.mapPixelToCoords(sf::Vector2i(0, 5)));
     float levelPercentage = experience / experienceToNextLevel;
     levelBarForeground.setSize(sf::Vector2f((window.getSize().x/2) * levelPercentage, 20));
     levelBarForeground.setFillColor(sf::Color(135, 206, 250));
-    levelBarForeground.setPosition(levelBarBackground.getPosition().x + 5, levelBarBackground.getPosition().y + 5);
+    levelBarForeground.setPosition(levelBarBackground.getPosition().x, levelBarBackground.getPosition().y + 5);
     levelText.setString("Level: " + std::to_string(level));
 
     float textWidth = levelText.getLocalBounds().width;
-    levelText.setPosition(levelBarBackground.getPosition().x - textWidth - 15, levelBarBackground.getPosition().y + 5);
+    levelText.setPosition(levelBarBackground.getPosition().x+5 , levelBarBackground.getPosition().y + 5);
 }
 
 // 타워 내구도 바 업데이트
 void UIManager::updateTowerDurability(float currentDurability, float maxDurability) {
     float durabilityPercentage = currentDurability / maxDurability;
-    towerDurabilityBar.setSize(sf::Vector2f(100.0f * durabilityPercentage, 10.0f));
+    mainTowerHealthBarBackground.setPosition(window.mapPixelToCoords(sf::Vector2i(window.getSize().x / 2, 5)));
+    mainTowerHealthBarForeground.setSize(sf::Vector2f((window.getSize().x/2-3) * durabilityPercentage, 20));
+    mainTowerHealthBarForeground.setFillColor(sf::Color::Red);
+    mainTowerHealthBarForeground.setPosition(mainTowerHealthBarBackground.getPosition().x+3, mainTowerHealthBarBackground.getPosition().y + 5);
+    towerText.setPosition(mainTowerHealthBarBackground.getPosition().x+5, mainTowerHealthBarBackground.getPosition().y + 5);
 }
 
 // 타이머 업데이트
@@ -77,6 +89,9 @@ void UIManager::draw(sf::RenderWindow& window) {
     window.draw(characterHealthBarForeground);
     window.draw(levelBarBackground);
     window.draw(levelBarForeground);
+    window.draw(mainTowerHealthBarBackground);
+    window.draw(mainTowerHealthBarForeground);
     window.draw(levelText);
+    window.draw(towerText);
     window.draw(timerText);
 }

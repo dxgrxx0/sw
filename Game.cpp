@@ -4,7 +4,7 @@
 
 Game::Game() :
     window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),
-    warrior("knightbg.png", 700, 700, 3.0f, 100.0f),
+    warrior("knightbg.png", 700, 700, 3.0f, 200.0f),
     uiManager(font, &warrior, window),
     minimap(600, 600, 0.4f),
     mainView(sf::FloatRect(0, 0, 1600, 1000)),
@@ -52,11 +52,11 @@ void Game::update() {
 
         // 체력이 0 이하인 몬스터들을 한 번에 제거
         monsters.erase(std::remove_if(monsters.begin(), monsters.end(),
-            [this](const Monster& monster) {
-                if (monster.getHealthPoint() <= 0) {
+            [this](const std::unique_ptr<Monster>& monster) {
+                if (monster->getHealthPoint() <= 0) {
                     addExp(10);
                 }
-                return monster.getHealthPoint() <= 0;
+                return monster->getHealthPoint() <= 0;
             }),
             monsters.end());
 
@@ -78,10 +78,11 @@ void Game::update() {
     minimap.update(towerView, mainTower, monsters, warrior);
 
     minimap.setPosition(mainView.getCenter().x - mainView.getSize().x / 2 + 3,
-        mainView.getCenter().y - mainView.getSize().y / 2 + 3);
+        mainView.getCenter().y + mainView.getSize().y / 2 - 243);
     uiManager.updateCharacterHealth();
     uiManager.updateLevelBar(level, experience, experienceToNextLevel);
     uiManager.updateTimer(deltaTime);
+    uiManager.updateTowerDurability(mainTower.getHealth(), mainTower.getMaxHealth());
     mainTower.healNearbyCharacter(deltaTime, warrior);
 }
 

@@ -10,7 +10,7 @@ public:
     void updateAnimation(float deltaTime);
     void draw(sf::RenderTarget& target);
 
-    void basicAttack(std::vector<Monster>& monsters);
+    void basicAttack(std::vector<std::unique_ptr<Monster>>& monsters);
 
     sf::Vector2f getPosition();
     bool getAttackApplied();

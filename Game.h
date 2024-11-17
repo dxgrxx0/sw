@@ -29,7 +29,8 @@ private:
     sf::View mainView, towerView;
     MiniMap minimap;
     sf::Clock clock, spawnClock;
-    std::vector<Monster> monsters;
+    //std::vector<Monster> monsters;
+    std::vector<std::unique_ptr<Monster>> monsters;
     float spawnInterval;
     float monsterSpeed;
     int level;
