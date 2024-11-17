@@ -272,6 +272,9 @@ float Monster::getHealthPoint()const {
     return healthPoint;
 }
 
+
+//원거리 공격 로직 추가
+
 void Monster::shootProjectile(const sf::Vector2f& targetPos) {
     sf::Vector2f direction = targetPos - sprite.getPosition();
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
@@ -281,7 +284,6 @@ void Monster::shootProjectile(const sf::Vector2f& targetPos) {
 
     projectiles.emplace_back(sprite.getPosition(), direction * projectileSpeed, attackPower);
 }
-//원거리 공격 로직 추가
 void Monster::updateProjectiles(float deltaTime, Character& character, MainTower& mainTower) {
     for (auto& projectile : projectiles) {
         if (!projectile.active) continue;
@@ -408,6 +410,7 @@ void Monster::Sec_useSkill(Character& character, MainTower& mainTower) {
         printf("Main Boss uses Ranged Attack!\n");
     }
 }
+
 void Monster::removeSkillEffects() {
     // 스킬 효과 제거
     movementSpeed = originalSpeed;
