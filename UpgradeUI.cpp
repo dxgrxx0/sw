@@ -3,20 +3,20 @@
 
 UpgradeUI::UpgradeUI(sf::Font& font, const sf::Vector2f& windowSize)
     : isVisible(false) {
-    // ¹è°æ ¼³Á¤
-    background.setSize(sf::Vector2f(windowSize.x * 0.6f, windowSize.y * 0.4f)); // Ã¢ Å©±â ¼³Á¤ (È­¸é Å©±âÀÇ 60% Æø, 40% ³ôÀÌ)
-    background.setFillColor(sf::Color(50, 50, 50, 200)); // ¹İÅõ¸í È¸»ö ¹è°æ
-    background.setPosition((windowSize.x - background.getSize().x) / 2, (windowSize.y - background.getSize().y) / 2); // È­¸é Áß¾Ó¿¡ ¹èÄ¡
+    // ë°°ê²½ ì„¤ì •
+    background.setSize(sf::Vector2f(windowSize.x * 0.6f, windowSize.y * 0.4f)); // ì°½ í¬ê¸° ì„¤ì • (í™”ë©´ í¬ê¸°ì˜ 60% í­, 40% ë†’ì´)
+    background.setFillColor(sf::Color(50, 50, 50, 200)); // ë°˜íˆ¬ëª… íšŒìƒ‰ ë°°ê²½
+    background.setPosition((windowSize.x - background.getSize().x) / 2, (windowSize.y - background.getSize().y) / 2); // í™”ë©´ ì¤‘ì•™ì— ë°°ì¹˜
     background.setOutlineColor(sf::Color::White);
     background.setOutlineThickness(2);
 
-    // ¾÷±×·¹ÀÌµå ¿É¼Ç ÅØ½ºÆ® ÃÊ±âÈ­
+    // ì—…ê·¸ë ˆì´ë“œ ì˜µì…˜ í…ìŠ¤íŠ¸ ì´ˆê¸°í™”
     for (int i = 0; i < 3; ++i) {
         sf::Text optionText;
         optionText.setFont(font);
         optionText.setCharacterSize(24);
         optionText.setFillColor(sf::Color::White);
-        optionText.setPosition(background.getPosition().x + 20, background.getPosition().y + 50 + i * 50); // ¿É¼Ç À§Ä¡
+        optionText.setPosition(background.getPosition().x + 20, background.getPosition().y + 50 + i * 50); // ì˜µì…˜ ìœ„ì¹˜
         optionTexts.push_back(optionText);
     }
 }
@@ -28,7 +28,7 @@ void UpgradeUI::showOptions(const std::vector<std::string>& options) {
             optionTexts[i].setString("");
             continue;
         }
-        optionTexts[i].setString(options[i]); // °¢ ¿É¼Ç ¼³¸í ¼³Á¤
+        optionTexts[i].setString(options[i]); // ê° ì˜µì…˜ ì„¤ëª… ì„¤ì •
     }
 }
 
@@ -37,22 +37,22 @@ void UpgradeUI::hide() {
 }
 
 int UpgradeUI::handleClick(const sf::Vector2f& mousePos) {
-    if (!isVisible) return -1; // UI°¡ Ç¥½ÃµÇÁö ¾ÊÀ¸¸é Å¬¸¯ Ã³¸® ¾È ÇÔ
+    if (!isVisible) return -1; // UIê°€ í‘œì‹œë˜ì§€ ì•Šìœ¼ë©´ í´ë¦­ ì²˜ë¦¬ ì•ˆ í•¨
 
     for (int i = 0; i < optionTexts.size(); ++i) {
         if (optionTexts[i].getGlobalBounds().contains(mousePos)) {
-            return i; // Å¬¸¯µÈ ¿É¼Ç ÀÎµ¦½º ¹İÈ¯
+            return i; // í´ë¦­ëœ ì˜µì…˜ ì¸ë±ìŠ¤ ë°˜í™˜
         }
     }
-    return -1; // ¾Æ¹« °Íµµ Å¬¸¯µÇÁö ¾ÊÀ¸¸é -1 ¹İÈ¯
+    return -1; // ì•„ë¬´ ê²ƒë„ í´ë¦­ë˜ì§€ ì•Šìœ¼ë©´ -1 ë°˜í™˜
 }
 
 void UpgradeUI::draw(sf::RenderWindow& window) {
-    if (!isVisible) return; // UI°¡ ºñÈ°¼ºÈ­ »óÅÂ¶ó¸é ±×¸®Áö ¾ÊÀ½
+    if (!isVisible) return; // UIê°€ ë¹„í™œì„±í™” ìƒíƒœë¼ë©´ ê·¸ë¦¬ì§€ ì•ŠìŒ
 
-    window.draw(background); // ¹è°æ ±×¸®±â
+    window.draw(background); // ë°°ê²½ ê·¸ë¦¬ê¸°
     for (const auto& text : optionTexts) {
-        window.draw(text); // °¢ ¿É¼Ç ÅØ½ºÆ® ±×¸®±â
+        window.draw(text); // ê° ì˜µì…˜ í…ìŠ¤íŠ¸ ê·¸ë¦¬ê¸°
     }
 }
 

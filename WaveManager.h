@@ -14,24 +14,24 @@ private:
     float maxDistance;
     Character* heroine;
     MainTower* mainTower;
-    std::vector<std::unique_ptr<Monster>>* monsters; // Æ÷ÀÎÅÍ·Î º¯°æ
+    std::vector<std::unique_ptr<Monster>>* monsters; // í¬ì¸í„°ë¡œ ë³€ê²½
 
-    // ½ºÆù ¼Óµµ °ü·Ã º¯¼ö
-    float spawnInterval;           // ÇöÀç ½ºÆù °£°İ
+    // ìŠ¤í° ì†ë„ ê´€ë ¨ ë³€ìˆ˜
+    float spawnInterval;           // í˜„ì¬ ìŠ¤í° ê°„ê²©
     float timeSinceLastSpawn = 0.0f;
-    float minSpawnInterval = 0.5f; // ½ºÆù ¼Óµµ »óÇÑ (¿¹: 0.2ÃÊ)
-    float maxSpawnInterval = 2.0f; // ½ºÆù ¼Óµµ ÇÏÇÑ (¿¹: 2ÃÊ)
+    float minSpawnInterval = 0.5f; // ìŠ¤í° ì†ë„ ìƒí•œ (ì˜ˆ: 0.2ì´ˆ)
+    float maxSpawnInterval = 2.0f; // ìŠ¤í° ì†ë„ í•˜í•œ (ì˜ˆ: 2ì´ˆ)
 
 public:
     WaveManager(Character* heroine, MainTower* mainTower, std::vector<std::unique_ptr<Monster>>* monsters, float mapWidth, float mapHeight);
 
-    void update(float deltaTime);           // ¸Å ÇÁ·¹ÀÓ¸¶´Ù È£Ãâ, ½ºÆù ¹× ¾÷µ¥ÀÌÆ®
-    void drawMonsters(sf::RenderTarget& target); // ¸ó½ºÅÍ ±×¸®±â
+    void update(float deltaTime);           // ë§¤ í”„ë ˆì„ë§ˆë‹¤ í˜¸ì¶œ, ìŠ¤í° ë° ì—…ë°ì´íŠ¸
+    void drawMonsters(sf::RenderTarget& target); // ëª¬ìŠ¤í„° ê·¸ë¦¬ê¸°
 
 private:
-    void spawnMonsterAtSpecificDistance();   // Æ¯Á¤ °Å¸®¿¡¼­ ¸ó½ºÅÍ ½ºÆù
+    void spawnMonsterAtSpecificDistance();   // íŠ¹ì • ê±°ë¦¬ì—ì„œ ëª¬ìŠ¤í„° ìŠ¤í°
     float calculateDistance(const sf::Vector2f& pos1, const sf::Vector2f& pos2);
-    float calculateSpawnInterval();          // Å¸¿ö¿Í È÷·ÎÀÎÀÇ °Å¸®¿¡ µû¶ó ½ºÆù °£°İ °è»ê
+    float calculateSpawnInterval();          // íƒ€ì›Œì™€ íˆë¡œì¸ì˜ ê±°ë¦¬ì— ë”°ë¼ ìŠ¤í° ê°„ê²© ê³„ì‚°
 };
 
 #endif // WAVEMANAGER_H

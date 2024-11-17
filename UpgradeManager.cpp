@@ -13,7 +13,7 @@ void UpgradeManager::generateUpgradeOptions() {
 
     std::shuffle(currentOptions.begin(), currentOptions.end(), rng);
     if (currentOptions.size() > 3) {
-        currentOptions.resize(3); // ÃÖ´ë 3°³ÀÇ ¿É¼Ç¸¸ Á¦°ø
+        currentOptions.resize(3); // ìµœëŒ€ 3ê°œì˜ ì˜µì…˜ë§Œ ì œê³µ
     }
 }*/
 void UpgradeManager::generateUpgradeOptions() {
@@ -24,7 +24,7 @@ void UpgradeManager::generateUpgradeOptions() {
             upgradeOptions[desc] = UpgradeOption(desc, func);
         }
         if (upgradeOptions[desc].currentLevel < upgradeOptions[desc].maxLevel) {
-            currentOptions.push_back(&upgradeOptions[desc]); // Æ÷ÀÎÅÍ Ãß°¡
+            currentOptions.push_back(&upgradeOptions[desc]); // í¬ì¸í„° ì¶”ê°€
         }
         };
 
@@ -46,7 +46,7 @@ void UpgradeManager::generateUpgradeOptions() {
 
 void UpgradeManager::applyUpgrade(int choice) {
     if (choice >= 0 && choice < currentOptions.size()) {
-        bool upgraded = currentOptions[choice]->upgrade(); // ¼±ÅÃµÈ ¾÷±×·¹ÀÌµå ½Ãµµ
+        bool upgraded = currentOptions[choice]->upgrade(); // ì„ íƒëœ ì—…ê·¸ë ˆì´ë“œ ì‹œë„
         if (!upgraded) {
             std::cout << "Already at max level for this upgrade." << std::endl;
         }

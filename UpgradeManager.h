@@ -11,15 +11,15 @@ class UpgradeManager {
 private:
     Character* character;
     MainTower* mainTower;
-    std::map<std::string, UpgradeOption> upgradeOptions; // ¾÷±×·¹ÀÌµå »óÅÂ ÀúÀå
-    std::vector<UpgradeOption*> currentOptions;// ÇöÀç Ç¥½ÃÇÒ ¿É¼Ç
+    std::map<std::string, UpgradeOption> upgradeOptions; // ì—…ê·¸ë ˆì´ë“œ ìƒíƒœ ì €ì¥
+    std::vector<UpgradeOption*> currentOptions;// í˜„ì¬ í‘œì‹œí•  ì˜µì…˜
     std::mt19937 rng;
 
 public:
     UpgradeManager(Character* character, MainTower* mainTower);
 
-    void generateUpgradeOptions();                  // ¾÷±×·¹ÀÌµå ¿É¼Ç »ı¼º
-    void applyUpgrade(int choice);                  // ¼±ÅÃµÈ ¾÷±×·¹ÀÌµå ¿É¼Ç Àû¿ë
-    std::vector<std::string> getUpgradeDescriptions() const; // ¾÷±×·¹ÀÌµå ¼³¸í ¹İÈ¯
+    void generateUpgradeOptions();                  // ì—…ê·¸ë ˆì´ë“œ ì˜µì…˜ ìƒì„±
+    void applyUpgrade(int choice);                  // ì„ íƒëœ ì—…ê·¸ë ˆì´ë“œ ì˜µì…˜ ì ìš©
+    std::vector<std::string> getUpgradeDescriptions() const; // ì—…ê·¸ë ˆì´ë“œ ì„¤ëª… ë°˜í™˜
 };
 #endif // UPGRADEMANAGER_H

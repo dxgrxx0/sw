@@ -6,17 +6,17 @@
 #include "Character.h"
 class UIManager {
 public:
-    // UI ¿ä¼Òµé
+    // UI ìš”ì†Œë“¤
     //sf::RectangleShape characterHealthBar;
     sf::RectangleShape towerDurabilityBar;
     sf::Text waveNotificationText;
     sf::Text experienceText;
-    sf::Text upgradeSelectionText; // ¾÷±×·¹ÀÌµå ¼±ÅÃ Ã¢
+    sf::Text upgradeSelectionText; // ì—…ê·¸ë ˆì´ë“œ ì„ íƒ ì°½
 
-    // »ı¼ºÀÚ ¹× ÃÊ±âÈ­
-    UIManager(sf::Font& font,Character* character, sf::RenderWindow& window);
+    // ìƒì„±ì ë° ì´ˆê¸°í™”
+    UIManager(sf::Font& font, Character* character, sf::RenderWindow& window);
 
-    // UI ¾÷µ¥ÀÌÆ® ¸Ş¼­µå
+    // UI ì—…ë°ì´íŠ¸ ë©”ì„œë“œ
     void updateCharacterHealth();
     void updateTowerDurability(float currentDurability, float maxDurability);
     void updateTimer(float dt);
@@ -24,7 +24,7 @@ public:
     void updateExperience(int experience);
     void showUpgradeOptions(const std::string& options);
     void updateLevelBar(int level, float experience, float experienceToNextLevel);
-    // UI ¿ä¼Ò¸¦ ·»´õ¸µÇÏ´Â ¸Ş¼­µå
+    // UI ìš”ì†Œë¥¼ ë Œë”ë§í•˜ëŠ” ë©”ì„œë“œ
     void draw(sf::RenderWindow& window);
 private:
     float elapsedTime;

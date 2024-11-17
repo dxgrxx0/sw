@@ -1,4 +1,7 @@
 #include "Game.h"
+#include "BladeWhirl.h"
+#include "BulkUp.h"
+#include "Teleport.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -97,6 +100,7 @@ void Game::update() {
     uiManager.updateTimer(deltaTime);
     uiManager.updateTowerDurability(mainTower.getHealth(), mainTower.getMaxHealth());
     mainTower.healNearbyCharacter(deltaTime, warrior);
+    warrior.updateSkills(deltaTime);
 }
 
 void Game::render() {
@@ -134,6 +138,7 @@ void Game::onLevelUp() {
     experience -= experienceToNextLevel;
     experienceToNextLevel *= 1.5f;
     level += 1;
+    if (level == 3)warrior.addSkill(std::make_unique<BulkUp>(&warrior));
     upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
     std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
     upgradeUI.showOptions(options); // UI에 업그레이드 옵션 표시

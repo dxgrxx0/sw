@@ -5,7 +5,7 @@
 Character::Character(const std::string& textureFile, float x, float y, float scale, float speed)
     : movementSpeed(speed), animationSpeed(0.1f), timeSinceLastFrame(0.0f),
 
-    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(200),attackDamage(50),attackApplied(true),facingDirection(90.0f),attackCoolDown(1.0f),health(100),maxHealth(100){
+    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(200),attackDamage(50),attackApplied(true),facingDirection(90.0f),attackCoolDown(1.0f),health(100),maxHealth(100),defense(0){
 
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Failed to load texture" << std::endl;
@@ -56,8 +56,14 @@ void Character::handleInput(float deltaTime) {
         // 슬래시의 위치 설정
         
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
-        sprite.setPosition(700, 700);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+        activateSkill(sf::Keyboard::Q);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+        activateSkill(sf::Keyboard::W);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+        activateSkill(sf::Keyboard::E);
     }
 }
 
@@ -134,6 +140,9 @@ float Character::getHealth() {
 float Character::getMaxHealth() {
     return maxHealth;
 }
+void Character::setPosition(sf::Vector2f pos) {
+    sprite.setPosition(pos);
+}
 
 void Character::basicAttack(std::vector<std::unique_ptr<Monster>>& monsters) {
     float attackRange = this->getAttackRange();
@@ -189,4 +198,21 @@ void Character::reduceCooldown(float cooldown) {
 }
 void Character::increaseSpeed(float speed) {
     movementSpeed += speed;
+}
+void Character::increaseAttackRange(float range) {
+    attackRange += range;
+}
+void Character::addSkill(std::unique_ptr<BaseSkill> skill) {
+    skillManager.addSkill(std::move(skill));
+}
+
+void Character::activateSkill(sf::Keyboard::Key key) {
+    skillManager.activateSkill(key);
+}
+
+void Character::updateSkills(float deltaTime) {
+    skillManager.updateSkills(deltaTime);
+}
+void Character::setScale(float scale) {
+    sprite.setScale(scale,scale);
 }

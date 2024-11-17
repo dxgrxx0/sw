@@ -5,31 +5,31 @@
 #include <functional>
 
 struct UpgradeOption {
-    std::string description;                  // ¾÷±×·¹ÀÌµå ¼³¸í
-    std::function<void()> applyUpgrade;       // ¾÷±×·¹ÀÌµå È¿°ú Àû¿ë ÇÔ¼ö
-    int currentLevel;                         // ÇöÀç ·¹º§
-    const int maxLevel = 3;                   // ÃÖ´ë ·¹º§
+    std::string description;                  // ì—…ê·¸ë ˆì´ë“œ ì„¤ëª…
+    std::function<void()> applyUpgrade;       // ì—…ê·¸ë ˆì´ë“œ íš¨ê³¼ ì ìš© í•¨ìˆ˜
+    int currentLevel;                         // í˜„ì¬ ë ˆë²¨
+    const int maxLevel = 3;                   // ìµœëŒ€ ë ˆë²¨
 
-    // ±âº» »ı¼ºÀÚ
+    // ê¸°ë³¸ ìƒì„±ì
     UpgradeOption() : currentLevel(0) {}
 
-    // »ı¼ºÀÚ
+    // ìƒì„±ì
     UpgradeOption(const std::string& desc, std::function<void()> func)
         : description(desc), applyUpgrade(func), currentLevel(0) {}
 
-    // º¹»ç »ı¼ºÀÚ
+    // ë³µì‚¬ ìƒì„±ì
     UpgradeOption(const UpgradeOption& other)
         : description(other.description)
         , applyUpgrade(other.applyUpgrade)
         , currentLevel(other.currentLevel) {}
 
-    // ÀÌµ¿ »ı¼ºÀÚ
+    // ì´ë™ ìƒì„±ì
     UpgradeOption(UpgradeOption&& other) noexcept
         : description(std::move(other.description))
         , applyUpgrade(std::move(other.applyUpgrade))
         , currentLevel(other.currentLevel) {}
 
-    // º¹»ç ÇÒ´ç ¿¬»êÀÚ
+    // ë³µì‚¬ í• ë‹¹ ì—°ì‚°ì
     UpgradeOption& operator=(const UpgradeOption& other) {
         if (this != &other) {
             description = other.description;
@@ -39,7 +39,7 @@ struct UpgradeOption {
         return *this;
     }
 
-    // ÀÌµ¿ ÇÒ´ç ¿¬»êÀÚ
+    // ì´ë™ í• ë‹¹ ì—°ì‚°ì
     UpgradeOption& operator=(UpgradeOption&& other) noexcept {
         if (this != &other) {
             description = std::move(other.description);
@@ -49,14 +49,14 @@ struct UpgradeOption {
         return *this;
     }
 
-    // ¾÷±×·¹ÀÌµå Àû¿ë ÇÔ¼ö
+    // ì—…ê·¸ë ˆì´ë“œ ì ìš© í•¨ìˆ˜
     bool upgrade() {
         if (currentLevel < maxLevel) {
             applyUpgrade();
             ++currentLevel;
             return true;
         }
-        return false; // ÃÖ´ë ·¹º§¿¡ µµ´ŞÇÑ °æ¿ì ¾÷±×·¹ÀÌµå ºÒ°¡
+        return false; // ìµœëŒ€ ë ˆë²¨ì— ë„ë‹¬í•œ ê²½ìš° ì—…ê·¸ë ˆì´ë“œ ë¶ˆê°€
     }
 };
 
