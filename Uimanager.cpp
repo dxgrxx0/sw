@@ -38,6 +38,11 @@ UIManager::UIManager(sf::Font& font, Character* character, sf::RenderWindow& win
     timerText.setFillColor(sf::Color::White);
     timerText.setPosition(800, 20);
 
+
+    skillText.setFont(font);
+    skillPositions["BladeWhirl"] = sf::Vector2i(window.getSize().x-130, 700);
+    skillPositions["BulkUp"] = sf::Vector2i(window.getSize().x - 130, 800);
+    skillPositions["Teleport"] = sf::Vector2i(window.getSize().x - 130, 900);
 }
 
 // 캐릭터 체력바 업데이트
@@ -81,7 +86,38 @@ void UIManager::updateTimer(float dt) {
     float textWidth = timerText.getLocalBounds().width;
     timerText.setPosition(window.mapPixelToCoords(sf::Vector2i(window.getSize().x / 2 - textWidth / 2, 50)));
 }
+void UIManager::updateSkillCoolTime(SkillManager& skillManager) {
+    for (const auto& skillPair : skillPositions) {
+        const std::string& skillName = skillPair.first;             // 키 (스킬 이름)
+        const sf::Vector2i skillPosition = skillPair.second; // 값 (스킬 객체)
+        // 스킬 상태 정보 가져오기
+        bool isUnlocked = skillManager.isSkillUnlocked(skillName);
+        float remainingCooldown = skillManager.getRemainingCooldown(skillName);
 
+        // 사각형 배경
+        skillBoxBackground.setSize(sf::Vector2f(120, 90));
+        skillBoxBackground.setPosition(window.mapPixelToCoords(skillPosition));
+        skillBoxBackground.setFillColor(isUnlocked ? sf::Color(50, 50, 50) : sf::Color(100, 100, 100));
+        window.draw(skillBoxBackground);
+
+        // 텍스트
+        if (!isUnlocked) {
+            skillText.setString("Locked");
+            skillText.setFillColor(sf::Color(200, 50, 50)); // 빨간색
+        }
+        else if (remainingCooldown > 0) {
+            skillText.setString(skillName + "\n" + std::to_string(static_cast<int>(remainingCooldown)) + "s");
+            skillText.setFillColor(sf::Color::White);
+        }
+        else {
+            skillText.setString(skillName + "\nReady");
+            skillText.setFillColor(sf::Color::Green);
+        }
+        skillText.setCharacterSize(20);
+        skillText.setPosition(window.mapPixelToCoords(sf::Vector2i(skillPosition.x+10,skillPosition.y+5)));
+        window.draw(skillText);
+    }
+}
 
 // UI 요소를 그리기
 void UIManager::draw(sf::RenderWindow& window) {

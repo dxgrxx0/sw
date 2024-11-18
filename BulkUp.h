@@ -21,7 +21,7 @@ public:
         character->increaseAttackPower(20);
         character->increaseSpeed(50);
         character->increaseAttackRange(200);
-        character->setScale(5);
+        character->setScale(3);
     }
     void update(float deltaTime) override {
         if (isActive) {
@@ -33,7 +33,7 @@ public:
                 character->increaseAttackPower(-20);
                 character->increaseSpeed(-50);
                 character->increaseAttackRange(-200);
-                character->setScale(3);
+                character->setScale(1);
             }
         }
     }

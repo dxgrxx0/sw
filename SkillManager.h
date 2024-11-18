@@ -1,19 +1,28 @@
-#ifndef SKILLMANAGER_H
-#define SKILLMANAGER_H
+#ifndef SKILL_MANAGER_H
+#define SKILL_MANAGER_H
 
+#include <map>
 #include <vector>
+#include <string>
 #include <memory>
 #include <SFML/Window/Keyboard.hpp>
 #include "BaseSkill.h"
 
 class SkillManager {
 private:
-    std::vector<std::unique_ptr<BaseSkill>> skills;
+    std::map<std::string, std::unique_ptr<BaseSkill>> skills; // 스킬 이름으로 관리
+    std::map<std::string, bool> skillStates;                 // 스킬 잠금 상태 (true = 해제, false = 잠금)
 
 public:
-    void addSkill(std::unique_ptr<BaseSkill> skill);
-    void activateSkill(sf::Keyboard::Key key); // 키 입력에 따라 스킬 활성화
+    SkillManager();
+
+    void addSkill(const std::string& name, std::unique_ptr<BaseSkill> skill);
+    bool hasSkill(const std::string& name) const;
+    bool isSkillUnlocked(const std::string& name) const;
+    void unlockSkill(const std::string& name);
+    void activateSkill(sf::Keyboard::Key key);
     void updateSkills(float deltaTime);
+	float getRemainingCooldown(const std::string& name) const;
 };
 
-#endif // SKILLMANAGER_H
+#endif // SKILL_MANAGER_H

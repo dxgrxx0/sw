@@ -4,7 +4,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/System/Clock.hpp>
 #include <string>
-
+#include <iostream>
 class BaseSkill {
 protected:
     std::string name;           // 스킬 이름
@@ -36,7 +36,9 @@ public:
             isActive = false; // 스킬의 지속 시간이 끝났다고 가정
         }
     }
-
+    float getRemainCool() {
+        return (cooldown - cooldownTimer.getElapsedTime().asSeconds())<0?0: cooldown - cooldownTimer.getElapsedTime().asSeconds();
+    }
     virtual void applyEffect() = 0; // 각 스킬 효과 구현
 
     sf::Keyboard::Key getKey() const { return key; }

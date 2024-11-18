@@ -5,7 +5,7 @@
 Character::Character(const std::string& textureFile, float x, float y, float scale, float speed)
     : movementSpeed(speed), animationSpeed(0.1f), timeSinceLastFrame(0.0f),
 
-    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(200),attackDamage(50),attackApplied(true),facingDirection(90.0f),attackCoolDown(1.0f),health(100),maxHealth(100),defense(0){
+    currentFrameIndex(0), isSwinging(false), frameWidth(96), frameHeight(97), totalFrames(5),attackRange(200),attackDamage(50),attackApplied(true),facingDirection(90.0f),attackCoolDown(1.0f),health(100),maxHealth(100),defense(0){
 
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Failed to load texture" << std::endl;
@@ -30,7 +30,7 @@ Character::Character(const std::string& textureFile, float x, float y, float sca
 void Character::handleInput(float deltaTime) {
     // 방향 입력 처리
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-        if (!isSwinging) { currentFrame.top = 32; facingDirection = 270.0f; } // 북쪽
+        if (!isSwinging) { currentFrame.top = 97; facingDirection = 270.0f; } // 북쪽
         sprite.move(0, -movementSpeed * deltaTime);
         
     }
@@ -40,12 +40,12 @@ void Character::handleInput(float deltaTime) {
         
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-        if (!isSwinging) { currentFrame.top = 64; facingDirection = 180.0f; } // 서쪽
+        if (!isSwinging) { currentFrame.top = 291; facingDirection = 180.0f; } // 서쪽
         sprite.move(-movementSpeed * deltaTime, 0);
         
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-        if (!isSwinging) { currentFrame.top = 96; facingDirection = 0.0f; } // 동쪽
+        if (!isSwinging) { currentFrame.top = 194; facingDirection = 0.0f; } // 동쪽
         sprite.move(movementSpeed * deltaTime, 0);
     }
 
@@ -55,15 +55,6 @@ void Character::handleInput(float deltaTime) {
         slashSprite.setRotation(facingDirection - 90.f); // 캐릭터의 바라보는 방향으로 회전
         // 슬래시의 위치 설정
         
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
-        activateSkill(sf::Keyboard::Q);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-        activateSkill(sf::Keyboard::W);
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-        activateSkill(sf::Keyboard::E);
     }
 }
 
@@ -80,7 +71,7 @@ void Character::updateAnimation(float deltaTime) {
             if (currentFrameIndex >= totalFrames - 1) {
                 currentFrameIndex = 0;
                 isSwinging = false;
-                currentFrame.top -= 128; // 다음 애니메이션 프레임으로 이동
+                currentFrame.top -= 388; // 다음 애니메이션 프레임으로 이동
                 animationSpeed = 0.1f;
             }
             // 슬래시 스프라이트 위치는 스윙 시 고정
@@ -115,7 +106,7 @@ sf::Vector2f Character::getPosition() {
 }
 
 void Character::startSwinging() {
-    currentFrame.top += 128;
+    currentFrame.top += 388;
     isSwinging = true;
     currentFrameIndex = 0;
 }
@@ -202,7 +193,7 @@ void Character::increaseSpeed(float speed) {
 void Character::increaseAttackRange(float range) {
     attackRange += range;
 }
-void Character::addSkill(std::unique_ptr<BaseSkill> skill) {
+/*void Character::addSkill(std::unique_ptr<BaseSkill> skill) {
     skillManager.addSkill(std::move(skill));
 }
 
@@ -212,7 +203,7 @@ void Character::activateSkill(sf::Keyboard::Key key) {
 
 void Character::updateSkills(float deltaTime) {
     skillManager.updateSkills(deltaTime);
-}
+}*/
 void Character::setScale(float scale) {
     sprite.setScale(scale,scale);
 }

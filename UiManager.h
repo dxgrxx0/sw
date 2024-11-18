@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "Character.h"
+#include "SkillManager.h"
 class UIManager {
 public:
     // UI 요소들
@@ -20,10 +21,8 @@ public:
     void updateCharacterHealth();
     void updateTowerDurability(float currentDurability, float maxDurability);
     void updateTimer(float dt);
-    void updateWaveNotification(int currentWave);
-    void updateExperience(int experience);
-    void showUpgradeOptions(const std::string& options);
     void updateLevelBar(int level, float experience, float experienceToNextLevel);
+    void updateSkillCoolTime(SkillManager& skillManager);
     // UI 요소를 렌더링하는 메서드
     void draw(sf::RenderWindow& window);
 private:
@@ -40,6 +39,14 @@ private:
     sf::RectangleShape mainTowerHealthBarBackground;
     sf::RectangleShape mainTowerHealthBarForeground;
     sf::Text towerText;
+
+    sf::RectangleShape skillBoxBackground;
+    sf::Text skillText;
+    std::map<std::string, sf::Vector2i> skillPositions;
+
+    // 미니맵 위치를 기준으로 계산
+    sf::Vector2f minimapPosition;
+    float minimapWidth;
 };
 
 #endif // UIMANAGER_H
