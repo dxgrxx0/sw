@@ -189,8 +189,8 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
         }
     }
 
-    // 메인 스킬 (10초 쿨타임)
-    if (skillCooldown.getElapsedTime().asSeconds() >= 10.0f) {
+    // 메인 스킬 (15초 쿨타임)
+    if (skillCooldown.getElapsedTime().asSeconds() >= 15.0f) {
         Fir_useSkill(character, mainTower);
     }
 
@@ -284,25 +284,30 @@ void Monster::shootProjectile(const sf::Vector2f& targetPos) {
 
     projectiles.emplace_back(sprite.getPosition(), direction * projectileSpeed, attackPower);
 }
+
 void Monster::updateProjectiles(float deltaTime, Character& character, MainTower& mainTower) {
     for (auto& projectile : projectiles) {
         if (!projectile.active) continue;
-
+        
         // 투사체 이동
         projectile.shape.move(projectile.velocity * deltaTime);
 
+        float collisionRadius = 40.0f; // 투사체 충돌 범위
+
+
         // 캐릭터와 충돌 체크
         sf::Vector2f projectilePos = projectile.shape.getPosition();
-        if (calculateDistance(projectilePos, character.getPosition()) < 30.0f) {
+        if (calculateDistance(projectilePos, character.getPosition()) < collisionRadius) {
             character.takeDamage(projectile.damage);
             projectile.active = false;
             continue;
         }
 
         // 타워와 충돌 체크
-        if (calculateDistance(projectilePos, mainTower.getPosition()) < 30.0f) {
+        if (calculateDistance(projectilePos, mainTower.getPosition()) < collisionRadius) {
             mainTower.takeDamage(projectile.damage);
             projectile.active = false;
+            printf("Tower hit by projectile!\n"); // 디버깅용 메시지 추가
             continue;
         }
 
@@ -342,7 +347,7 @@ void Monster::Fir_useSkill(Character& character, MainTower& mainTower) {
         printf("Mid Boss uses Berserk!\n");
     }
     else if (texturePath == "mainboss.PNG") {
-        // 메인보스 스킬: "절대방어" - 방어력 대폭 증가
+        // 메인보스 스킬: "절대방어" - 방어력 대폭 증가,주변 광역 공격
         defense = originalDefense * 3.0f;
         movementSpeed = originalSpeed * 4.5f;
         attackRange = originalattackRange * 2.0f;
@@ -391,21 +396,28 @@ void Monster::Sec_useSkill(Character& character, MainTower& mainTower) {
             targetPos = mainTower.getPosition();
         }
 
-        for (int i = 0; i < 8; ++i) {
-            float randomAngle = (rand() % 40 - 20) * 3.14159f / 180.0f;
-            sf::Vector2f direction = targetPos - sprite.getPosition();
-            float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-            if (length != 0) {
-                direction /= length;
-                float newX = direction.x * std::cos(randomAngle) - direction.y * std::sin(randomAngle);
-                float newY = direction.x * std::sin(randomAngle) + direction.y * std::cos(randomAngle);
-                direction = sf::Vector2f(newX, newY);
-            }
+        sf::Vector2f baseDirection = targetPos - sprite.getPosition();
+        float baseLength = std::sqrt(baseDirection.x * baseDirection.x + baseDirection.y * baseDirection.y);
+        if (baseLength != 0) {
+            baseDirection /= baseLength;
 
-            Projectile projectile(sprite.getPosition(), direction * projectileSpeed, attackPower * 2.0f);
-            projectile.shape.setFillColor(sf::Color::Red);
-            projectile.shape.setRadius(15.f);
-            projectiles.push_back(projectile);
+            // 부채꼴 형태로 투사체 발사 (각도 범위를 좁힘)
+            for (int i = 0; i < 8; ++i) {
+                float spreadAngle = (i - 3.5f) * 10.0f; // -35도에서 +35도 사이로 조정
+                float randomOffset = (rand() % 10 - 5) * 0.5f; // 약간의 랜덤성 추가
+                float finalAngle = (spreadAngle + randomOffset) * 3.14159f / 180.0f;
+
+                // 회전 행렬 적용
+                float newX = baseDirection.x * std::cos(finalAngle) - baseDirection.y * std::sin(finalAngle);
+                float newY = baseDirection.x * std::sin(finalAngle) + baseDirection.y * std::cos(finalAngle);
+                sf::Vector2f direction(newX, newY);
+
+                // 투사체 생성 및 설정
+                Projectile projectile(sprite.getPosition(), direction * projectileSpeed, attackPower * 2.0f);
+                projectile.shape.setFillColor(sf::Color::Red);
+                projectile.shape.setRadius(15.f);
+                projectiles.push_back(projectile);
+            }
         }
         printf("Main Boss uses Ranged Attack!\n");
     }
