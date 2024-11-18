@@ -3,6 +3,7 @@
 #include <string>
 #include "Monster.h"
 #include "Utility.h"
+//#include "SkillManager.h"
 class Character {
 public:
     Character(const std::string& textureFile, float x, float y, float scale, float speed);
@@ -27,6 +28,13 @@ public:
     void increaseAttackPower(float power);
     void increaseMaxHealth(float hp);
     void reduceCooldown(float cooldown);
+	void increaseSpeed(float speed);
+    void increaseAttackRange(float range);
+    /*void addSkill(std::unique_ptr<BaseSkill> skill);
+    void activateSkill(sf::Keyboard::Key key);
+    void updateSkills(float deltaTime);*/
+    void setPosition(sf::Vector2f pos);
+    void setScale(float scale);
 private:
     sf::Sprite sprite;
     sf::Texture texture;
@@ -50,4 +58,5 @@ private:
     float defense;
     float maxHealth;    //최대체력
     float health;//현재체력
+    //SkillManager skillManager;
 };

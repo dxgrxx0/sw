@@ -33,6 +33,20 @@ public:
     
     void takeDamage(float attackDamage);
     float getHealthPoint()const;
+
+
+    void Fir_useSkill(Character& character, MainTower& mainTower);
+    void Sec_useSkill(Character& character, MainTower& mainTower);
+
+    void createClones();
+    void updateClones(float deltaTime);
+    void removeClones();
+
+
+    //원거리 공격 로직 추가
+    void updateProjectiles(float deltaTime, Character& character, MainTower& mainTower);
+    void shootProjectile(const sf::Vector2f& targetPos);
+    void drawProjectiles(sf::RenderTarget& target) const;
 private:
     sf::RectangleShape shape; // ������ ���
     float movementSpeed; // ������ �̵� �ӵ�
@@ -43,13 +57,54 @@ private:
     float damageDisplayTime; // 피해 표시 경과 시간
     float attackPower; //공격력
     float defense;  //방어력
-
+    float attackRange;
     sf::Clock attackTimer; // 공격 타이머 추가
     float attackCooldown = 1.0f; // 1초 주기
 
     std::string texturePath;
     sf::Texture texture;
     sf::Sprite sprite;
+
+    //mid,main boss skill variable
+    sf::Clock skillCooldown;
+    sf::Clock rangedAttackCooldown;
+    float skillDuration;
+    bool isSkillActive;
+    float originalSpeed;
+    float originalDefense;
+    float originalAttackPower;
+    float originalattackRange;
+
+    //void applySkillEffects();
+    void removeSkillEffects();
+
+    bool isCloneActive;
+    std::vector<sf::Sprite> cloneSprites;
+    float cloneDistance;
+    float cloneRotationAngle;
+    float cloneRotationSpeed;
+
+
+
+    //원거리 공격 로직 추가
+    struct Projectile {
+        sf::CircleShape shape;
+        sf::Vector2f velocity;
+        float damage;
+        bool active;
+
+        Projectile(const sf::Vector2f& pos, const sf::Vector2f& vel, float dmg)
+            : velocity(vel), damage(dmg), active(true) {
+            shape.setRadius(10.f);
+            shape.setFillColor(sf::Color::Red);
+            shape.setPosition(pos);
+            shape.setOrigin(10.f, 10.f);
+        }
+    };
+
+    std::vector<Projectile> projectiles;
+    float projectileSpeed = 400.0f;
+    sf::Clock rangedAttackTimer;
 };
 
 #endif // MONSTER_H

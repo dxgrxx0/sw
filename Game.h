@@ -13,6 +13,7 @@
 #include "WaveManager.h"
 #include "UpgradeManager.h"
 #include "UpgradeUI.h"
+#include "SkillManager.h"
 class Game {
 public:
     Game();
@@ -38,14 +39,14 @@ private:
     int level;
     float experience;
     float experienceToNextLevel;
-
+    float deltaTime;
     sf::Font font;
     UIManager uiManager;
     MainTower mainTower;
     WaveManager waveManager;
     UpgradeManager upgradeManager;
     UpgradeUI upgradeUI;
-
+    SkillManager skillManager;
 };
 
 #endif // GAME_H
