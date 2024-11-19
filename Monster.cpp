@@ -54,32 +54,12 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         skillDuration = 5.0f;
         //shape.setFillColor(sf::Color::Yellow);
         break;
-
     case MonsterType::Main_Boss: // 메인보스
         texturePath = "mainboss.PNG";
         movementSpeed = 80.0f;
         healthPoint = 5000.0f; 
         attackPower = 100.0f;  
         defense = 50.0f;       
-        skillDuration = 8.0f;
-        //shape.setFillColor(sf::Color::Black);
-        break;
-    case MonsterType::Mid_Boss: // 미드보스
-        texturePath = "midboss.PNG";
-        movementSpeed = 100.0f;
-        healthPoint = 1000.0f;
-        attackPower = 50.0f;
-        defense = 20.0f;
-        skillDuration = 5.0f;
-        //shape.setFillColor(sf::Color::Yellow);
-        break;
-
-    case MonsterType::Main_Boss: // 메인보스
-        texturePath = "mainboss.PNG";
-        movementSpeed = 80.0f;
-        healthPoint = 5000.0f;
-        attackPower = 100.0f;
-        defense = 50.0f;
         skillDuration = 8.0f;
         //shape.setFillColor(sf::Color::Black);
         break;

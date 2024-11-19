@@ -9,7 +9,6 @@
 #include "Character.h"
 #include "MainTower.h"
 
-
 class WaveManager {
 private:
     float maxDistance;
@@ -30,13 +29,12 @@ private:
 
 public:
     WaveManager(Character* heroine, MainTower* mainTower, std::vector<std::unique_ptr<Monster>>* monsters, float mapWidth, float mapHeight);
-    bool loadResources();
+
     void update(float deltaTime);           // 매 프레임마다 호출, 스폰 및 업데이트
     void drawMonsters(sf::RenderTarget& target); // 몬스터 그리기
 
 private:
     void spawnMonsterAtSpecificDistance();   // 특정 거리에서 몬스터 스폰
-    void spawnBoss(MonsterType bossType);    // Mid-Boss와 Main-Boss 스폰
     float calculateDistance(const sf::Vector2f& pos1, const sf::Vector2f& pos2);
     float calculateSpawnInterval();          // 타워와 히로인의 거리에 따라 스폰 간격 계산
 

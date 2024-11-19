@@ -4,26 +4,9 @@
 #include <cstdlib>
 
 WaveManager::WaveManager(Character* heroine, MainTower* mainTower, std::vector<std::unique_ptr<Monster>>* monsters, float mapWidth, float mapHeight)
-    : heroine(heroine), mainTower(mainTower), monsters(monsters), midBossSpawned(false), mainBossSpawned(false),displayBossMessage(false) {
+    : heroine(heroine), mainTower(mainTower), monsters(monsters) {
     maxDistance = std::sqrt(mapWidth * mapWidth + mapHeight * mapHeight);
     spawnInterval = maxSpawnInterval; // 초기 스폰 간격은 최대값으로 설정
-
-    if (!loadResources()) {
-        std::cout << "Failed to load font!" << std::endl;
-    }
-
-    text.setFont(font);
-    text.setCharacterSize(50);
-    text.setFillColor(sf::Color::Red);
-    text.setStyle(sf::Text::Bold);
-}
-
-bool WaveManager::loadResources() {
-    // 프로젝트의 폰트 파일 경로를 정확하게 지정해주세요
-    if (!font.loadFromFile("arial.ttf")) { 
-        return false;
-    }
-    return true;
 }
 
 float WaveManager::calculateSpawnInterval() {
@@ -60,9 +43,11 @@ void WaveManager::update(float deltaTime) {
         }
     }
 
+    // 몬스터 업데이트
     for (auto& monster : *monsters) {
-        monster->update(heroine->getPosition(), mainTower->getPosition(), deltaTime,*heroine,*mainTower);
+        monster->update(heroine->getPosition(), mainTower->getPosition(), deltaTime, *heroine, *mainTower);
     }
+    //if (heroine->getIsSwinging())std::cout << spawnInterval;
 }
 
 void WaveManager::spawnMonsterAtSpecificDistance() {
@@ -94,41 +79,11 @@ void WaveManager::spawnMonsterAtSpecificDistance() {
     std::cout << "Moster spawned!" << std::endl;
 }
 
-void WaveManager::spawnBoss(MonsterType bossType) {
-    
-    bossMessage = (bossType == MonsterType::Mid_Boss) ? "Mid-Boss spawned!" : "Main-Boss spawned!";
-
-    std::cout << "Boss Message: " << bossMessage << std::endl;
-
-    displayBossMessage = true;
-    messageTimer.restart();
-
-    if (bossType != MonsterType::Mid_Boss && bossType != MonsterType::Main_Boss) {
-        return;
-    }
-
-    sf::Vector2f spawnPos = { 1000.0f, 1000.0f }; // 보스는 스폰 위치
-    float health = (bossType == MonsterType::Mid_Boss) ? 500.0f : 1000.0f;
-    float speed = (bossType == MonsterType::Mid_Boss) ? 70.0f : 50.0f;
-
-    auto boss = std::make_unique<Monster>(spawnPos.x, spawnPos.y, speed, bossType);
-    //boss->setHealthPoint(health);
-
-    if (bossType==MonsterType::Main_Boss)
-        monsters->clear();
-
-    monsters->push_back(std::move(boss));
-
-
-   
-}
-
 float WaveManager::calculateDistance(const sf::Vector2f& pos1, const sf::Vector2f& pos2) {
     return std::sqrt((pos2.x - pos1.x) * (pos2.x - pos1.x) + (pos2.y - pos1.y) * (pos2.y - pos1.y));
 }
 
 void WaveManager::drawMonsters(sf::RenderTarget& target) {
-
     for (const auto& monster : *monsters) {
         //target.draw(monster.getSprite());
         monster->draw(target);
