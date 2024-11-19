@@ -7,27 +7,27 @@
 
 class UpgradeUI {
 private:
-    sf::RectangleShape background;             // ¾÷±×·¹ÀÌµå Ã¢ ¹è°æ
-    std::vector<sf::Text> optionTexts;         // ¾÷±×·¹ÀÌµå ¿É¼Ç ÅØ½ºÆ®µé
-    bool isVisible;                            // ¾÷±×·¹ÀÌµå UI Ç¥½Ã ¿©ºÎ
+    sf::RectangleShape background;             // ì—…ê·¸ë ˆì´ë“œ ì°½ ë°°ê²½
+    std::vector<sf::Text> optionTexts;         // ì—…ê·¸ë ˆì´ë“œ ì˜µì…˜ í…ìŠ¤íŠ¸ë“¤
+    bool isVisible;                            // ì—…ê·¸ë ˆì´ë“œ UI í‘œì‹œ ì—¬ë¶€
 
 public:
-    // »ı¼ºÀÚ
+    // ìƒì„±ì
     UpgradeUI(sf::Font& font, const sf::Vector2f& windowSize);
 
-    // ¾÷±×·¹ÀÌµå ¿É¼ÇÀ» È­¸é¿¡ Ç¥½Ã
+    // ì—…ê·¸ë ˆì´ë“œ ì˜µì…˜ì„ í™”ë©´ì— í‘œì‹œ
     void showOptions(const std::vector<std::string>& options);
 
-    // ¾÷±×·¹ÀÌµå UI ¼û±â±â
+    // ì—…ê·¸ë ˆì´ë“œ UI ìˆ¨ê¸°ê¸°
     void hide();
 
-    // ¸¶¿ì½º Å¬¸¯ Ã³¸®ÇÏ¿© ¼±ÅÃµÈ ¿É¼ÇÀÇ ÀÎµ¦½º¸¦ ¹İÈ¯
+    // ë§ˆìš°ìŠ¤ í´ë¦­ ì²˜ë¦¬í•˜ì—¬ ì„ íƒëœ ì˜µì…˜ì˜ ì¸ë±ìŠ¤ë¥¼ ë°˜í™˜
     int handleClick(const sf::Vector2f& mousePos);
 
-    // UI ±×¸®±â
+    // UI ê·¸ë¦¬ê¸°
     void draw(sf::RenderWindow& window);
 
-    // UI°¡ Ç¥½Ã ÁßÀÎÁö È®ÀÎ
+    // UIê°€ í‘œì‹œ ì¤‘ì¸ì§€ í™•ì¸
     bool getIsVisible() const;
 };
 

@@ -6,7 +6,7 @@
 WaveManager::WaveManager(Character* heroine, MainTower* mainTower, std::vector<std::unique_ptr<Monster>>* monsters, float mapWidth, float mapHeight)
     : heroine(heroine), mainTower(mainTower), monsters(monsters), midBossSpawned(false), mainBossSpawned(false),displayBossMessage(false) {
     maxDistance = std::sqrt(mapWidth * mapWidth + mapHeight * mapHeight);
-    spawnInterval = maxSpawnInterval; // ÃÊ±â ½ºÆù °£°İÀº ÃÖ´ë°ªÀ¸·Î ¼³Á¤
+    spawnInterval = maxSpawnInterval; // ì´ˆê¸° ìŠ¤í° ê°„ê²©ì€ ìµœëŒ€ê°’ìœ¼ë¡œ ì„¤ì •
 
     if (!loadResources()) {
         std::cout << "Failed to load font!" << std::endl;
@@ -19,7 +19,7 @@ WaveManager::WaveManager(Character* heroine, MainTower* mainTower, std::vector<s
 }
 
 bool WaveManager::loadResources() {
-    // ÇÁ·ÎÁ§Æ®ÀÇ ÆùÆ® ÆÄÀÏ °æ·Î¸¦ Á¤È®ÇÏ°Ô ÁöÁ¤ÇØÁÖ¼¼¿ä
+    // í”„ë¡œì íŠ¸ì˜ í°íŠ¸ íŒŒì¼ ê²½ë¡œë¥¼ ì •í™•í•˜ê²Œ ì§€ì •í•´ì£¼ì„¸ìš”
     if (!font.loadFromFile("arial.ttf")) { 
         return false;
     }
@@ -28,7 +28,7 @@ bool WaveManager::loadResources() {
 
 float WaveManager::calculateSpawnInterval() {
     float distance = calculateDistance(heroine->getPosition(), mainTower->getPosition());
-    // °Å¸® ºñÀ²À» »ç¿ëÇØ ½ºÆù °£°İÀ» µ¿ÀûÀ¸·Î °è»ê
+    // ê±°ë¦¬ ë¹„ìœ¨ì„ ì‚¬ìš©í•´ ìŠ¤í° ê°„ê²©ì„ ë™ì ìœ¼ë¡œ ê³„ì‚°
     float distanceRatio = distance / maxDistance;
     if (distanceRatio > 1)distanceRatio = 1;
     return maxSpawnInterval - distanceRatio * (maxSpawnInterval - minSpawnInterval);
@@ -38,19 +38,19 @@ void WaveManager::update(float deltaTime) {
     float elapsedTime = gameClock.getElapsedTime().asSeconds();
 
 
-    // Mid-Boss ½ºÆù (5ºĞ¿¡ µîÀå)
+    // Mid-Boss ìŠ¤í° (5ë¶„ì— ë“±ì¥)
     if (elapsedTime >= 10.0f && !midBossSpawned) {
         spawnBoss(MonsterType::Mid_Boss);
         midBossSpawned = true;
     } //(10.0f -> 300.0f)
 
-    // Main-Boss ½ºÆù (10ºĞ¿¡ µîÀå)
-    if (elapsedTime >= 30.0f && !mainBossSpawned) {
+    // Main-Boss ìŠ¤í° (10ë¶„ì— ë“±ì¥)
+    if (elapsedTime >= 40.0f && !mainBossSpawned) {
         spawnBoss(MonsterType::Main_Boss);
         mainBossSpawned = true;
     } //(20.0f -> 600.0f)
 
-    if (!mainBossSpawned) { // Main-Boss°¡ µîÀåÇÏ¸é ÀÏ¹İ ¸ó½ºÅÍ ½ºÆù ÁßÁö
+    if (!mainBossSpawned) { // Main-Bossê°€ ë“±ì¥í•˜ë©´ ì¼ë°˜ ëª¬ìŠ¤í„° ìŠ¤í° ì¤‘ì§€
         spawnInterval = calculateSpawnInterval();
         timeSinceLastSpawn += deltaTime;
 
@@ -58,11 +58,6 @@ void WaveManager::update(float deltaTime) {
             spawnMonsterAtSpecificDistance();
             timeSinceLastSpawn = 0.0f;
         }
-    }
-
-    //º¸½º ¸Ş¼¼Áö Ç¥½Ã Å¸ÀÌ¸Ó
-    if (displayBossMessage && messageTimer.getElapsedTime().asSeconds() >= 5.0f) {
-        displayBossMessage = false;
     }
 
     for (auto& monster : *monsters) {
@@ -112,7 +107,7 @@ void WaveManager::spawnBoss(MonsterType bossType) {
         return;
     }
 
-    sf::Vector2f spawnPos = { 1000.0f, 1000.0f }; // º¸½º´Â ½ºÆù À§Ä¡
+    sf::Vector2f spawnPos = { 1000.0f, 1000.0f }; // ë³´ìŠ¤ëŠ” ìŠ¤í° ìœ„ì¹˜
     float health = (bossType == MonsterType::Mid_Boss) ? 500.0f : 1000.0f;
     float speed = (bossType == MonsterType::Mid_Boss) ? 70.0f : 50.0f;
 
@@ -138,39 +133,25 @@ void WaveManager::drawMonsters(sf::RenderTarget& target) {
         //target.draw(monster.getSprite());
         monster->draw(target);
     }
+}
+void WaveManager::spawnBoss(MonsterType bossType) {
 
-    if (displayBossMessage) {
-
-        sf::Vector2f viewCenter = target.getView().getCenter();
-        sf::Vector2f viewSize = target.getView().getSize();
-
-        sf::RectangleShape background(sf::Vector2f(800, 100));  // ¹è°æ Å©±â 
-        background.setFillColor(sf::Color::Black);
-        background.setPosition(
-            viewCenter.x - background.getSize().x / 2,
-            viewCenter.y - viewSize.y * 0.2f  // View Áß½É¿¡¼­ À§ÂÊÀ¸·Î ¾à°£ ÀÌµ¿
-        );
-        target.draw(background);
-
-        float blinkValue = std::abs(std::sin(blinkClock.getElapsedTime().asSeconds() * 3.0f));  // ±ôºıÀÓ ¼Óµµ Á¶Àı
-        sf::Uint8 alpha = static_cast<sf::Uint8>(blinkValue * 255);  // ¾ËÆÄ°ªÀ» 0-255 »çÀÌ·Î º¯È¯
-
-        // ÅØ½ºÆ® ¼³Á¤ ¹× ±×¸®±â
-        text.setString(bossMessage);
-        text.setCharacterSize(72);
-        text.setFillColor(sf::Color(255, 0, 0, alpha));  // ¾ËÆÄ°ªÀ» Àû¿ëÇÑ »¡°£»ö
-
-        // ÅØ½ºÆ®¸¦ ÇöÀç ViewÀÇ Áß½ÉÀ» ±âÁØÀ¸·Î À§Ä¡½ÃÅ°±â
-        sf::FloatRect textBounds = text.getLocalBounds();
-        text.setPosition(
-            viewCenter.x - textBounds.width / 2,
-            viewCenter.y - viewSize.y * 0.2f + (background.getSize().y - textBounds.height) / 2 - 20
-        );
-
-        target.draw(text);
+    if (bossType != MonsterType::Mid_Boss && bossType != MonsterType::Main_Boss) {
+        return;
     }
-    else {
-        // ¸Ş½ÃÁö°¡ Ç¥½ÃµÇÁö ¾ÊÀ» ¶§ Å¸ÀÌ¸Ó Àç½ÃÀÛ
-        blinkClock.restart();
-    }
+
+    sf::Vector2f spawnPos = { 1000.0f, 1000.0f }; // ë³´ìŠ¤ëŠ” ìŠ¤í° ìœ„ì¹˜
+    float health = (bossType == MonsterType::Mid_Boss) ? 500.0f : 1000.0f;
+    float speed = (bossType == MonsterType::Mid_Boss) ? 70.0f : 50.0f;
+
+    auto boss = std::make_unique<Monster>(spawnPos.x, spawnPos.y, speed, bossType);
+    //boss->setHealthPoint(health);
+
+    if (bossType == MonsterType::Main_Boss)
+        monsters->clear();
+
+    monsters->push_back(std::move(boss));
+
+
+
 }

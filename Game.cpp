@@ -1,10 +1,13 @@
 #include "Game.h"
+#include "BladeWhirl.h"
+#include "BulkUp.h"
+#include "Teleport.h"
 #include <cstdlib>
 #include <ctime>
-
+#include <iostream>
 Game::Game() :
     window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),
-    warrior("knightbg.png", 700, 700, 3.0f, 200.0f),
+    warrior("knight.png", 700, 700, 1.0f, 100.0f),
     uiManager(font, &warrior, window),
     minimap(600, 600, 0.4f),
     mainView(sf::FloatRect(0, 0, 1600, 1000)),
@@ -47,35 +50,44 @@ void Game::update() {
             if (choice != -1) {
                 upgradeManager.applyUpgrade(choice); // 선택된 업그레이드 적용
                 upgradeUI.hide(); // UI 숨기기 (업그레이드 완료)
+                clock.restart();
             }
         }
         return; // 업그레이드 UI가 활성화된 동안 다른 게임 업데이트 중단
     }
 
-    float deltaTime = clock.restart().asSeconds();
+    deltaTime = clock.restart().asSeconds();
     /*if (spawnClock.getElapsedTime().asSeconds() > spawnInterval) {
         spawnMonster();
         spawnClock.restart();
     }*/
     warrior.handleInput(deltaTime);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+        skillManager.activateSkill(sf::Keyboard::Q); // Q스킬 활성화
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+        skillManager.activateSkill(sf::Keyboard::W); // W스킬 활성화
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+        skillManager.activateSkill(sf::Keyboard::E); // E스킬 활성화
+    }
     warrior.updateAnimation(deltaTime);
 
 
     if (warrior.getIsSwinging() && !warrior.getAttackApplied()) {
         warrior.basicAttack(monsters);
 
-        // 체력이 0 이하인 몬스터들을 한 번에 제거
-        monsters.erase(std::remove_if(monsters.begin(), monsters.end(),
-            [this](const std::unique_ptr<Monster>& monster) {
-                if (monster->getHealthPoint() <= 0) {
-                    addExp(10);
-                }
-                return monster->getHealthPoint() <= 0;
-            }),
-            monsters.end());
-
         warrior.setAttackApplied(true);  // 공격 적용 완료 플래그 설정
     }
+    // 체력이 0 이하인 몬스터들을 한 번에 제거
+    monsters.erase(std::remove_if(monsters.begin(), monsters.end(),
+        [this](const std::unique_ptr<Monster>& monster) {
+            if (monster->getHealthPoint() <= 0) {
+                addExp(100);
+            }
+            return monster->getHealthPoint() <= 0;
+        }),
+        monsters.end());
     if (experience > experienceToNextLevel) {
         onLevelUp();
     }
@@ -96,6 +108,8 @@ void Game::update() {
     uiManager.updateTimer(deltaTime);
     uiManager.updateTowerDurability(mainTower.getHealth(), mainTower.getMaxHealth());
     mainTower.healNearbyCharacter(deltaTime, warrior);
+    skillManager.updateSkills(deltaTime);
+    
 }
 
 void Game::render() {
@@ -116,6 +130,7 @@ void Game::render() {
         // 미니맵 그리기
         minimap.draw(window);
         uiManager.draw(window);// UI 그리기
+        uiManager.updateSkillCoolTime(skillManager);
     }
     
     window.display();
@@ -133,6 +148,18 @@ void Game::onLevelUp() {
     experience -= experienceToNextLevel;
     experienceToNextLevel *= 1.5f;
     level += 1;
+    if (level == 2) {
+        skillManager.unlockSkill("BladeWhirl");
+        skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
+    }
+    if (level == 3) {
+        skillManager.unlockSkill("BulkUp");
+        skillManager.addSkill("BulkUp", std::make_unique<BulkUp>(&warrior));
+    }
+    if (level == 4) {
+        skillManager.unlockSkill("Teleport");
+        skillManager.addSkill("Teleport", std::make_unique<Teleport>(&warrior,&mainTower));
+    }
     upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
     std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
     upgradeUI.showOptions(options); // UI에 업그레이드 옵션 표시

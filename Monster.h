@@ -29,6 +29,7 @@ public:
     void takeDamage(float attackDamage);
     float getHealthPoint()const;
 
+
     void Fir_useSkill(Character& character, MainTower& mainTower);
     void Sec_useSkill(Character& character, MainTower& mainTower);
 
@@ -52,14 +53,13 @@ private:
     float attackPower; //공격력
     float defense;  //방어력
     float attackRange;
-
     sf::Clock attackTimer; // 공격 타이머 추가
     float attackCooldown = 1.0f; // 1초 주기
 
     std::string texturePath;
     sf::Texture texture;
     sf::Sprite sprite;
-    
+
     //mid,main boss skill variable
     sf::Clock skillCooldown;
     sf::Clock rangedAttackCooldown;

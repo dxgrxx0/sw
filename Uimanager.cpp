@@ -1,17 +1,17 @@
 #include "UIManager.h"
 
-UIManager::UIManager(sf::Font& font,Character* character, sf::RenderWindow& window):character(character),window(window) {
-    // Ä³¸¯ÅÍ Ã¼·Â¹Ù ÃÊ±âÈ­
+UIManager::UIManager(sf::Font& font, Character* character, sf::RenderWindow& window) :character(character), window(window) {
+    // ìºë¦­í„° ì²´ë ¥ë°” ì´ˆê¸°í™”
     characterHealthBarBackground.setSize(sf::Vector2f(48, 10));
     characterHealthBarBackground.setFillColor(sf::Color(50, 50, 50));
     characterHealthBarBackground.setOutlineThickness(1);
     characterHealthBarBackground.setOutlineColor(sf::Color::White);
-    characterHealthBarBackground.setPosition(character->getPosition().x-24, character->getPosition().y - 55);
-    characterHealthBarForeground.setFillColor(sf::Color::Green);  // Àü°æ»ö ¼³Á¤
+    characterHealthBarBackground.setPosition(character->getPosition().x - 24, character->getPosition().y - 55);
+    characterHealthBarForeground.setFillColor(sf::Color::Green);  // ì „ê²½ìƒ‰ ì„¤ì •
     characterHealthBarForeground.setPosition(characterHealthBarBackground.getPosition().x + 1, characterHealthBarBackground.getPosition().y + 1);
 
 
-    levelBarBackground.setSize(sf::Vector2f(window.getSize().x/2, 30));
+    levelBarBackground.setSize(sf::Vector2f(window.getSize().x / 2, 30));
     levelBarBackground.setFillColor(sf::Color(50, 50, 50));
     levelBarBackground.setOutlineThickness(2);
     levelBarBackground.setOutlineColor(sf::Color(101, 67, 33));
@@ -21,7 +21,7 @@ UIManager::UIManager(sf::Font& font,Character* character, sf::RenderWindow& wind
     levelText.setFillColor(sf::Color::White);
     levelText.setPosition(0, 0);
 
-    mainTowerHealthBarBackground.setSize(sf::Vector2f(window.getSize().x /2, 30));
+    mainTowerHealthBarBackground.setSize(sf::Vector2f(window.getSize().x / 2, 30));
     mainTowerHealthBarBackground.setFillColor(sf::Color(50, 50, 50));
     mainTowerHealthBarBackground.setOutlineThickness(2);
     mainTowerHealthBarBackground.setOutlineColor(sf::Color(101, 67, 33));
@@ -32,44 +32,49 @@ UIManager::UIManager(sf::Font& font,Character* character, sf::RenderWindow& wind
     currentTime = 0;
     elapsedTime = 0;
 
-    // Å¸ÀÌ¸Ó ÅØ½ºÆ® ÃÊ±âÈ­
+    // íƒ€ì´ë¨¸ í…ìŠ¤íŠ¸ ì´ˆê¸°í™”
     timerText.setFont(font);
     timerText.setCharacterSize(24);
     timerText.setFillColor(sf::Color::White);
     timerText.setPosition(800, 20);
 
+
+    skillText.setFont(font);
+    skillPositions["BladeWhirl"] = sf::Vector2i(window.getSize().x-130, 700);
+    skillPositions["BulkUp"] = sf::Vector2i(window.getSize().x - 130, 800);
+    skillPositions["Teleport"] = sf::Vector2i(window.getSize().x - 130, 900);
 }
 
-// Ä³¸¯ÅÍ Ã¼·Â¹Ù ¾÷µ¥ÀÌÆ®
+// ìºë¦­í„° ì²´ë ¥ë°” ì—…ë°ì´íŠ¸
 void UIManager::updateCharacterHealth() {
     float healthPercentage = character->getHealth() / character->getMaxHealth();
     characterHealthBarBackground.setPosition(character->getPosition().x - 24, character->getPosition().y - 55);
     characterHealthBarForeground.setSize(sf::Vector2f(46 * healthPercentage, 8));
     characterHealthBarForeground.setPosition(characterHealthBarBackground.getPosition().x + 1, characterHealthBarBackground.getPosition().y + 1);
 }
-void UIManager::updateLevelBar(int level,float experience,float experienceToNextLevel) {
+void UIManager::updateLevelBar(int level, float experience, float experienceToNextLevel) {
     levelBarBackground.setPosition(window.mapPixelToCoords(sf::Vector2i(0, 5)));
     float levelPercentage = experience / experienceToNextLevel;
-    levelBarForeground.setSize(sf::Vector2f((window.getSize().x/2) * levelPercentage, 20));
+    levelBarForeground.setSize(sf::Vector2f((window.getSize().x / 2) * levelPercentage, 20));
     levelBarForeground.setFillColor(sf::Color(135, 206, 250));
     levelBarForeground.setPosition(levelBarBackground.getPosition().x, levelBarBackground.getPosition().y + 5);
     levelText.setString("Level: " + std::to_string(level));
 
     float textWidth = levelText.getLocalBounds().width;
-    levelText.setPosition(levelBarBackground.getPosition().x+5 , levelBarBackground.getPosition().y + 5);
+    levelText.setPosition(levelBarBackground.getPosition().x + 5, levelBarBackground.getPosition().y + 5);
 }
 
-// Å¸¿ö ³»±¸µµ ¹Ù ¾÷µ¥ÀÌÆ®
+// íƒ€ì›Œ ë‚´êµ¬ë„ ë°” ì—…ë°ì´íŠ¸
 void UIManager::updateTowerDurability(float currentDurability, float maxDurability) {
     float durabilityPercentage = currentDurability / maxDurability;
     mainTowerHealthBarBackground.setPosition(window.mapPixelToCoords(sf::Vector2i(window.getSize().x / 2, 5)));
-    mainTowerHealthBarForeground.setSize(sf::Vector2f((window.getSize().x/2-3) * durabilityPercentage, 20));
+    mainTowerHealthBarForeground.setSize(sf::Vector2f((window.getSize().x / 2 - 3) * durabilityPercentage, 20));
     mainTowerHealthBarForeground.setFillColor(sf::Color::Red);
-    mainTowerHealthBarForeground.setPosition(mainTowerHealthBarBackground.getPosition().x+3, mainTowerHealthBarBackground.getPosition().y + 5);
-    towerText.setPosition(mainTowerHealthBarBackground.getPosition().x+5, mainTowerHealthBarBackground.getPosition().y + 5);
+    mainTowerHealthBarForeground.setPosition(mainTowerHealthBarBackground.getPosition().x + 3, mainTowerHealthBarBackground.getPosition().y + 5);
+    towerText.setPosition(mainTowerHealthBarBackground.getPosition().x + 5, mainTowerHealthBarBackground.getPosition().y + 5);
 }
 
-// Å¸ÀÌ¸Ó ¾÷µ¥ÀÌÆ®
+// íƒ€ì´ë¨¸ ì—…ë°ì´íŠ¸
 void UIManager::updateTimer(float dt) {
     elapsedTime += dt;
     if (currentTime != (int)elapsedTime) {
@@ -81,9 +86,40 @@ void UIManager::updateTimer(float dt) {
     float textWidth = timerText.getLocalBounds().width;
     timerText.setPosition(window.mapPixelToCoords(sf::Vector2i(window.getSize().x / 2 - textWidth / 2, 50)));
 }
+void UIManager::updateSkillCoolTime(SkillManager& skillManager) {
+    for (const auto& skillPair : skillPositions) {
+        const std::string& skillName = skillPair.first;             // í‚¤ (ìŠ¤í‚¬ ì´ë¦„)
+        const sf::Vector2i skillPosition = skillPair.second; // ê°’ (ìŠ¤í‚¬ ê°ì²´)
+        // ìŠ¤í‚¬ ìƒíƒœ ì •ë³´ ê°€ì ¸ì˜¤ê¸°
+        bool isUnlocked = skillManager.isSkillUnlocked(skillName);
+        float remainingCooldown = skillManager.getRemainingCooldown(skillName);
 
+        // ì‚¬ê°í˜• ë°°ê²½
+        skillBoxBackground.setSize(sf::Vector2f(120, 90));
+        skillBoxBackground.setPosition(window.mapPixelToCoords(skillPosition));
+        skillBoxBackground.setFillColor(isUnlocked ? sf::Color(50, 50, 50) : sf::Color(100, 100, 100));
+        window.draw(skillBoxBackground);
 
-// UI ¿ä¼Ò¸¦ ±×¸®±â
+        // í…ìŠ¤íŠ¸
+        if (!isUnlocked) {
+            skillText.setString("Locked");
+            skillText.setFillColor(sf::Color(200, 50, 50)); // ë¹¨ê°„ìƒ‰
+        }
+        else if (remainingCooldown > 0) {
+            skillText.setString(skillName + "\n" + std::to_string(static_cast<int>(remainingCooldown)) + "s");
+            skillText.setFillColor(sf::Color::White);
+        }
+        else {
+            skillText.setString(skillName + "\nReady");
+            skillText.setFillColor(sf::Color::Green);
+        }
+        skillText.setCharacterSize(20);
+        skillText.setPosition(window.mapPixelToCoords(sf::Vector2i(skillPosition.x+10,skillPosition.y+5)));
+        window.draw(skillText);
+    }
+}
+
+// UI ìš”ì†Œë¥¼ ê·¸ë¦¬ê¸°
 void UIManager::draw(sf::RenderWindow& window) {
     window.draw(characterHealthBarBackground);
     window.draw(characterHealthBarForeground);

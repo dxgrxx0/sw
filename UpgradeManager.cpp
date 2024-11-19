@@ -2,7 +2,7 @@
 #include <iostream>
 UpgradeManager::UpgradeManager(Character* character, MainTower* mainTower)
     : character(character), mainTower(mainTower), rng(std::random_device{}()) {}
-
+/*
 void UpgradeManager::generateUpgradeOptions() {
     currentOptions.clear();
     currentOptions.emplace_back(std::move(UpgradeOption("Increase Attack Power", [this]() { character->increaseAttackPower(10); })));
@@ -13,7 +13,32 @@ void UpgradeManager::generateUpgradeOptions() {
 
     std::shuffle(currentOptions.begin(), currentOptions.end(), rng);
     if (currentOptions.size() > 3) {
-        currentOptions.resize(3); // ÃÖ´ë 3°³ÀÇ ¿É¼Ç¸¸ Á¦°ø
+        currentOptions.resize(3); // ìµœëŒ€ 3ê°œì˜ ì˜µì…˜ë§Œ ì œê³µ
+    }
+}*/
+void UpgradeManager::generateUpgradeOptions() {
+    currentOptions.clear();
+
+    auto addOption = [&](const std::string& desc, std::function<void()> func) {
+        if (upgradeOptions.find(desc) == upgradeOptions.end()) {
+            upgradeOptions[desc] = UpgradeOption(desc, func);
+        }
+        if (upgradeOptions[desc].currentLevel < upgradeOptions[desc].maxLevel) {
+            currentOptions.push_back(&upgradeOptions[desc]); // í¬ì¸í„° ì¶”ê°€
+        }
+        };
+
+    addOption("Increase Attack Power", [this]() { character->increaseAttackPower(10); });
+    addOption("Increase Health", [this]() { character->increaseMaxHealth(20); });
+    addOption("Reduce Skill Cooldown", [this]() { character->reduceCooldown(0.1f); });
+    addOption("Increase Heroine Speed", [this]() {character->increaseSpeed(30.0f); });
+    std::shuffle(currentOptions.begin(), currentOptions.end(), rng);
+
+    if (currentOptions.size() > 3) {
+        currentOptions.resize(3);
+    }
+    else if (currentOptions.size() < 3) {
+        currentOptions.resize(currentOptions.size());
     }
 }
 
@@ -21,7 +46,7 @@ void UpgradeManager::generateUpgradeOptions() {
 
 void UpgradeManager::applyUpgrade(int choice) {
     if (choice >= 0 && choice < currentOptions.size()) {
-        bool upgraded = currentOptions[choice].upgrade(); // ¼±ÅÃµÈ ¾÷±×·¹ÀÌµå ½Ãµµ
+        bool upgraded = currentOptions[choice]->upgrade(); // ì„ íƒëœ ì—…ê·¸ë ˆì´ë“œ ì‹œë„
         if (!upgraded) {
             std::cout << "Already at max level for this upgrade." << std::endl;
         }
@@ -32,9 +57,9 @@ void UpgradeManager::applyUpgrade(int choice) {
 std::vector<std::string> UpgradeManager::getUpgradeDescriptions() const {
     std::vector<std::string> descriptions;
     for (const auto& option : currentOptions) {
-        descriptions.push_back(option.description + " (Level " +
-            std::to_string(option.currentLevel) + "/" +
-            std::to_string(option.maxLevel) + ")");
+        descriptions.push_back(option->description + " (Level " +
+            std::to_string(option->currentLevel) + "/" +
+            std::to_string(option->maxLevel) + ")");
     }
     return descriptions;
 }
