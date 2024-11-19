@@ -324,7 +324,7 @@ void Monster::drawProjectiles(sf::RenderTarget& target) const {
         }
     }
 }
-
+//아니 이거 왜안됨 ㅋㅋ (pull용 지워도됨)
 void Monster::Fir_useSkill(Character& character, MainTower& mainTower) {
     if (texturePath == "midboss.PNG") {
         // 미드보스 스킬: "광폭화" - 이동속도와 공격력 증가

@@ -135,12 +135,12 @@ void Game::render() {
     
     window.display();
 }
-/*
-void Game::spawnMonster() {
-    float x = static_cast<float>(std::rand() % window.getSize().x);
-    float y = static_cast<float>(std::rand() % window.getSize().y);
-    monsters.emplace_back(x, y, monsterSpeed);
-}*/
+//
+//void Game::spawnMonster() {
+//    float x = static_cast<float>(std::rand() % window.getSize().x);
+//    float y = static_cast<float>(std::rand() % window.getSize().y);
+//    monsters.emplace_back(x, y, monsterSpeed);
+//}
 void Game::addExp(float exp) {
     experience += exp;
 }
