@@ -109,7 +109,7 @@ void Game::update() {
     uiManager.updateTowerDurability(mainTower.getHealth(), mainTower.getMaxHealth());
     mainTower.healNearbyCharacter(deltaTime, warrior);
     skillManager.updateSkills(deltaTime);
-    
+
 }
 
 void Game::render() {
@@ -132,15 +132,15 @@ void Game::render() {
         uiManager.draw(window);// UI 그리기
         uiManager.updateSkillCoolTime(skillManager);
     }
-    
+
     window.display();
 }
-//
-//void Game::spawnMonster() {
-//    float x = static_cast<float>(std::rand() % window.getSize().x);
-//    float y = static_cast<float>(std::rand() % window.getSize().y);
-//    monsters.emplace_back(x, y, monsterSpeed);
-//}
+/*
+void Game::spawnMonster() {
+    float x = static_cast<float>(std::rand() % window.getSize().x);
+    float y = static_cast<float>(std::rand() % window.getSize().y);
+    monsters.emplace_back(x, y, monsterSpeed);
+}*/
 void Game::addExp(float exp) {
     experience += exp;
 }
@@ -158,7 +158,7 @@ void Game::onLevelUp() {
     }
     if (level == 4) {
         skillManager.unlockSkill("Teleport");
-        skillManager.addSkill("Teleport", std::make_unique<Teleport>(&warrior,&mainTower));
+        skillManager.addSkill("Teleport", std::make_unique<Teleport>(&warrior, &mainTower));
     }
     upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
     std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();

@@ -4,18 +4,17 @@
 #include "Character.h"
 #include "MainTower.h"
 #include <iostream>
-
 // 생성자
-Monster::Monster(float x, float y, float speed,MonsterType type)
-    : movementSpeed(speed),damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f),attackPower(0),defense(0)
-    ,attackRange(50),skillDuration(5.0f), isSkillActive(false), isCloneActive(false)
+Monster::Monster(float x, float y, float speed, MonsterType type)
+    : movementSpeed(speed), damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f), attackPower(0), defense(0)
+    , attackRange(50), skillDuration(5.0f), isSkillActive(false), isCloneActive(false)
     , cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f)
-    {
+{
     shape.setSize(sf::Vector2f(30.0f, 30.0f));
     shape.setFillColor(sf::Color::Blue);
     shape.setPosition(x, y);
     shape.setOrigin(shape.getGlobalBounds().width / 2, shape.getGlobalBounds().height / 2); // 원점을 중앙으로 설정
-	healthPoint = 100.0f;
+    healthPoint = 100.0f;
     originalSpeed = speed;
     originalDefense = defense;
     originalAttackPower = attackPower;
@@ -27,7 +26,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         healthPoint = 50.0f;
         attackPower = 10.0f;
         defense = 10.0f;
-        //shape.setFillColor(sf::Color::Cyan);
+        shape.setFillColor(sf::Color::Cyan);
         break;
     case MonsterType::Attack: //공격력 3배
         texturePath = ("attackMonster.PNG");
@@ -35,7 +34,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         healthPoint = 100.0f;
         defense = 10.0f;
         attackPower = 30.0f; // 추가 공격력
-        //shape.setFillColor(sf::Color::Red);
+        shape.setFillColor(sf::Color::Red);
         break;
     case MonsterType::Defense: //방어력3배,체력2배
         texturePath = ("defenseMonster.PNG");
@@ -43,23 +42,24 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         healthPoint = 200.0f;
         attackPower = 10.0f;
         defense = 30.0f; // 방어력 추가
-        //shape.setFillColor(sf::Color::Magenta);
+        shape.setFillColor(sf::Color::Magenta);
         break;
     case MonsterType::Mid_Boss: // 미드보스
         texturePath = "midboss.PNG";
         movementSpeed = 100.0f;
-        healthPoint = 1000.0f;  
-        attackPower = 50.0f;   
-        defense = 20.0f;       
+        healthPoint = 1000.0f;
+        attackPower = 50.0f;
+        defense = 20.0f;
         skillDuration = 5.0f;
         //shape.setFillColor(sf::Color::Yellow);
         break;
+
     case MonsterType::Main_Boss: // 메인보스
         texturePath = "mainboss.PNG";
         movementSpeed = 80.0f;
-        healthPoint = 5000.0f; 
-        attackPower = 100.0f;  
-        defense = 50.0f;       
+        healthPoint = 5000.0f;
+        attackPower = 100.0f;
+        defense = 50.0f;
         skillDuration = 8.0f;
         //shape.setFillColor(sf::Color::Black);
         break;
@@ -128,7 +128,7 @@ void Monster::removeClones() {
 }
 
 // update 함수 구현
-void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& towerPosition, float deltaTime,Character& character,MainTower& mainTower) {
+void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& towerPosition, float deltaTime, Character& character, MainTower& mainTower) {
     sf::Vector2f targetPosition;
     float distanceToHeroine = calculateDistance(sprite.getPosition(), heroinePosition);
     float distanceToTower = calculateDistance(sprite.getPosition(), towerPosition);
@@ -151,14 +151,14 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
                 mainTower.takeDamage(attackPower);
                 //printf("Tower takeDamage!");
             }
-            else { 
+            else {
                 character.takeDamage(attackPower);
                 //printf("character takeDamage!");
             } // 캐릭터에 피해 입힘
             attackTimer.restart(); // 타이머 초기화
         }
     }
-    else if (length >=attackRange) {
+    else if (length >= attackRange) {
         direction /= length; // 방향 정규화
         sprite.move(direction * movementSpeed * deltaTime); // 몬스터 이동
     }
@@ -178,21 +178,6 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
     if (rangedAttackCooldown.getElapsedTime().asSeconds() >= 5.0f) {
         Sec_useSkill(character, mainTower);
         rangedAttackCooldown.restart();
-    }
-
-    // 스킬 지속시간 체크
-    if (isSkillActive && skillCooldown.getElapsedTime().asSeconds() >= skillDuration) {
-        removeSkillEffects();
-    }
-
-    //분신 업데이트
-    if (isCloneActive) {
-        updateClones(deltaTime);
-    }
-
-    if (isSkillActive && skillCooldown.getElapsedTime().asSeconds() >= skillDuration) {
-        removeSkillEffects();
-        removeClones();
     }
 
     // 스킬 지속시간 체크
@@ -324,7 +309,7 @@ void Monster::drawProjectiles(sf::RenderTarget& target) const {
         }
     }
 }
-//아니 이거 왜안됨 ㅋㅋ (pull용 지워도됨)
+
 void Monster::Fir_useSkill(Character& character, MainTower& mainTower) {
     if (texturePath == "midboss.PNG") {
         // 미드보스 스킬: "광폭화" - 이동속도와 공격력 증가

@@ -1,0 +1,737 @@
+[1mdiff --git a/.editorconfig b/.editorconfig[m
+[1mnew file mode 100644[m
+[1mindex 0000000..427407b[m
+[1m--- /dev/null[m
+[1m+++ b/.editorconfig[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m[32mroot = true[m
+[32m+[m
+[32m+[m[32m[*][m
+[32m+[m[32mcharset = utf-8[m
+\ No newline at end of file[m
+[1mdiff --git a/BaseSkill.h b/BaseSkill.h[m
+[1mnew file mode 100644[m
+[1mindex 0000000..8a65f5f[m
+[1m--- /dev/null[m
+[1m+++ b/BaseSkill.h[m
+[36m@@ -0,0 +1,47 @@[m
+[32m+[m[32m#ifndef BASESKILL_H[m
+[32m+[m[32m#define BASESKILL_H[m
+[32m+[m
+[32m+[m[32m#include <SFML/Window/Keyboard.hpp>[m
+[32m+[m[32m#include <SFML/System/Clock.hpp>[m
+[32m+[m[32m#include <string>[m
+[32m+[m[32m#include <iostream>[m
+[32m+[m[32mclass BaseSkill {[m
+[32m+[m[32mprotected:[m
+[32m+[m[32m    std::string name;           // 스킬 이름[m
+[32m+[m[32m    sf::Keyboard::Key key;      // 스킬 활성화 키[m
+[32m+[m[32m    float cooldown;             // 쿨타임[m
+[32m+[m[32m    sf::Clock cooldownTimer;    // 쿨타임 타이머[m
+[32m+[m[32m    bool isActive;              // 활성화 여부[m
+[32m+[m
+[32m+[m[32mpublic:[m
+[32m+[m[32m    BaseSkill(const std::string& name, sf::Keyboard::Key key, float cooldown)[m
+[32m+[m[32m        : name(name), key(key), cooldown(cooldown), isActive(false) {}[m
+[32m+[m
+[32m+[m[32m    virtual ~BaseSkill() {}[m
+[32m+[m
+[32m+[m[32m    bool canActivate() const {[m
+[32m+[m[32m        return cooldownTimer.getElapsedTime().asSeconds() >= cooldown;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    virtual void activate() {[m
+[32m+[m[32m        if (canActivate()) {[m
+[32m+[m[32m            isActive = true;[m
+[32m+[m[32m            cooldownTimer.restart();[m
+[32m+[m[32m            applyEffect(); // 스킬 효과 적용[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    virtual void update(float deltaTime) {[m
+[32m+[m[32m        if (isActive) {[m
+[32m+[m[32m            isActive = false; // 스킬의 지속 시간이 끝났다고 가정[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m[32m    float getRemainCool() {[m
+[32m+[m[32m        return (cooldown - cooldownTimer.getElapsedTime().asSeconds())<0?0: cooldown - cooldownTimer.getElapsedTime().asSeconds();[m
+[32m+[m[32m    }[m
+[32m+[m[32m    virtual void applyEffect() = 0; // 각 스킬 효과 구현[m
+[32m+[m
+[32m+[m[32m    sf::Keyboard::Key getKey() const { return key; }[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32m#endif // BASESKILL_H[m
+[1mdiff --git a/BladeWhirl.h b/BladeWhirl.h[m
+[1mnew file mode 100644[m
+[1mindex 0000000..0b04c46[m
+[1m--- /dev/null[m
+[1m+++ b/BladeWhirl.h[m
+[36m@@ -0,0 +1,28 @@[m
+[32m+[m[32m#ifndef BLADEWHIRL_H[m
+[32m+[m[32m#define BLADEWHIRL_H[m
+[32m+[m
+[32m+[m[32m#include "BaseSkill.h"[m
+[32m+[m[32m#include "Character.h"[m
+[32m+[m[32m#include "Monster.h"[m
+[32m+[m[32m#include "Utility.h"[m
+[32m+[m[32mclass BladeWhirl : public BaseSkill {[m
+[32m+[m[32mprivate:[m
+[32m+[m[32m    Character* character;[m
+[32m+[m	[32mstd::vector<std::unique_ptr<Monster>>& monsters;[m
+[32m+[m[32m    float range;[m
+[32m+[m[32m    float damage;[m
+[32m+[m
+[32m+[m[32mpublic:[m
+[32m+[m[32m    BladeWhirl(Character* character,std::vector<std::unique_ptr<Monster>>& monsters)[m
+[32m+[m[32m        : BaseSkill("Blade Whirl", sf::Keyboard::Q, 2.0f), character(character),monsters(monsters),range(200),damage(100) {}[m
+[32m+[m
+[32m+[m[32m    void applyEffect() override {[m
+[32m+[m[32m        for (auto& monster : monsters) {[m
+[32m+[m			[32mif (range >= calculateDistance(character->getPosition(), monster->getPosition())) {[m
+[32m+[m				[32mmonster->takeDamage(damage);[m
+[32m+[m			[32m}[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32m#endif // BLADEWHIRL_H[m
+[1mdiff --git a/Character.cpp b/Character.cpp[m
+[1mindex e0bec8f..0adf239 100644[m
+[1m--- a/Character.cpp[m
+[1m+++ b/Character.cpp[m
+[36m@@ -6,7 +6,7 @@[m
+ Character::Character(const std::string& textureFile, float x, float y, float scale, float speed)[m
+     : movementSpeed(speed), animationSpeed(0.1f), timeSinceLastFrame(0.0f),[m
+ [m
+[31m-    currentFrameIndex(0), isSwinging(false), frameWidth(32), frameHeight(32), totalFrames(5),attackRange(200),attackDamage(30),attackApplied(true),facingDirection(90.0f){[m
+[32m+[m[32m    currentFrameIndex(0), isSwinging(false), frameWidth(96), frameHeight(97), totalFrames(5),attackRange(200),attackDamage(50),attackApplied(true),facingDirection(90.0f),attackCoolDown(1.0f),health(100),maxHealth(100),defense(0){[m
+ [m
+     if (!texture.loadFromFile(textureFile)) {[m
+         std::cerr << "Failed to load texture" << std::endl;[m
+[36m@@ -31,7 +31,7 @@[m [mCharacter::Character(const std::string& textureFile, float x, float y, float sca[m
+ void Character::handleInput(float deltaTime) {[m
+     // 방향 입력 처리[m
+     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {[m
+[31m-        if (!isSwinging) { currentFrame.top = 32; facingDirection = 270.0f; } // 북쪽[m
+[32m+[m[32m        if (!isSwinging) { currentFrame.top = 97; facingDirection = 270.0f; } // 북쪽[m
+         sprite.move(0, -movementSpeed * deltaTime);[m
+ [m
+     }[m
+[36m@@ -41,12 +41,12 @@[m [mvoid Character::handleInput(float deltaTime) {[m
+ [m
+     }[m
+     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {[m
+[31m-        if (!isSwinging) { currentFrame.top = 64; facingDirection = 180.0f; } // 서쪽[m
+[32m+[m[32m        if (!isSwinging) { currentFrame.top = 291; facingDirection = 180.0f; } // 서쪽[m
+         sprite.move(-movementSpeed * deltaTime, 0);[m
+ [m
+     }[m
+     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {[m
+[31m-        if (!isSwinging) { currentFrame.top = 96; facingDirection = 0.0f; } // 동쪽[m
+[32m+[m[32m        if (!isSwinging) { currentFrame.top = 194; facingDirection = 0.0f; } // 동쪽[m
+         sprite.move(movementSpeed * deltaTime, 0);[m
+     }[m
+ [m
+[36m@@ -57,10 +57,6 @@[m [mvoid Character::handleInput(float deltaTime) {[m
+         // 슬래시의 위치 설정[m
+ [m
+     }[m
+[31m-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {[m
+[31m-        sprite.setPosition(700, 700);[m
+[31m-    }[m
+[31m-[m
+ }[m
+ [m
+ void Character::updateAnimation(float deltaTime) {[m
+[36m@@ -75,7 +71,7 @@[m [mvoid Character::updateAnimation(float deltaTime) {[m
+             if (currentFrameIndex >= totalFrames - 1) {[m
+                 currentFrameIndex = 0;[m
+                 isSwinging = false;[m
+[31m-                currentFrame.top -= 128; // 다음 애니메이션 프레임으로 이동[m
+[32m+[m[32m                currentFrame.top -= 388; // 다음 애니메이션 프레임으로 이동[m
+                 animationSpeed = 0.1f;[m
+             }[m
+             // 슬래시 스프라이트 위치는 스윙 시 고정[m
+[36m@@ -110,7 +106,7 @@[m [msf::Vector2f Character::getPosition() {[m
+ }[m
+ [m
+ void Character::startSwinging() {[m
+[31m-    currentFrame.top += 128;[m
+[32m+[m[32m    currentFrame.top += 388;[m
+     isSwinging = true;[m
+     currentFrameIndex = 0;[m
+ }[m
+[36m@@ -135,6 +131,9 @@[m [mfloat Character::getHealth() {[m
+ float Character::getMaxHealth() {[m
+     return maxHealth;[m
+ }[m
+[32m+[m[32mvoid Character::setPosition(sf::Vector2f pos) {[m
+[32m+[m[32m    sprite.setPosition(pos);[m
+[32m+[m[32m}[m
+ [m
+ void Character::basicAttack(std::vector<std::unique_ptr<Monster>>& monsters) {[m
+     float attackRange = this->getAttackRange();[m
+[36m@@ -159,7 +158,7 @@[m [mbool Character::isMonsterInAttackRange(const sf::Vector2f& characterPosition, co[m
+ [m
+     // 거리 계산[m
+     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);[m
+[31m-    if (distance < 40)return true;[m
+[32m+[m[32m    if (distance <= 50)return true;[m
+     // 거리가 공격 범위 이내인지 체크[m
+     if (distance > attackRange) {[m
+         return false; // 공격 범위를 초과함[m
+[36m@@ -178,4 +177,33 @@[m [mvoid Character::takeDamage(float damageAmount) {[m
+     if (health < 0) {[m
+         health = 0;  // 체력은 0 이하로 내려가지 않음[m
+     }[m
+[32m+[m[32m}[m
+[32m+[m[32mvoid Character::increaseAttackPower(float power) {[m
+[32m+[m[32m    attackDamage += power;[m
+[32m+[m[32m}[m
+[32m+[m[32mvoid Character::increaseMaxHealth(float hp) {[m
+[32m+[m[32m    maxHealth += hp;[m
+[32m+[m[32m}[m
+[32m+[m[32mvoid Character::reduceCooldown(float cooldown) {[m
+[32m+[m[32m    attackCoolDown -= cooldown;[m
+[32m+[m[32m}[m
+[32m+[m[32mvoid Character::increaseSpeed(float speed) {[m
+[32m+[m[32m    movementSpeed += speed;[m
+[32m+[m[32m}[m
+[32m+[m[32mvoid Character::increaseAttackRange(float range) {[m
+[32m+[m[32m    attackRange += range;[m
+[32m+[m[32m}[m
+[32m+[m[32m/*void Character::addSkill(std::unique_ptr<BaseSkill> skill) {[m
+[32m+[m[32m    skillManager.addSkill(std::move(skill));[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mvoid Character::activateSkill(sf::Keyboard::Key key) {[m
+[32m+[m[32m    skillManager.activateSkill(key);[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mvoid Character::updateSkills(float deltaTime) {[m
+[32m+[m[32m    skillManager.updateSkills(deltaTime);[m
+[32m+[m[32m}*/[m
+[32m+[m[32mvoid Character::setScale(float scale) {[m
+[32m+[m[32m    sprite.setScale(scale,scale);[m
+ }[m
+\ No newline at end of file[m
+[1mdiff --git a/Character.h b/Character.h[m
+[1mindex eb891e4..81d9a27 100644[m
+[1m--- a/Character.h[m
+[1m+++ b/Character.h[m
+[36m@@ -3,6 +3,7 @@[m
+ #include <string>[m
+ #include "Monster.h"[m
+ #include "Utility.h"[m
+[32m+[m[32m//#include "SkillManager.h"[m
+ class Character {[m
+ public:[m
+     Character(const std::string& textureFile, float x, float y, float scale, float speed);[m
+[36m@@ -24,6 +25,16 @@[m [mpublic:[m
+     void heal(float healAmount);[m
+     bool isMonsterInAttackRange(const sf::Vector2f& characterPosition, const sf::Vector2f& monsterPosition,[m
+         float attackRange, float attackAngle, float characterRotation);[m
+[32m+[m[32m    void increaseAttackPower(float power);[m
+[32m+[m[32m    void increaseMaxHealth(float hp);[m
+[32m+[m[32m    void reduceCooldown(float cooldown);[m
+[32m+[m	[32mvoid increaseSpeed(float speed);[m
+[32m+[m[32m    void increaseAttackRange(float range);[m
+[32m+[m[32m    /*void addSkill(std::unique_ptr<BaseSkill> skill);[m
+[32m+[m[32m    void activateSkill(sf::Keyboard::Key key);[m
+[32m+[m[32m    void updateSkills(float deltaTime);*/[m
+[32m+[m[32m    void setPosition(sf::Vector2f pos);[m
+[32m+[m[32m    void setScale(float scale);[m
+ private:[m
+     sf::Sprite sprite;[m
+     sf::Texture texture;[m
+[36m@@ -47,4 +58,5 @@[m [mprivate:[m
+     float defense;[m
+     float maxHealth;    //최대체력[m
+     float health;//현재체력[m
+[31m-};[m
+\ No newline at end of file[m
+[32m+[m[32m    //SkillManager skillManager;[m
+[32m+[m[32m};[m
+[1mdiff --git a/Game.cpp b/Game.cpp[m
+[1mindex 508a624..1fd544a 100644[m
+[1m--- a/Game.cpp[m
+[1m+++ b/Game.cpp[m
+[36m@@ -1,10 +1,13 @@[m
+ #include "Game.h"[m
+[32m+[m[32m#include "BladeWhirl.h"[m
+[32m+[m[32m#include "BulkUp.h"[m
+[32m+[m[32m#include "Teleport.h"[m
+ #include <cstdlib>[m
+ #include <ctime>[m
+[31m-[m
+[32m+[m[32m#include <iostream>[m
+ Game::Game() :[m
+     window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),[m
+[31m-    warrior("knightbg.png", 700, 700, 3.0f, 200.0f),[m
+[32m+[m[32m    warrior("knight.png", 700, 700, 1.0f, 100.0f),[m
+     uiManager(font, &warrior, window),[m
+     minimap(600, 600, 0.4f),[m
+     mainView(sf::FloatRect(0, 0, 1600, 1000)),[m
+[36m@@ -15,7 +18,9 @@[m [mGame::Game() :[m
+     experience(0),[m
+     level(1),[m
+     experienceToNextLevel(100),[m
+[31m-    waveManager(&warrior, &mainTower, &monsters, 1600, 1000)[m
+[32m+[m[32m    waveManager(&warrior, &mainTower, &monsters, 1600, 1000),[m
+[32m+[m[32m    upgradeManager(&warrior, &mainTower),[m
+[32m+[m[32m    upgradeUI(font, sf::Vector2f(window.getSize()))[m
+ {[m
+     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정[m
+     font.loadFromFile("arial.ttf");[m
+[36m@@ -38,34 +43,53 @@[m [mvoid Game::handleEvents() {[m
+ }[m
+ [m
+ void Game::update() {[m
+[31m-    float deltaTime = clock.restart().asSeconds();[m
+[32m+[m[32m    if (upgradeUI.getIsVisible()) {[m
+[32m+[m[32m        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));[m
+[32m+[m[32m        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {[m
+[32m+[m[32m            int choice = upgradeUI.handleClick(mousePos);[m
+[32m+[m[32m            if (choice != -1) {[m
+[32m+[m[32m                upgradeManager.applyUpgrade(choice); // 선택된 업그레이드 적용[m
+[32m+[m[32m                upgradeUI.hide(); // UI 숨기기 (업그레이드 완료)[m
+[32m+[m[32m                clock.restart();[m
+[32m+[m[32m            }[m
+[32m+[m[32m        }[m
+[32m+[m[32m        return; // 업그레이드 UI가 활성화된 동안 다른 게임 업데이트 중단[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    deltaTime = clock.restart().asSeconds();[m
+     /*if (spawnClock.getElapsedTime().asSeconds() > spawnInterval) {[m
+         spawnMonster();[m
+         spawnClock.restart();[m
+     }*/[m
+     warrior.handleInput(deltaTime);[m
+[32m+[m[32m    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {[m
+[32m+[m[32m        skillManager.activateSkill(sf::Keyboard::Q); // Q스킬 활성화[m
+[32m+[m[32m    }[m
+[32m+[m[32m    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {[m
+[32m+[m[32m        skillManager.activateSkill(sf::Keyboard::W); // W스킬 활성화[m
+[32m+[m[32m    }[m
+[32m+[m[32m    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {[m
+[32m+[m[32m        skillManager.activateSkill(sf::Keyboard::E); // E스킬 활성화[m
+[32m+[m[32m    }[m
+     warrior.updateAnimation(deltaTime);[m
+ [m
+ [m
+     if (warrior.getIsSwinging() && !warrior.getAttackApplied()) {[m
+         warrior.basicAttack(monsters);[m
+ [m
+[31m-        // 체력이 0 이하인 몬스터들을 한 번에 제거[m
+[31m-        monsters.erase(std::remove_if(monsters.begin(), monsters.end(),[m
+[31m-            [this](const std::unique_ptr<Monster>& monster) {[m
+[31m-                if (monster->getHealthPoint() <= 0) {[m
+[31m-                    addExp(10);[m
+[31m-                }[m
+[31m-                return monster->getHealthPoint() <= 0;[m
+[31m-            }),[m
+[31m-            monsters.end());[m
+[31m-[m
+         warrior.setAttackApplied(true);  // 공격 적용 완료 플래그 설정[m
+     }[m
+[32m+[m[32m    // 체력이 0 이하인 몬스터들을 한 번에 제거[m
+[32m+[m[32m    monsters.erase(std::remove_if(monsters.begin(), monsters.end(),[m
+[32m+[m[32m        [this](const std::unique_ptr<Monster>& monster) {[m
+[32m+[m[32m            if (monster->getHealthPoint() <= 0) {[m
+[32m+[m[32m                addExp(100);[m
+[32m+[m[32m            }[m
+[32m+[m[32m            return monster->getHealthPoint() <= 0;[m
+[32m+[m[32m        }),[m
+[32m+[m[32m        monsters.end());[m
+     if (experience > experienceToNextLevel) {[m
+[31m-        experience -= experienceToNextLevel;[m
+[31m-        experienceToNextLevel *= 1.5f;[m
+[31m-        level += 1;[m
+[32m+[m[32m        onLevelUp();[m
+     }[m
+ [m
+     sf::Vector2f warriorPosition = warrior.getPosition();[m
+[36m@@ -84,25 +108,31 @@[m [mvoid Game::update() {[m
+     uiManager.updateTimer(deltaTime);[m
+     uiManager.updateTowerDurability(mainTower.getHealth(), mainTower.getMaxHealth());[m
+     mainTower.healNearbyCharacter(deltaTime, warrior);[m
+[32m+[m[32m    skillManager.updateSkills(deltaTime);[m
+[32m+[m
+ }[m
+ [m
+ void Game::render() {[m
+     window.clear();[m
+[31m-    window.setView(mainView);[m
+[31m-    window.draw(towerSprite);[m
+[32m+[m[32m    if (upgradeUI.getIsVisible()) {[m
+[32m+[m[32m        window.setView(window.getDefaultView());  // 기본 뷰로 변경[m
+[32m+[m[32m        upgradeUI.draw(window); // UI가 활성화된 경우에만 그리기[m
+[32m+[m[32m    }[m
+[32m+[m[32m    else {[m
+[32m+[m[32m        window.setView(mainView);[m
+[32m+[m[32m        window.draw(towerSprite);[m
+ [m
+[31m-    mainTower.draw(window);[m
+[32m+[m[32m        mainTower.draw(window);[m
+ [m
+[31m-    /*for (auto& monster : monsters) {[m
+[31m-        monster.draw(window);[m
+[31m-    }*/[m
+[32m+[m[32m        waveManager.drawMonsters(window);[m
+[32m+[m[32m        warrior.draw(window);[m
+ [m
+[31m-    waveManager.drawMonsters(window);[m
+[31m-    warrior.draw(window);[m
+[32m+[m[32m        // 미니맵 그리기[m
+[32m+[m[32m        minimap.draw(window);[m
+[32m+[m[32m        uiManager.draw(window);// UI 그리기[m
+[32m+[m[32m        uiManager.updateSkillCoolTime(skillManager);[m
+[32m+[m[32m    }[m
+ [m
+[31m-    // 미니맵 그리기[m
+[31m-    minimap.draw(window);[m
+[31m-    uiManager.draw(window);// UI 그리기[m
+     window.display();[m
+ }[m
+ /*[m
+[36m@@ -113,4 +143,24 @@[m [mvoid Game::spawnMonster() {[m
+ }*/[m
+ void Game::addExp(float exp) {[m
+     experience += exp;[m
+[32m+[m[32m}[m
+[32m+[m[32mvoid Game::onLevelUp() {[m
+[32m+[m[32m    experience -= experienceToNextLevel;[m
+[32m+[m[32m    experienceToNextLevel *= 1.5f;[m
+[32m+[m[32m    level += 1;[m
+[32m+[m[32m    if (level == 2) {[m
+[32m+[m[32m        skillManager.unlockSkill("BladeWhirl");[m
+[32m+[m[32m        skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));[m
+[32m+[m[32m    }[m
+[32m+[m[32m    if (level == 3) {[m
+[32m+[m[32m        skillManager.unlockSkill("BulkUp");[m
+[32m+[m[32m        skillManager.addSkill("BulkUp", std::make_unique<BulkUp>(&warrior));[m
+[32m+[m[32m    }[m
+[32m+[m[32m    if (level == 4) {[m
+[32m+[m[32m        skillManager.unlockSkill("Teleport");[m
+[32m+[m[32m        skillManager.addSkill("Teleport", std::make_unique<Teleport>(&warrior, &mainTower));[m
+[32m+[m[32m    }[m
+[32m+[m[32m    upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성[m
+[32m+[m[32m    std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();[m
+[32m+[m[32m    upgradeUI.showOptions(options); // UI에 업그레이드 옵션 표시[m
+ }[m
+\ No newline at end of file[m
+[1mdiff --git a/Game.h b/Game.h[m
+[1mindex 933ad44..07f4a0a 100644[m
+[1m--- a/Game.h[m
+[1m+++ b/Game.h[m
+[36m@@ -11,6 +11,9 @@[m
+ #include "MainTower.h"[m
+ #include "UiManager.h"[m
+ #include "WaveManager.h"[m
+[32m+[m[32m#include "UpgradeManager.h"[m
+[32m+[m[32m#include "UpgradeUI.h"[m
+[32m+[m[32m#include "SkillManager.h"[m
+ class Game {[m
+ public:[m
+     Game();[m
+[36m@@ -20,7 +23,7 @@[m [mprivate:[m
+     void handleEvents();[m
+     void update();[m
+     void render();[m
+[31m-    void spawnMonster();[m
+[32m+[m[32m    void onLevelUp();[m
+ [m
+     sf::RenderWindow window;[m
+     Character warrior;[m
+[36m@@ -36,12 +39,14 @@[m [mprivate:[m
+     int level;[m
+     float experience;[m
+     float experienceToNextLevel;[m
+[31m-[m
+[32m+[m[32m    float deltaTime;[m
+     sf::Font font;[m
+     UIManager uiManager;[m
+     MainTower mainTower;[m
+     WaveManager waveManager;[m
+[31m-[m
+[32m+[m[32m    UpgradeManager upgradeManager;[m
+[32m+[m[32m    UpgradeUI upgradeUI;[m
+[32m+[m[32m    SkillManager skillManager;[m
+ };[m
+ [m
+ #endif // GAME_H[m
+[1mdiff --git a/Monster.cpp b/Monster.cpp[m
+[1mindex b2d76a8..0f7ec96 100644[m
+[1m--- a/Monster.cpp[m
+[1m+++ b/Monster.cpp[m
+[36m@@ -4,23 +4,21 @@[m
+ #include "Character.h"[m
+ #include "MainTower.h"[m
+ #include <iostream>[m
+[31m-[m
+ // 생성자[m
+ Monster::Monster(float x, float y, float speed, MonsterType type)[m
+[31m-    : movementSpeed(speed), damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f), attackPower(0), defense(0),skillDuration(5.0f),isSkillActive(false),isCloneActive(false)[m
+[31m-,cloneDistance(50.0f),cloneRotationAngle(0.0f),cloneRotationSpeed(180.0f),attackRange(20.0f){[m
+[32m+[m[32m    : movementSpeed(speed), damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f), attackPower(0), defense(0)[m
+[32m+[m[32m    , attackRange(50), skillDuration(5.0f), isSkillActive(false), isCloneActive(false)[m
+[32m+[m[32m    , cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f)[m
+[32m+[m[32m{[m
+     shape.setSize(sf::Vector2f(30.0f, 30.0f));[m
+     shape.setFillColor(sf::Color::Blue);[m
+     shape.setPosition(x, y);[m
+     shape.setOrigin(shape.getGlobalBounds().width / 2, shape.getGlobalBounds().height / 2); // 원점을 중앙으로 설정[m
+     healthPoint = 100.0f;[m
+[31m-[m
+[31m-[m
+     originalSpeed = speed;[m
+     originalDefense = defense;[m
+     originalAttackPower = attackPower;[m
+     originalattackRange = attackRange;[m
+[31m-[m
+     switch (type) {[m
+     case MonsterType::Speed:  //이속 3배,체력 1/2배[m
+         texturePath = ("speedMonster.PNG");[m
+[36m@@ -28,7 +26,7 @@[m [mMonster::Monster(float x, float y, float speed, MonsterType type)[m
+         healthPoint = 50.0f;[m
+         attackPower = 10.0f;[m
+         defense = 10.0f;[m
+[31m-        //shape.setFillColor(sf::Color::Cyan);[m
+[32m+[m[32m        shape.setFillColor(sf::Color::Cyan);[m
+         break;[m
+     case MonsterType::Attack: //공격력 3배[m
+         texturePath = ("attackMonster.PNG");[m
+[36m@@ -36,7 +34,7 @@[m [mMonster::Monster(float x, float y, float speed, MonsterType type)[m
+         healthPoint = 100.0f;[m
+         defense = 10.0f;[m
+         attackPower = 30.0f; // 추가 공격력[m
+[31m-        //shape.setFillColor(sf::Color::Red);[m
+[32m+[m[32m        shape.setFillColor(sf::Color::Red);[m
+         break;[m
+     case MonsterType::Defense: //방어력3배,체력2배[m
+         texturePath = ("defenseMonster.PNG");[m
+[36m@@ -44,14 +42,14 @@[m [mMonster::Monster(float x, float y, float speed, MonsterType type)[m
+         healthPoint = 200.0f;[m
+         attackPower = 10.0f;[m
+         defense = 30.0f; // 방어력 추가[m
+[31m-        //shape.setFillColor(sf::Color::Magenta);[m
+[32m+[m[32m        shape.setFillColor(sf::Color::Magenta);[m
+         break;[m
+     case MonsterType::Mid_Boss: // 미드보스[m
+         texturePath = "midboss.PNG";[m
+         movementSpeed = 100.0f;[m
+[31m-        healthPoint = 1000.0f;  [m
+[31m-        attackPower = 50.0f;   [m
+[31m-        defense = 20.0f;       [m
+[32m+[m[32m        healthPoint = 1000.0f;[m
+[32m+[m[32m        attackPower = 50.0f;[m
+[32m+[m[32m        defense = 20.0f;[m
+         skillDuration = 5.0f;[m
+         //shape.setFillColor(sf::Color::Yellow);[m
+         break;[m
+[36m@@ -59,9 +57,9 @@[m [mMonster::Monster(float x, float y, float speed, MonsterType type)[m
+     case MonsterType::Main_Boss: // 메인보스[m
+         texturePath = "mainboss.PNG";[m
+         movementSpeed = 80.0f;[m
+[31m-        healthPoint = 5000.0f; [m
+[31m-        attackPower = 100.0f;  [m
+[31m-        defense = 50.0f;       [m
+[32m+[m[32m        healthPoint = 5000.0f;[m
+[32m+[m[32m        attackPower = 100.0f;[m
+[32m+[m[32m        defense = 50.0f;[m
+         skillDuration = 8.0f;[m
+         //shape.setFillColor(sf::Color::Black);[m
+         break;[m
+[36m@@ -85,25 +83,10 @@[m [mMonster::Monster(float x, float y, float speed, MonsterType type)[m
+         sprite.setTexture(texture);[m
+         sprite.setScale(0.1f, 0.1f);[m
+         sprite.setPosition(x, y);[m
+[31m-        sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);[m
+[31m-    }[m
+[31m-[m
+[31m-    //repeat[m
+[31m-    if (!texture.loadFromFile(texturePath)) {[m
+[31m-        std::cerr << "Failed to load texture: " << texturePath << std::endl;[m
+[31m-        shape.setFillColor(sf::Color::White);[m
+[31m-    }[m
+[31m-    else {[m
+[31m-        texture.setRepeated(true);  // 텍스처 반복 설정 추가[m
+[31m-        sprite.setTexture(texture);[m
+[31m-        sprite.setScale(0.1f, 0.1f);[m
+[31m-        sprite.setPosition(x, y);[m
+[31m-        sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);[m
+[31m-        //수정코드[m
+[31m-        //sprite.setScale(3.0f, 3.0f);[m
+[32m+[m[32m        //sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);[m
+[32m+[m[32m        sprite.setOrigin(500, 500);[m
+     }[m
+ }[m
+[31m-[m
+ void Monster::createClones() {[m
+     if (!isCloneActive) {[m
+         cloneSprites.clear();  // 기존 분신들 제거[m
+[36m@@ -145,7 +128,7 @@[m [mvoid Monster::removeClones() {[m
+ }[m
+ [m
+ // update 함수 구현[m
+[31m-void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& towerPosition, float deltaTime,Character& character,MainTower& mainTower) {[m
+[32m+[m[32mvoid Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& towerPosition, float deltaTime, Character& character, MainTower& mainTower) {[m
+     sf::Vector2f targetPosition;[m
+     float distanceToHeroine = calculateDistance(sprite.getPosition(), heroinePosition);[m
+     float distanceToTower = calculateDistance(sprite.getPosition(), towerPosition);[m
+[36m@@ -162,22 +145,20 @@[m [mvoid Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to[m
+     sf::Vector2f direction = targetPosition - sprite.getPosition();[m
+     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);[m
+     // 특정 거리 이내로 접근했을 때 피해를 입힘[m
+[31m-    //float attackRange = 10.0f; // 공격 범위 (거리) (조정가능)[m
+[31m-[m
+     if (length <= attackRange) {[m
+         if (attackTimer.getElapsedTime().asSeconds() >= attackCooldown) {[m
+             if (targetPosition == towerPosition) {[m
+                 mainTower.takeDamage(attackPower);[m
+[31m-                printf("Tower takeDamage!");[m
+[32m+[m[32m                //printf("Tower takeDamage!");[m
+             }[m
+[31m-            else { [m
+[32m+[m[32m            else {[m
+                 character.takeDamage(attackPower);[m
+[31m-                printf("character takeDamage!");[m
+[32m+[m[32m                //printf("character takeDamage!");[m
+             } // 캐릭터에 피해 입힘[m
+             attackTimer.restart(); // 타이머 초기화[m
+         }[m
+     }[m
+[31m-    else if (length != 0) {[m
+[32m+[m[32m    else if (length >= attackRange) {[m
+         direction /= length; // 방향 정규화[m
+         sprite.move(direction * movementSpeed * deltaTime); // 몬스터 이동[m
+     }[m
+[36m@@ -188,7 +169,6 @@[m [mvoid Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to[m
+             damageTaken = 0.0f; // 피해량 초기화[m
+         }[m
+     }[m
+[31m-[m
+     // 메인 스킬 (15초 쿨타임)[m
+     if (skillCooldown.getElapsedTime().asSeconds() >= 15.0f) {[m
+         Fir_useSkill(character, mainTower);[m
+[36m@@ -218,13 +198,11 @@[m [mvoid Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to[m
+ [m
+ // draw 함수 구현[m
+ void Monster::draw(sf::RenderTarget& target)const {[m
+[31m-[m
+     if (isCloneActive) {[m
+         for (const auto& cloneSprite : cloneSprites) {[m
+             target.draw(cloneSprite);[m
+         }[m
+     }[m
+[31m-[m
+     target.draw(sprite);[m
+ [m
+     drawProjectiles(target); //투사체 그리기[m
+[36m@@ -239,7 +217,7 @@[m [mvoid Monster::draw(sf::RenderTarget& target)const {[m
+         damageText.setFillColor(sf::Color::White);[m
+ [m
+ [m
+[31m-        damageText.setPosition(sprite.getPosition().x+30, sprite.getPosition().y - 30); // 위치 조정[m
+[32m+[m[32m        damageText.setPosition(sprite.getPosition().x, sprite.getPosition().y - 70); // 위치 조정[m
+ [m
+         target.draw(damageText); // 피해량 텍스트 그리기[m
+     }[m
+[36m@@ -272,7 +250,6 @@[m [mfloat Monster::getHealthPoint()const {[m
+     return healthPoint;[m
+ }[m
+ [m
+[31m-[m
+ //원거리 공격 로직 추가[m
+ [m
+ void Monster::shootProjectile(const sf::Vector2f& targetPos) {[m
+[36m@@ -288,7 +265,7 @@[m [mvoid Monster::shootProjectile(const sf::Vector2f& targetPos) {[m
+ void Monster::updateProjectiles(float deltaTime, Character& character, MainTower& mainTower) {[m
+     for (auto& projectile : projectiles) {[m
+         if (!projectile.active) continue;[m
+[31m-        [m
+[32m+[m
+         // 투사체 이동[m
+         projectile.shape.move(projectile.velocity * deltaTime);[m
+ [m
+[36m@@ -353,7 +330,6 @@[m [mvoid Monster::Fir_useSkill(Character& character, MainTower& mainTower) {[m
+         attackRange = originalattackRange * 2.0f;[m
+ [m
+         createClones();[m
+[31m-[m
+         //광역 공격[m
+         float attackRadius = 200.0f;[m
+         if (calculateDistance(sprite.getPosition(), character.getPosition()) <= attackRadius) {[m
+[36m@@ -395,7 +371,6 @@[m [mvoid Monster::Sec_useSkill(Character& character, MainTower& mainTower) {[m
+         else {[m
+             targetPos = mainTower.getPosition();[m
+         }[m
+[31m-[m
+         sf::Vector2f baseDirection = targetPos - sprite.getPosition();[m
+         float baseLength = std::sqrt(baseDirection.x * baseDirection.x + baseDirection.y * baseDirection.y);[m
+         if (baseLength != 0) {[m
+[1mdiff --git a/Monster.h b/Monster.h[m
+[1mindex 5eea804..2ecff64 100644[m
+[1m--- a/Monster.h[m
+[1m+++ b/Monster.h[m
+[36m@@ -15,20 +15,26 @@[m [menum class MonsterType {[m
+ };[m
+ class Monster {[m
+ public:[m
+[32m+[m[32m    // ������[m
+     Monster(float x, float y, float speed, MonsterType type);[m
+ [m
+[31m-    void update(const sf::Vector2f& CharacterPos,const sf::Vector2f& MainTowerPos, float deltaTime,Character& character,MainTower& mainTower);[m
+[32m+[m[32m    // ���� ������Ʈ �Լ� (��ǥ ��ġ�� �̵�)[m
+[32m+[m[32m    void update(const sf::Vector2f& CharacterPos, const sf::Vector2f& MainTowerPos, float deltaTime, Character& character, MainTower& mainTower);[m
+ [m
+[32m+[m[32m    // ���͸� �����쿡 �׸��� �Լ�[m
+     void draw(sf::RenderTarget& target)const;[m
+ [m
+[32m+[m[32m    // ������ ���� ��ġ ��ȯ �Լ�[m
+     sf::Vector2f getPosition();[m
+ [m
+[32m+[m[32m    // Ư�� ��ġ ��ó�� �ִ��� Ȯ���ϴ� �Լ� (�̴ϸ� Ȱ�� ��)[m
+     bool isNear(sf::Vector2f position, float radius) const;[m
+ [m
+ [m
+     void takeDamage(float attackDamage);[m
+     float getHealthPoint()const;[m
+ [m
+[32m+[m
+     void Fir_useSkill(Character& character, MainTower& mainTower);[m
+     void Sec_useSkill(Character& character, MainTower& mainTower);[m
+ [m
+[36m@@ -52,14 +58,13 @@[m [mprivate:[m
+     float attackPower; //공격력[m
+     float defense;  //방어력[m
+     float attackRange;[m
+[31m-[m
+     sf::Clock attackTimer; // 공격 타이머 추가[m
+     float attackCooldown = 1.0f; // 1초 주기[m
+ [m
+     std::string texturePath;[m
+     sf::Texture texture;[m
+     sf::Sprite sprite;[m
+[31m-    [m
+[32m+[m
+     //mid,main boss skill variable[m
+     sf::Clock skillCooldown;[m
+     sf::Clock rangedAttackCooldown;[m
+[1mdiff --git a/SkillManager.cpp b/SkillManager.cpp[m
+[1mnew file mode 100644[m
+[1mindex 0000000..1a4fe5b[m
+[1m--- /dev/null[m
+[1m+++ b/SkillManager.cpp[m
+[36m@@ -0,0 +1,55 @@[m
+[32m+[m[32m#include "SkillManager.h"[m
+[32m+[m
+[32m+[m[32mSkillManager::SkillManager() {[m
+[32m+[m[32m    // 초기 상태: 모든 스킬 잠금[m
+[32m+[m[32m    skillStates["BladeWhirl"] = false;[m
+[32m+[m[32m    skillStates["BulkUp"] = false;[m
+[32m+[m[32m    skillStates["Teleport"] = false;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mvoid SkillManager::addSkill(const std::string& name, std::unique_ptr<BaseSkill> skill) {
