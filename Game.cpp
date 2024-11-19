@@ -2,6 +2,7 @@
 #include "BladeWhirl.h"
 #include "BulkUp.h"
 #include "Teleport.h"
+#include "ArrowTower.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -88,7 +89,7 @@ void Game::update() {
             return monster->getHealthPoint() <= 0;
         }),
         monsters.end());
-    if (experience > experienceToNextLevel) {
+    if (experience >= experienceToNextLevel) {
         onLevelUp();
     }
 
@@ -109,6 +110,7 @@ void Game::update() {
     uiManager.updateTowerDurability(mainTower.getHealth(), mainTower.getMaxHealth());
     mainTower.healNearbyCharacter(deltaTime, warrior);
     skillManager.updateSkills(deltaTime);
+    subTowerManager.updateTowers(monsters,deltaTime);
     
 }
 
@@ -131,6 +133,7 @@ void Game::render() {
         minimap.draw(window);
         uiManager.draw(window);// UI 그리기
         uiManager.updateSkillCoolTime(skillManager);
+		subTowerManager.drawTowers(window);
     }
     
     window.display();
@@ -151,6 +154,7 @@ void Game::onLevelUp() {
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
+        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(300,300)));
     }
     if (level == 3) {
         skillManager.unlockSkill("BulkUp");
