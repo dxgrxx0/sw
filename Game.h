@@ -11,6 +11,8 @@
 #include "MainTower.h"
 #include "UiManager.h"
 #include "WaveManager.h"
+#include "UpgradeManager.h"
+#include "UpgradeUI.h"
 class Game {
 public:
     Game();
@@ -20,7 +22,7 @@ private:
     void handleEvents();
     void update();
     void render();
-    void spawnMonster();
+    void onLevelUp();
 
     sf::RenderWindow window;
     Character warrior;
@@ -41,6 +43,8 @@ private:
     UIManager uiManager;
     MainTower mainTower;
     WaveManager waveManager;
+    UpgradeManager upgradeManager;
+    UpgradeUI upgradeUI;
 
 };
 

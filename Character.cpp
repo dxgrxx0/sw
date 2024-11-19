@@ -179,3 +179,12 @@ void Character::takeDamage(float damageAmount) {
         health = 0;  // 체력은 0 이하로 내려가지 않음
     }
 }
+void Character::increaseAttackPower(float power) {
+    attackDamage += power;
+}
+void Character::increaseMaxHealth(float hp) {
+    maxHealth += hp;
+}
+void Character::reduceCooldown(float cooldown) {
+    attackCoolDown += cooldown;
+}

@@ -24,6 +24,9 @@ public:
     void heal(float healAmount);
     bool isMonsterInAttackRange(const sf::Vector2f& characterPosition, const sf::Vector2f& monsterPosition,
         float attackRange, float attackAngle, float characterRotation);
+    void increaseAttackPower(float power);
+    void increaseMaxHealth(float hp);
+    void reduceCooldown(float cooldown);
 private:
     sf::Sprite sprite;
     sf::Texture texture;
