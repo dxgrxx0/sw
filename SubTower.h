@@ -8,7 +8,7 @@ class SubTower {
 protected:
     sf::Vector2f position;   // 타워 위치
     float range;             // 공격 범위
-    float attackSpeed;       // 공격 속도 (초당 발사 가능 횟수)
+    float attackSpeed;       // 공격 속도
     float attackDamage;      // 공격력
     sf::Clock attackClock;   // 공격 주기 관리
     sf::CircleShape rangeIndicator; // 시각적 범위 표시

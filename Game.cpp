@@ -4,6 +4,7 @@
 #include "Teleport.h"
 #include "ArrowTower.h"
 #include "WizardTower.h"
+#include "TrainingTower.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -166,7 +167,7 @@ void Game::onLevelUp() {
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
         subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(350,326)));
         subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(950, 326)));
-        subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(650, 846)));
+        subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
     }
     if (level == 3) {
         skillManager.unlockSkill("BulkUp");
