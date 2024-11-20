@@ -3,6 +3,7 @@
 #include <ctime>
 
 int main() {
+    std::cout << "hello" << std::endl;
     std::srand(static_cast<unsigned int>(std::time(0)));
     Game game;
     game.run();

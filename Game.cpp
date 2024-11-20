@@ -2,6 +2,9 @@
 #include "BladeWhirl.h"
 #include "BulkUp.h"
 #include "Teleport.h"
+#include "ArrowTower.h"
+#include "WizardTower.h"
+#include"TrainingTower.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -29,6 +32,7 @@ Game::Game() :
 }
 
 void Game::run() {
+    printf("hello");
     while (window.isOpen()) {
         handleEvents();
         update();
@@ -91,7 +95,7 @@ void Game::update() {
             return monster->getHealthPoint() <= 0;
         }),
         monsters.end());
-    if (experience > experienceToNextLevel) {
+    if (experience >= experienceToNextLevel) {
         onLevelUp();
     }
 
@@ -112,7 +116,8 @@ void Game::update() {
     uiManager.updateTowerDurability(mainTower.getHealth(), mainTower.getMaxHealth());
     mainTower.healNearbyCharacter(deltaTime, warrior);
     skillManager.updateSkills(deltaTime);
-
+    subTowerManager.updateTowers(monsters,deltaTime);
+    
 }
 
 void Game::render() {
@@ -136,8 +141,7 @@ void Game::render() {
         minimap.draw(window);
         uiManager.draw(window);// UI 그리기
         uiManager.updateSkillCoolTime(skillManager);
-        //스킬 렌더링
-        //skillManager.draw(window);
+		subTowerManager.drawTowers(window);
     }
 
     if (skillManager.hasSkill("BladeWhirl")) {
@@ -173,7 +177,10 @@ void Game::onLevelUp() {
         skillManager.unlockSkill("BladeWhirl");
 
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
+        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(300, 300)));
+     //   subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 800)));
     }
+
     if (level == 3) {
         skillManager.unlockSkill("BulkUp");
         skillManager.addSkill("BulkUp", std::make_unique<BulkUp>(&warrior));

@@ -14,6 +14,7 @@
 #include "UpgradeManager.h"
 #include "UpgradeUI.h"
 #include "SkillManager.h"
+#include "SubTowerManager.h"
 class Game {
 public:
     Game();
@@ -47,6 +48,7 @@ private:
     UpgradeManager upgradeManager;
     UpgradeUI upgradeUI;
     SkillManager skillManager;
+	SubTowerManager subTowerManager;
 };
 
 #endif // GAME_H

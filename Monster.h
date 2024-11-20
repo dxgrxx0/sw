@@ -47,6 +47,11 @@ public:
     void updateProjectiles(float deltaTime, Character& character, MainTower& mainTower);
     void shootProjectile(const sf::Vector2f& targetPos);
     void drawProjectiles(sf::RenderTarget& target) const;
+
+    bool isDead() const {
+        return healthPoint <= 0.0f;
+    }
+
 private:
     sf::RectangleShape shape; // ������ ���
     float movementSpeed; // ������ �̵� �ӵ�
