@@ -15,7 +15,6 @@ BaseSkill* SkillManager::getSkill(const std::string& skillName) {
     return nullptr;
 }
 
-
 void SkillManager::addSkill(const std::string& name, std::unique_ptr<BaseSkill> skill) {
     skills[name] = std::move(skill);
     skillStates[name] = true; // 스킬 추가 시 잠금 해제

@@ -5,216 +5,188 @@
 #include "Monster.h"
 #include <iostream>
 
-// Knight.h
 class Knight {
 private:
     sf::Sprite sprite;
     sf::Texture texture;
-    float healthPoint;
-    float movementSpeed;
-    float attackPower;
+    sf::Vector2f position;
+    sf::Vector2f targetPosition; // 목표 위치 추가
+    float speed;
     float attackRange;
-    float attackCooldown;
-    sf::Clock attackTimer;
-    sf::Vector2f initialPosition;
-    sf::Vector2f mainTowerPos;
-    float patrolRadius;
-    float currentPatrolAngle;
+    float attackDamage;
+    float attackSpeed;
+    float maxHealth;
+    float currentHealth;
+    sf::Clock attackClock;
+    sf::Clock animationClock;
+    sf::Clock stateClock;      // 상태 전환을 위한 클럭 추가
 
-    // 데미지 효과 관련 변수
-    float damageTaken;
-    float damageDisplayTime;
-    bool showDamageText;
-
-    // 애니메이션 관련 변수 추가
-    sf::IntRect frameRect;
-    float animationTimer;
-    float frameDuration;
     int currentFrame;
-    int frameCount;
-    enum class AnimationState {
-        Idle,
-        Walk,
-        Attack,
-        Death
-    };
-    AnimationState currentState;
-    bool facingLeft;
-
-    // 스프라이트 프레임 크기
-    static const int FRAME_WIDTH = 64;  // 스프라이트 한 프레임의 너비
-    static const int FRAME_HEIGHT = 64; // 스프라이트 한 프레임의 높이
-
-    void updateAnimation(float deltaTime) {
-        animationTimer += deltaTime;
-        if (animationTimer >= frameDuration) {
-            animationTimer = 0;
-            currentFrame++;
-
-            // 각 상태별 프레임 개수에 따라 순환
-            switch (currentState) {
-            case AnimationState::Idle:
-                if (currentFrame >= 8) currentFrame = 0;  // 8프레임 순환
-                break;
-            case AnimationState::Walk:
-                if (currentFrame >= 8) currentFrame = 0;  // 8프레임 순환
-                break;
-            case AnimationState::Attack:
-                if (currentFrame >= 6) {
-                    currentFrame = 0;
-                    currentState = AnimationState::Idle;  // 공격 애니메이션 완료 후 대기
-                }
-                break;
-            case AnimationState::Death:
-                if (currentFrame >= 6) currentFrame = 5;  // 죽음 애니메이션은 마지막 프레임에서 정지
-                break;
-            }
-
-            // 프레임 직사각형 업데이트
-            int row;
-            switch (currentState) {
-            case AnimationState::Idle: row = 0; break;
-            case AnimationState::Walk: row = 1; break;
-            case AnimationState::Attack: row = 2; break;
-            case AnimationState::Death: row = 3; break;
-            default: row = 0;
-            }
-
-            frameRect = sf::IntRect(currentFrame * FRAME_WIDTH, row * FRAME_HEIGHT,
-                FRAME_WIDTH, FRAME_HEIGHT);
-            sprite.setTextureRect(frameRect);
-        }
-    }
+    int frameWidth;
+    int frameHeight;
+    float animationTime;
+    enum State { IDLE, WALKING, ATTACKING } currentState;
+    int facingLeft=0;
+    bool isAttacking;          // 공격 상태 플래그 추가
+    Monster* currentTarget;     // 현재 타겟 몬스터 추가
 
 public:
-    Knight(sf::Vector2f position, sf::Vector2f mainTowerPos)
-        : movementSpeed(100.0f), healthPoint(100.0f), attackPower(20.0f)
-        , attackRange(50.0f), attackCooldown(1.0f), initialPosition(position)
-        , mainTowerPos(mainTowerPos), patrolRadius(100.0f), currentPatrolAngle(0.0f)
-        , damageTaken(0.0f), damageDisplayTime(0.0f), showDamageText(false)
-        , animationTimer(0.0f), frameDuration(0.1f), currentFrame(0)
-        , currentState(AnimationState::Idle), facingLeft(false)
+    Knight(sf::Vector2f startPos, sf::Vector2f mainTowerPos)
+        : position(startPos)
+        , targetPosition(mainTowerPos)
+        , speed(100.0f)
+        , attackRange(50.0f)
+        , attackDamage(10.0f)
+        , attackSpeed(1.0f)
+        , maxHealth(100.0f)
+        , currentHealth(100.0f)
+        , currentFrame(0)
+        , frameWidth(32)
+        , frameHeight(32)
+        , animationTime(0.1f)
+        , currentState(IDLE)
+        , facingLeft(false)
+        , isAttacking(false)
+        , currentTarget(nullptr)
     {
         if (!texture.loadFromFile("knightbg.png")) {
-            std::cout << "Failed to load knight texture!" << std::endl;
+            std::cout << "Error loading knight sprite sheet!" << std::endl;
         }
         sprite.setTexture(texture);
-        frameRect = sf::IntRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
-        sprite.setTextureRect(frameRect);
+        sprite.setTextureRect(sf::IntRect(0, 0, frameWidth, frameHeight));
         sprite.setPosition(position);
-        sprite.setScale(1.0f, 1.0f);
-        sprite.setOrigin(FRAME_WIDTH / 2.0f, FRAME_HEIGHT / 2.0f);
+        sprite.setOrigin(frameWidth / 2.0f, frameHeight / 2.0f);
+        sprite.setScale(2.0f, 2.0f);
     }
 
-    void takeDamage(float damage) {
-        healthPoint -= damage;
-        if (damage > 0) {
-            damageTaken = damage;
-            damageDisplayTime = 0.0f;
-            showDamageText = true;
-        }
-        if (healthPoint <= 0) {
-            currentState = AnimationState::Death;
-            currentFrame = 0;
-        }
-    }
+    void updateAnimation() {
+        float currentTime = animationClock.getElapsedTime().asSeconds();
+        if (currentTime >= animationTime) {
+            int row;
+            int framesInRow;
 
-    void update(float deltaTime) {
-        if (showDamageText) {
-            damageDisplayTime += deltaTime;
-            if (damageDisplayTime >= 0.5f) {
-                showDamageText = false;
-                damageTaken = 0.0f;
+            switch (currentState) {
+            case IDLE:
+                row = facingLeft;
+                framesInRow = 5;
+                break;
+            case WALKING:
+                row = facingLeft;
+                framesInRow = 5;
+                break;
+            case ATTACKING:
+                row = facingLeft+4;
+                framesInRow = 5;
+                if (currentFrame >= framesInRow - 1) {
+                    currentFrame = 0;  // 공격 애니메이션 완료 후 리셋
+                    if (!isAttacking) {
+                        currentState = IDLE;  // 공격이 끝나면 IDLE 상태로
+                    }
+                }
+                break;
             }
-        }
 
-        updateAnimation(deltaTime);
+            currentFrame = (currentFrame + 1) % framesInRow;
+
+            // 이전 프레임 위치 저장
+            sf::Vector2f prevPos = sprite.getPosition();
+
+            sprite.setTextureRect(sf::IntRect(currentFrame * frameWidth, row * frameHeight, frameWidth, frameHeight));
+
+            // 위치 유지
+            sprite.setPosition(prevPos);
+
+            animationClock.restart();
+        }
     }
 
     void engage(Monster* monster, float deltaTime) {
-        if (!monster || currentState == AnimationState::Death) return;
+        if (!monster) return;
 
-        sf::Vector2f monsterPos = monster->getPosition();
-        sf::Vector2f currentPos = sprite.getPosition();
-        sf::Vector2f direction = monsterPos - currentPos;
+        currentTarget = monster;
+        sf::Vector2f direction = monster->getPosition() - position;
         float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-        // 방향 설정
-        facingLeft = direction.x < 0;
-        sprite.setScale(facingLeft ? -1.0f : 1.0f, 1.0f);
+        if (direction.x < 0 && abs(direction.x) > abs(direction.y))facingLeft = 2;
+        else if (direction.x > 0 && abs(direction.x) >abs(direction.y))facingLeft = 3;
+        else if (direction.y < 0 && abs(direction.x) < abs(direction.y))facingLeft = 1;
+        else if (direction.y > 0 && abs(direction.x) < abs(direction.y))facingLeft = 0;
+
 
         if (distance > attackRange) {
-            currentState = AnimationState::Walk;
+            // 몬스터를 향해 이동
             direction /= distance;
-            sprite.move(direction * movementSpeed * deltaTime);
+            position += direction * speed * deltaTime;
+            sprite.setPosition(position);
+            currentState = WALKING;
+            isAttacking = false;
         }
         else {
-            if (attackTimer.getElapsedTime().asSeconds() >= attackCooldown) {
-                currentState = AnimationState::Attack;
-                currentFrame = 0;
-                monster->takeDamage(attackPower);
-                attackTimer.restart();
+            // 공격 범위 내에서 공격
+            currentState = ATTACKING;
+            isAttacking = true;
+            if (attackClock.getElapsedTime().asSeconds() >= 1.0f / attackSpeed) {
+                monster->takeDamage(attackDamage);
+                attackClock.restart();
             }
         }
-
-        update(deltaTime);
+        updateAnimation();
     }
 
-    void patrol(const sf::Vector2f& towerPos, float deltaTime) {
-        if (currentState == AnimationState::Death) return;
-
-        currentPatrolAngle += deltaTime * 0.5f;
-        float x = towerPos.x + std::cos(currentPatrolAngle) * patrolRadius;
-        float y = towerPos.y + std::sin(currentPatrolAngle) * patrolRadius;
-
-        sf::Vector2f targetPos(x, y);
-        sf::Vector2f currentPos = sprite.getPosition();
-        sf::Vector2f direction = targetPos - currentPos;
+    void patrol(sf::Vector2f towerPos, float deltaTime) {
+        sf::Vector2f direction = towerPos - position;
         float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-        // 방향 설정
-        facingLeft = direction.x < 0;
-        sprite.setScale(facingLeft ? -1.0f : 1.0f, 1.0f);
-
-        if (distance > 1.0f) {
-            currentState = AnimationState::Walk;
+        if (distance > 50.0f) {  // 타워 주변 50 반경 내에서 순찰
             direction /= distance;
-            sprite.move(direction * movementSpeed * deltaTime);
+            position += direction * speed * deltaTime;
+            sprite.setPosition(position);
+
+            if (direction.x < 0 && abs(direction.x) > abs(direction.y))facingLeft = 2;
+            else if (direction.x > 0 && abs(direction.x) > abs(direction.y))facingLeft = 3;
+            else if (direction.y < 0 && abs(direction.x) < abs(direction.y))facingLeft = 1;
+            else if (direction.y > 0 && abs(direction.x) < abs(direction.y))facingLeft = 0;
+
+            currentState = WALKING;
         }
         else {
-            currentState = AnimationState::Idle;
+            // 타워 주변에서 가만히 있기
+            currentState = IDLE;
         }
-
-        update(deltaTime);
+        isAttacking = false;
+        updateAnimation();
     }
 
-    void draw(sf::RenderTarget& target) const {
-        target.draw(sprite);
-
-        if (showDamageText) {
-            sf::Font font;
-            if (font.loadFromFile("arial.ttf")) {
-                sf::Text damageText;
-                damageText.setFont(font);
-                damageText.setString(std::to_string(static_cast<int>(damageTaken)));
-                damageText.setCharacterSize(15);
-                damageText.setFillColor(sf::Color::Red);
-                damageText.setPosition(sprite.getPosition().x, sprite.getPosition().y - 30);
-                target.draw(damageText);
-            }
-        }
+    void takeDamage(float damage) {
+        currentHealth -= damage;
+        if (currentHealth < 0) currentHealth = 0;
     }
 
     bool isDead() const {
-        return healthPoint <= 0.0f;
+        return currentHealth <= 0;
     }
 
     sf::Vector2f getPosition() const {
-        return sprite.getPosition();
+        return position;
     }
 
-    void setTexture(const sf::Texture& tex) {
-        sprite.setTexture(tex);
+    float getRange() const {
+        return attackRange;
+    }
+
+    void draw(sf::RenderTarget& target) {
+        target.draw(sprite);
+
+        // 체력바 그리기
+        sf::RectangleShape healthBar(sf::Vector2f(30.0f, 5.0f));
+        healthBar.setPosition(position.x - 15.0f, position.y - 25.0f);
+        healthBar.setFillColor(sf::Color::Red);
+        target.draw(healthBar);
+
+        sf::RectangleShape currentHealthBar(sf::Vector2f(30.0f * (currentHealth / maxHealth), 5.0f));
+        currentHealthBar.setPosition(position.x - 15.0f, position.y - 25.0f);
+        currentHealthBar.setFillColor(sf::Color::Green);
+        target.draw(currentHealthBar);
     }
 };
 

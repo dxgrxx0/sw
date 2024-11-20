@@ -1,6 +1,5 @@
 #ifndef TRAINING_TOWER_H
 #define TRAINING_TOWER_H
-
 #include "SubTower.h"
 #include "Knight.h"
 #include <vector>
@@ -9,38 +8,22 @@
 class TrainingTower : public SubTower {
 private:
     std::vector<std::unique_ptr<Knight>> knights;
-    int maxKnights;            // 최대 기사 수
-    float spawnInterval;       // 기사 생성 간격
-    sf::Clock spawnClock;      // 기사 생성 타이머
-    sf::Vector2f mainTowerPos; // 메인 타워 위치
-
-    // 텍스처를 한 번만 로드하기 위한 static 멤버
-    static sf::Texture knightTexture;
-    static bool textureLoaded;
-
-    // 애니메이션 프레임 관련 상수
-    static const int FRAME_COUNT = 60;  // 이미지에 있는 전체 프레임 수
-    static const int FRAMES_PER_ROW = 8;  // 한 줄당 프레임 수
-    static const int FRAME_WIDTH = 64;   // 프레임 너비
-    static const int FRAME_HEIGHT = 64;  // 프레임 높이
+    int maxKnights;
+    float spawnInterval;
+    sf::Clock spawnClock;
+    sf::Vector2f mainTowerPos;
 
 public:
     TrainingTower(sf::Vector2f position)
-        : SubTower(position, 200.0f, 0.2f, 0.0f)  // 범위, 공격속도(5초당 1번), 공격력(0: 직접공격X)
+        : SubTower(position, 200.0f, 0.2f, 0.0f)
         , maxKnights(3)
         , spawnInterval(5.0f)
-        , mainTowerPos(sf::Vector2f(650.0f, 500.0f))  // 메인 타워의 위치를 중앙으로 고정
+        , mainTowerPos(sf::Vector2f(650.0f, 500.0f))
     {
-        if (!textureLoaded) {
-            if (knightTexture.loadFromFile("knightbg.png")) {
-                textureLoaded = true;
-            }
-        }
         if (!texture.loadFromFile("TrainingTower.png")) {
             std::cout << "Failed to load training tower texture!" << std::endl;
         }
 
-        // 기본 SubTower의 range indicator 설정
         rangeIndicator.setPosition(position);
         rangeIndicator.setRadius(range);
         rangeIndicator.setOrigin(range, range);
@@ -49,11 +32,8 @@ public:
         rangeIndicator.setOutlineThickness(2.0f);
     }
 
-
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {
-        // 스폰 간격 체크 및 최대 기사 수 제한
-        if (attackClock.getElapsedTime().asSeconds() >= 1.0f / attackSpeed &&
-            knights.size() < maxKnights) {
+        if (attackClock.getElapsedTime().asSeconds() >= 1.0f / attackSpeed && knights.size() < maxKnights) {
             spawnKnight();
             attackClock.restart();
         }
@@ -61,10 +41,7 @@ public:
     }
 
     void draw(sf::RenderTarget& target) override {
-        // SubTower의 기본 draw 호출 (range indicator와 sprite 그리기)
         SubTower::draw(target);
-
-        // 기사들 그리기
         for (const auto& knight : knights) {
             knight->draw(target);
         }
@@ -72,30 +49,23 @@ public:
 
 private:
     void spawnKnight() {
-        auto knight = std::make_unique<Knight>(position, mainTowerPos);
-        if (textureLoaded) {
-            knight->setTexture(knightTexture);
-        }
-        knights.push_back(std::move(knight));
+        knights.push_back(std::make_unique<Knight>(position, mainTowerPos));
     }
 
     void updateKnights(float deltaTime, std::vector<std::unique_ptr<Monster>>& monsters) {
-        // 죽은 기사 제거
-        knights.erase(
-            std::remove_if(knights.begin(), knights.end(),
-                [](const auto& knight) { return knight->isDead(); }
-            ),
-            knights.end()
-        );
+        for (auto it = knights.begin(); it != knights.end();) {
+            if ((*it)->isDead()) {
+                it = knights.erase(it);
+                continue;
+            }
 
-        for (auto& knight : knights) {
             // 가장 가까운 몬스터 찾기
             Monster* closestMonster = nullptr;
             float closestDistance = std::numeric_limits<float>::max();
 
             for (const auto& monster : monsters) {
-                if (!monster->isDead()) {
-                    float distance = getDistance(knight->getPosition(), monster->getPosition());
+                if (!monster->isDead()) {  // 죽지 않은 몬스터만 대상으로
+                    float distance = getDistance((*it)->getPosition(), monster->getPosition());
                     if (distance < closestDistance) {
                         closestDistance = distance;
                         closestMonster = monster.get();
@@ -105,11 +75,13 @@ private:
 
             // 타워 범위 내에 몬스터가 있으면 공격, 없으면 순찰
             if (closestMonster && isInRange(closestMonster->getPosition())) {
-                knight->engage(closestMonster, deltaTime);
+                (*it)->engage(closestMonster, deltaTime);
             }
             else {
-                knight->patrol(position, deltaTime);
+                (*it)->patrol(position, deltaTime);  // 메인타워가 아닌 훈련타워 주변을 순찰
             }
+
+            ++it;
         }
     }
 
@@ -119,7 +91,5 @@ private:
         return std::sqrt(dx * dx + dy * dy);
     }
 };
-// Static 멤버 변수 초기화
-sf::Texture TrainingTower::knightTexture;
-bool TrainingTower::textureLoaded = false;
+
 #endif // TRAINING_TOWER_H
