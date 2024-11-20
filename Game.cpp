@@ -3,12 +3,13 @@
 #include "BulkUp.h"
 #include "Teleport.h"
 #include "ArrowTower.h"
+#include "WizardTower.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
 Game::Game() :
     window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),
-    warrior("knight.png", 700, 700, 1.0f, 100.0f),
+    warrior("knight.png", 600, 500, 1.0f, 100.0f),
     uiManager(font, &warrior, window),
     minimap(600, 600, 0.4f),
     mainView(sf::FloatRect(0, 0, 1600, 1000)),
@@ -25,6 +26,8 @@ Game::Game() :
 {
     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정
     font.loadFromFile("arial.ttf");
+	backgroundTexture.loadFromFile("background.png");
+	backgroundSprite.setTexture(backgroundTexture);
 }
 
 void Game::run() {
@@ -121,6 +124,13 @@ void Game::render() {
         upgradeUI.draw(window); // UI가 활성화된 경우에만 그리기
     }
     else {
+        for (int i = -5; i < 10; i++) {
+            for (int j = -5; j < 10; j++) {
+                sf::Vector2f backgroundPosition(i * 300, j * 200);
+                backgroundSprite.setPosition(backgroundPosition);
+                window.draw(backgroundSprite);
+            }
+        }
         window.setView(mainView);
         window.draw(towerSprite);
 
@@ -154,7 +164,9 @@ void Game::onLevelUp() {
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
-        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(300,300)));
+        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(350,326)));
+        subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(950, 326)));
+        subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(650, 846)));
     }
     if (level == 3) {
         skillManager.unlockSkill("BulkUp");

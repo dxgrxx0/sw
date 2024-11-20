@@ -27,6 +27,8 @@ private:
     void onLevelUp();
 
     sf::RenderWindow window;
+	sf::Texture backgroundTexture;
+	sf::Sprite backgroundSprite;
     Character warrior;
     sf::Texture mainTowerTexture;
     sf::Sprite towerSprite;

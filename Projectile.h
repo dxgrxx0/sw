@@ -21,6 +21,7 @@ public:
 
     bool checkCollision(Monster& monster);
     bool isDestroyed() const { return toBeDestroyed; }
+    bool isOutofBound();
 };
 
 #endif // PROJECTILE_H
