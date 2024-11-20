@@ -37,7 +37,7 @@ public:
         }
     }
     float getRemainCool() {
-        return (cooldown - cooldownTimer.getElapsedTime().asSeconds())<0?0: cooldown - cooldownTimer.getElapsedTime().asSeconds();
+        return (cooldown - cooldownTimer.getElapsedTime().asSeconds()) < 0 ? 0 : cooldown - cooldownTimer.getElapsedTime().asSeconds();
     }
     virtual void applyEffect() = 0; // 각 스킬 효과 구현
 

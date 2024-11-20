@@ -7,6 +7,7 @@
 #include <memory>
 #include <SFML/Window/Keyboard.hpp>
 #include "BaseSkill.h"
+#include<SFML/Graphics.hpp>
 
 class SkillManager {
 private:
@@ -23,6 +24,8 @@ public:
     void activateSkill(sf::Keyboard::Key key);
     void updateSkills(float deltaTime);
 	float getRemainingCooldown(const std::string& name) const;
+    BaseSkill* getSkill(const std::string& skillName);
+
 };
 
 #endif // SKILL_MANAGER_H

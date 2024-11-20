@@ -5,9 +5,11 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+//
+#include "BladeWhirl.h"
 Game::Game() :
     window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),
-    warrior("knight.png", 700, 700, 1.0f, 100.0f),
+    warrior("knight.png", 700, 700, 1.0f, 300.0f),
     uiManager(font, &warrior, window),
     minimap(600, 600, 0.4f),
     mainView(sf::FloatRect(0, 0, 1600, 1000)),
@@ -43,6 +45,7 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
+
     if (upgradeUI.getIsVisible()) {
         sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -114,6 +117,8 @@ void Game::update() {
 
 void Game::render() {
     window.clear();
+
+
     if (upgradeUI.getIsVisible()) {
         window.setView(window.getDefaultView());  // 기본 뷰로 변경
         upgradeUI.draw(window); // UI가 활성화된 경우에만 그리기
@@ -131,7 +136,22 @@ void Game::render() {
         minimap.draw(window);
         uiManager.draw(window);// UI 그리기
         uiManager.updateSkillCoolTime(skillManager);
+        //스킬 렌더링
+        //skillManager.draw(window);
     }
+
+    if (skillManager.hasSkill("BladeWhirl")) {
+        BaseSkill* skill = skillManager.getSkill("BladeWhirl");
+        // dynamic_cast로 BladeWhirl로 안전하게 변환
+        BladeWhirl* bladeWhirl = dynamic_cast<BladeWhirl*>(skill);
+        if (bladeWhirl) {
+            bladeWhirl->draw(window);
+        }
+    }
+
+    minimap.draw(window);
+    uiManager.draw(window);
+    uiManager.updateSkillCoolTime(skillManager);
 
     window.display();
 }
@@ -144,12 +164,14 @@ void Game::spawnMonster() {
 void Game::addExp(float exp) {
     experience += exp;
 }
+
 void Game::onLevelUp() {
     experience -= experienceToNextLevel;
     experienceToNextLevel *= 1.5f;
     level += 1;
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");
+
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
     }
     if (level == 3) {

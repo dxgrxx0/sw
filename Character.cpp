@@ -98,7 +98,6 @@ void Character::draw(sf::RenderTarget& target) {
     if (isSwinging) {
         target.draw(slashSprite); // 슬래시 이미지 그리기
     }
-
 }
 
 sf::Vector2f Character::getPosition() {

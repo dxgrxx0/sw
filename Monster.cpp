@@ -10,6 +10,11 @@ Monster::Monster(float x, float y, float speed, MonsterType type)
     , attackRange(50), skillDuration(5.0f), isSkillActive(false), isCloneActive(false)
     , cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f)
 {
+
+    aoeIndicator.setFillColor(sf::Color(255, 0, 0, 80));  // 반투명 빨간색
+    aoeIndicator.setOutlineColor(sf::Color(255, 0, 0, 200));  // 진한 빨간색 테두리
+    aoeIndicator.setOutlineThickness(2.0f);
+
     shape.setSize(sf::Vector2f(30.0f, 30.0f));
     shape.setFillColor(sf::Color::Blue);
     shape.setPosition(x, y);
@@ -87,6 +92,7 @@ Monster::Monster(float x, float y, float speed, MonsterType type)
         sprite.setOrigin(500, 500);
     }
 }
+
 void Monster::createClones() {
     if (!isCloneActive) {
         cloneSprites.clear();  // 기존 분신들 제거
@@ -194,6 +200,60 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
         removeSkillEffects();
         removeClones();
     }
+
+
+    if (isWarningActive || isDamageEffectActive) {
+        aoeTimer += deltaTime;
+
+        if (isWarningActive) {
+            // 경고 효과 단계
+            float warningProgress = aoeTimer / warningDuration;
+
+            // 깜빡이는 효과 (사인 함수 사용)
+            float alpha = (std::sin(warningProgress * 10) * 0.5f + 0.5f) * 100;   //깜빡임 진동수
+            aoeIndicator.setFillColor(sf::Color(255, 165, 0, static_cast<sf::Uint8>(alpha))); // 주황색 , 깜빡임 적용
+            aoeIndicator.setOutlineColor(sf::Color(255, 0, 0, 200)); // 진한 빨간색 , 테두리 색 적용
+
+            if (aoeTimer >= warningDuration) {
+                isWarningActive = false;
+                isDamageEffectActive = true;
+                aoeTimer = 0.0f;
+                hasDamageBeenDealt = false;
+            }
+        }
+        else if (isDamageEffectActive) {
+            // 데미지 효과 단계
+            if (!hasDamageBeenDealt) {
+                // 데미지 적용
+                float attackRadius = 200.0f;
+                if (calculateDistance(sprite.getPosition(), character.getPosition()) <= attackRadius) {
+                    character.takeDamage(attackPower * 1.5f);
+                }
+                if (calculateDistance(sprite.getPosition(), mainTower.getPosition()) <= attackRadius) {
+                    mainTower.takeDamage(attackPower * 1.5f);
+                }
+                hasDamageBeenDealt = true;
+
+                // 데미지 효과 색상 설정
+                aoeIndicator.setFillColor(sf::Color(255, 0, 0, 50)); // 연간 빨간색
+                aoeIndicator.setOutlineColor(sf::Color(255, 0, 0, 255)); // 완전 불투명한 빨간색
+            }
+
+            // 페이드 아웃
+            if (aoeTimer >= damageEffectDuration) {
+                isDamageEffectActive = false;
+                aoeTimer = 0.0f;
+            }
+        }
+
+        // 이펙트 위치 업데이트
+        float attackRadius = 200.0f;
+        aoeIndicator.setPosition(
+            sprite.getPosition().x - attackRadius,
+            sprite.getPosition().y - attackRadius
+        );
+    }
+
 }
 
 // draw 함수 구현
@@ -203,6 +263,11 @@ void Monster::draw(sf::RenderTarget& target)const {
             target.draw(cloneSprite);
         }
     }
+
+    if (isWarningActive || isDamageEffectActive) {
+        target.draw(aoeIndicator);
+    }
+
     target.draw(sprite);
 
     drawProjectiles(target); //투사체 그리기
@@ -289,8 +354,8 @@ void Monster::updateProjectiles(float deltaTime, Character& character, MainTower
         }
 
         // 화면 밖으로 나간 투사체 제거
-        if (projectilePos.x < -100 || projectilePos.x > 2100 ||
-            projectilePos.y < -100 || projectilePos.y > 2100) {
+        if (projectilePos.x < -1000 || projectilePos.x > 21000 ||
+            projectilePos.y < -1000 || projectilePos.y > 21000) {
             projectile.active = false;
         }
     }
@@ -332,16 +397,23 @@ void Monster::Fir_useSkill(Character& character, MainTower& mainTower) {
         createClones();
         //광역 공격
         float attackRadius = 200.0f;
-        if (calculateDistance(sprite.getPosition(), character.getPosition()) <= attackRadius) {
-            character.takeDamage(attackPower * 1.5f);
-        }
-        if (calculateDistance(sprite.getPosition(), mainTower.getPosition()) <= attackRadius) {
-            mainTower.takeDamage(attackPower * 1.5f);
-        }
+        aoeIndicator.setRadius(attackRadius);
+        aoeIndicator.setPosition(
+            sprite.getPosition().x - attackRadius,
+            sprite.getPosition().y - attackRadius
+        );
+
+        // 경고 효과 시작
+        isWarningActive = true;
+        isDamageEffectActive = false;
+        aoeTimer = 0.0f;
+        hasDamageBeenDealt = false;
 
         // 시각적 효과
         sprite.setColor(sf::Color::Blue);
         printf("Main Boss uses Absolute Defense!\n");
+
+
     }
 
     isSkillActive = true;
