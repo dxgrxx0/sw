@@ -208,7 +208,6 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
         if (isWarningActive) {
             // 경고 효과 단계
             float warningProgress = aoeTimer / warningDuration;
-
             // 깜빡이는 효과 (사인 함수 사용)
             float alpha = (std::sin(warningProgress * 10) * 0.5f + 0.5f) * 100;   //깜빡임 진동수
             aoeIndicator.setFillColor(sf::Color(255, 165, 0, static_cast<sf::Uint8>(alpha))); // 주황색 , 깜빡임 적용
@@ -385,7 +384,7 @@ void Monster::Fir_useSkill(Character& character, MainTower& mainTower) {
         createClones();
 
         // 시각적 효과
-        sprite.setColor(sf::Color::Magenta);
+        sprite.setColor(sf::Color::Black);
         printf("Mid Boss uses Berserk!\n");
     }
     else if (texturePath == "mainboss.PNG") {
@@ -412,7 +411,6 @@ void Monster::Fir_useSkill(Character& character, MainTower& mainTower) {
         // 시각적 효과
         sprite.setColor(sf::Color::Blue);
         printf("Main Boss uses Absolute Defense!\n");
-
 
     }
 

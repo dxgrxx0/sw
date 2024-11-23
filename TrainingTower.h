@@ -23,6 +23,10 @@ public:
         if (!texture.loadFromFile("TrainingTower.png")) {
             std::cout << "Failed to load training tower texture!" << std::endl;
         }
+        sprite.setTexture(texture);
+        sprite.setPosition(position);
+        sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
+        sprite.setScale(0.2f, 0.2f);
 
         rangeIndicator.setPosition(position);
         rangeIndicator.setRadius(range);
@@ -41,6 +45,7 @@ public:
     }
 
     void draw(sf::RenderTarget& target) override {
+        target.draw(sprite);
         SubTower::draw(target);
         for (const auto& knight : knights) {
             knight->draw(target);

@@ -7,6 +7,47 @@
 #include "BaseSkill.h"
 #include "Character.h"
 #include "Monster.h"
+class BladeWhirlVFX {
+public:
+    BladeWhirlVFX(Character* character, float radius, float rotationSpeed)
+        : character(character), radius(radius), rotationSpeed(rotationSpeed) {
+        // 날개 생성
+        wing.setRadius(radius);
+        wing.setFillColor(sf::Color(178, 58, 238, 0)); // 내부 투명
+        wing.setOutlineColor(sf::Color(178, 58, 238)); // 테두리 자주색
+        wing.setOutlineThickness(4.f); // 테두리 두께        wing.setOrigin(radius, radius);
+        wing.setOrigin(radius, radius);
+       // wing.setPosition(position);
+    }
+   /* void setPosition(sf::Vector2f newPosition) {
+        position = newPosition;
+        wing.setPosition(position);
+    }*/
+    void update(float deltaTime) {
+        // 날개 위치를 캐릭터 위치로 설정
+        sf::Vector2f characterPos = character->getPosition();
+        wing.setPosition(characterPos);
+
+        // 날개 회전
+        angle += rotationSpeed * deltaTime;
+        wing.setRotation(angle);
+    }
+
+    void draw(sf::RenderTarget& target) {
+        target.draw(wing);
+    }
+private:
+    sf::CircleShape wing;
+    Character* character;
+    float radius;
+    float rotationSpeed;
+    float angle = 0.f;
+};
+
+
+
+
+
 
 class BladeWhirl : public BaseSkill {
 private:
@@ -15,12 +56,12 @@ private:
     float range;  //스킬이 적중할 수 있는 거리
     float damage;
     float activeDuration; //스킬의 지속 시간
-    float elapsedTime; 
+    float elapsedTime;
 
     // 검 휘두르기 관련 변수들
     float currentAngle;  //회전 각도
-    float startAngle;  
-    float endAngle;   
+    float startAngle;
+    float endAngle;
     float swingSpeed;  //회전 속도
     float handleLength;// 손잡이 길이
     float bladeLength; //검의 칼날 길이
@@ -32,7 +73,9 @@ private:
     sf::RectangleShape guardSprite;       // 가드(십자가)
     sf::ConvexShape bladeSprite;          // 칼날
     sf::RectangleShape bladeCenterLine;   // 칼날 중앙선
-    
+
+    //날개 효과
+   // std::unique_ptr<BladeWhirlVFX> vfx;
 public:
     BladeWhirl(Character* character, std::vector<std::unique_ptr<Monster>>& monsters)
         : BaseSkill("Blade Whirl", sf::Keyboard::Q, 2.0f), // 쿨 2초
@@ -76,7 +119,12 @@ public:
         bladeCenterLine.setFillColor(sf::Color(160, 160, 160));
         bladeCenterLine.setOrigin(0, 1.0f);
 
-
+        // 날개 효과 생성
+            //vfx = std::make_unique<BladeWhirlVFX>(
+            //    character,
+            //    200.f, // 날개 반경
+            //    180.f  // 초당 180도 회전
+           // );
     }
 
 
@@ -113,6 +161,7 @@ public:
                     lastDamageAngle = currentAngle;
                 }
             }
+           // vfx->update(deltaTime);
         }
     }
 
@@ -123,6 +172,7 @@ public:
             target.draw(bladeSprite);
             target.draw(bladeCenterLine);
         }
+       // vfx->draw(target);
     }
 
 private:
