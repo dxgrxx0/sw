@@ -46,8 +46,7 @@ private:
     bool displayBossMessage; // 메시지 표시 여부
     sf::Font font;           // 메시지에 사용할 폰트
     sf::Text text;           // 메시지 텍스트
-
-
+    
 };
 
 #endif // WAVEMANAGER_H

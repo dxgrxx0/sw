@@ -1,12 +1,11 @@
 #include "Character.h"
-#include"Monster.h"
 #include <iostream>
 #include <cmath>  // If needed for calculations
 
 Character::Character(const std::string& textureFile, float x, float y, float scale, float speed)
     : movementSpeed(speed), animationSpeed(0.1f), timeSinceLastFrame(0.0f),
 
-    currentFrameIndex(0), isSwinging(false), frameWidth(96), frameHeight(97), totalFrames(5),attackRange(200),attackDamage(50),attackApplied(true),facingDirection(90.0f),attackCoolDown(1.0f),health(100),maxHealth(100),defense(0){
+    currentFrameIndex(0), isSwinging(false), frameWidth(96), frameHeight(97), totalFrames(5), attackRange(200), attackDamage(50), attackApplied(true), facingDirection(90.0f), attackCoolDown(1.0f), health(100), maxHealth(100), defense(0) {
 
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Failed to load texture" << std::endl;
@@ -67,6 +66,7 @@ void Character::updateAnimation(float deltaTime) {
         sprite.setTextureRect(currentFrame);
 
         if (isSwinging) {
+            if (currentFrameIndex == 0)animationSpeed = 0.1f * attackCoolDown;
             if (currentFrameIndex == totalFrames / 2) attackApplied = false;
             if (currentFrameIndex >= totalFrames - 1) {
                 currentFrameIndex = 0;
@@ -98,6 +98,7 @@ void Character::draw(sf::RenderTarget& target) {
     if (isSwinging) {
         target.draw(slashSprite); // 슬래시 이미지 그리기
     }
+
 }
 
 sf::Vector2f Character::getPosition() {
@@ -204,5 +205,5 @@ void Character::updateSkills(float deltaTime) {
     skillManager.updateSkills(deltaTime);
 }*/
 void Character::setScale(float scale) {
-    sprite.setScale(scale,scale);
+    sprite.setScale(scale, scale);
 }

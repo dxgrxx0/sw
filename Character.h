@@ -1,4 +1,5 @@
 #pragma once
+
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "Monster.h"
@@ -28,7 +29,7 @@ public:
     void increaseAttackPower(float power);
     void increaseMaxHealth(float hp);
     void reduceCooldown(float cooldown);
-	void increaseSpeed(float speed);
+    void increaseSpeed(float speed);
     void increaseAttackRange(float range);
     /*void addSkill(std::unique_ptr<BaseSkill> skill);
     void activateSkill(sf::Keyboard::Key key);
@@ -60,3 +61,4 @@ private:
     float health;//현재체력
     //SkillManager skillManager;
 };
+

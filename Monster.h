@@ -48,10 +48,16 @@ public:
     void shootProjectile(const sf::Vector2f& targetPos);
     void drawProjectiles(sf::RenderTarget& target) const;
 
-    bool isDead() const {
-        return healthPoint <= 0.0f;
-    }
 
+    MonsterType getBossMonsterType() const {
+        if (texturePath == "mainboss.PNG") {
+            return MonsterType::Main_Boss;
+        }
+        else   
+            return MonsterType::Mid_Boss;
+        
+       
+    }
 private:
     sf::RectangleShape shape; // ������ ���
     float movementSpeed; // ������ �̵� �ӵ�
@@ -110,15 +116,6 @@ private:
     std::vector<Projectile> projectiles;
     float projectileSpeed = 400.0f;
     sf::Clock rangedAttackTimer;
-
-
-    sf::CircleShape aoeIndicator;
-    float warningDuration = 3.0f;     // 경고 효과 지속 시간
-    float damageEffectDuration = 0.3f; // 데미지 효과 지속 시간
-    float aoeTimer = 0.0f;            // 이펙트 타이머
-    bool isWarningActive = false;      // 경고 효과 활성화 상태
-    bool isDamageEffectActive = false; // 데미지 효과 활성화 상태
-    bool hasDamageBeenDealt = false;   // 데미지가 적용되었는지 확인
 };
 
 #endif // MONSTER_H

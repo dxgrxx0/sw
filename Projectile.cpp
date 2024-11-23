@@ -48,3 +48,10 @@ bool Projectile::checkCollision(Monster& monster) {
     }
     return false;
 }
+bool Projectile::isOutofBound() {
+	if (position.x < -1000 || position.x > 3600 || position.y < -1000 || position.y > 2000) {
+		toBeDestroyed = true;
+		return true;
+	}
+	return false;
+}

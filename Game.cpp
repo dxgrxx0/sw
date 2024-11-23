@@ -4,15 +4,15 @@
 #include "Teleport.h"
 #include "ArrowTower.h"
 #include "WizardTower.h"
-#include"TrainingTower.h"
+#include "TrainingTower.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-//
+
 #include "BladeWhirl.h"
 Game::Game() :
     window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),
-    warrior("knight.png", 700, 700, 1.0f, 300.0f),
+    warrior("knight.png", 600, 500, 1.0f, 100.0f),
     uiManager(font, &warrior, window),
     minimap(600, 600, 0.4f),
     mainView(sf::FloatRect(0, 0, 1600, 1000)),
@@ -25,19 +25,51 @@ Game::Game() :
     experienceToNextLevel(100),
     waveManager(&warrior, &mainTower, &monsters, 1600, 1000),
     upgradeManager(&warrior, &mainTower),
-    upgradeUI(font, sf::Vector2f(window.getSize()))
+    upgradeUI(font, sf::Vector2f(window.getSize())),
+    screenUI(sf::Vector2f(window.getSize())),  // Add ScreenUI initialization
+    isGameOver(false),
+    mainBossDefeated(false),
+    isVictory(false)
 {
     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정
     font.loadFromFile("arial.ttf");
+    backgroundTexture.loadFromFile("background.png");
+    backgroundSprite.setTexture(backgroundTexture);
+   
+    screenUI.loadResources("StartUi.png", "arial.ttf");
+    gameStarted = false;
+
 }
 
 void Game::run() {
-    printf("hello");
+
     while (window.isOpen()) {
         handleEvents();
+
+        // Check if game has started
+        if (!gameStarted) {
+            // Update and render only the start screen
+            sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+            screenUI.update(mousePos);
+
+            window.clear();
+            screenUI.draw(window);
+            window.display();
+
+            // Check for start button click
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                if (screenUI.handleClick(mousePos)) {
+                    gameStarted = true;
+                }
+            }
+            continue;  // Skip main game update and render
+        }
+
+        // Normal game update and render
         update();
         render();
     }
+
 }
 
 void Game::handleEvents() {
@@ -49,8 +81,21 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
+    if (!gameStarted || isGameOver || isVictory) {
+        return;
+    }
+    // Game Over 조건
+    if (mainTower.getHealth() <= 0 || warrior.getHealth()<=0) {
+        isGameOver = true;
+        screenUI.setGameOver(true);
+    }
+    else if (mainBossDefeated) {
+        isVictory = true;
+        screenUI.setVictory(true);  // ScreenUI에 victory 상태 설정
+        return;
+    }
 
-    if (upgradeUI.getIsVisible()) {
+    else if (upgradeUI.getIsVisible()) {
         sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             int choice = upgradeUI.handleClick(mousePos);
@@ -62,7 +107,7 @@ void Game::update() {
         }
         return; // 업그레이드 UI가 활성화된 동안 다른 게임 업데이트 중단
     }
-
+ 
     deltaTime = clock.restart().asSeconds();
     /*if (spawnClock.getElapsedTime().asSeconds() > spawnInterval) {
         spawnMonster();
@@ -86,15 +131,31 @@ void Game::update() {
 
         warrior.setAttackApplied(true);  // 공격 적용 완료 플래그 설정
     }
-    // 체력이 0 이하인 몬스터들을 한 번에 제거
     monsters.erase(std::remove_if(monsters.begin(), monsters.end(),
+        [this](const std::unique_ptr<Monster>& monster) {
+
+            if (monster->getHealthPoint() <= 0) {
+                if (monster->getBossMonsterType() == MonsterType::Main_Boss) {
+                    mainBossDefeated = true;  // 메인 보스 처치 표시
+                    printf("Main Boss has been defeated!\n");
+                }
+                addExp(100);
+                return true;
+            }
+            return false;
+        }),
+        monsters.end());
+
+    //체력이 0 이하인 몬스터들을 한 번에 제거
+   /* monsters.erase(std::remove_if(monsters.begin(), monsters.end(),
         [this](const std::unique_ptr<Monster>& monster) {
             if (monster->getHealthPoint() <= 0) {
                 addExp(100);
             }
             return monster->getHealthPoint() <= 0;
         }),
-        monsters.end());
+        monsters.end());*/
+
     if (experience >= experienceToNextLevel) {
         onLevelUp();
     }
@@ -121,14 +182,30 @@ void Game::update() {
 }
 
 void Game::render() {
+    
+
     window.clear();
 
-
-    if (upgradeUI.getIsVisible()) {
+    if (isGameOver) {
+        window.setView(window.getDefaultView());
+        screenUI.draw(window);
+    }
+    else if (isVictory) {
+        window.setView(window.getDefaultView());
+        screenUI.draw(window);
+    }
+    else if (upgradeUI.getIsVisible()) {
         window.setView(window.getDefaultView());  // 기본 뷰로 변경
         upgradeUI.draw(window); // UI가 활성화된 경우에만 그리기
     }
     else {
+        for (int i = -5; i < 10; i++) {
+            for (int j = -5; j < 10; j++) {
+                sf::Vector2f backgroundPosition(i * 300, j * 200);
+                backgroundSprite.setPosition(backgroundPosition);
+                window.draw(backgroundSprite);
+            }
+        }
         window.setView(mainView);
         window.draw(towerSprite);
 
@@ -177,8 +254,9 @@ void Game::onLevelUp() {
         skillManager.unlockSkill("BladeWhirl");
 
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
-        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(300, 300)));
-        subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 800)));
+        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(350,326)));
+        subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(950, 326)));
+        subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
     }
     if (level == 3) {
         skillManager.unlockSkill("BulkUp");
