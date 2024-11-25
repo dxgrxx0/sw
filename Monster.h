@@ -55,9 +55,9 @@ public:
         }
         else   
             return MonsterType::Mid_Boss;
-        
        
     }
+
 private:
     sf::RectangleShape shape; // ������ ���
     float movementSpeed; // ������ �̵� �ӵ�

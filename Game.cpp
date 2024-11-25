@@ -36,7 +36,7 @@ Game::Game() :
     backgroundTexture.loadFromFile("background.png");
     backgroundSprite.setTexture(backgroundTexture);
    
-    screenUI.loadResources("StartUi.png", "arial.ttf");
+    screenUI.loadResources("StartUi.png", "PixelOperator8.ttf");
     gameStarted = false;
 
 }
