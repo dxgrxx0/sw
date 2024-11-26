@@ -34,7 +34,7 @@ public:
         : BaseSkill("Blade Whirl", sf::Keyboard::Q, 2.0f),
         character(character),
         monsters(monsters),
-        range(150.0f),
+        range(300.0f),
         damage(25.0f),
         activeDuration(0.5f),
         elapsedTime(0.0f),
