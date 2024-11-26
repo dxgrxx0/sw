@@ -10,6 +10,8 @@
 #include <iostream>
 
 #include "BladeWhirl.h"
+#include "WaveManager.h"
+
 Game::Game() :
     window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),
     warrior("knight.png", 600, 500, 1.0f, 100.0f),
@@ -29,13 +31,15 @@ Game::Game() :
     screenUI(sf::Vector2f(window.getSize())),  // Add ScreenUI initialization
     isGameOver(false),
     mainBossDefeated(false),
-    isVictory(false)
+    isVictory(false),
+    mainBossSpawned(false)
 {
     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정
     font.loadFromFile("arial.ttf");
     backgroundTexture.loadFromFile("background.png");
     backgroundSprite.setTexture(backgroundTexture);
-   
+    bossbackgroundTexture.loadFromFile("Bossbackground.png");
+    bossbackgroundSprite.setTexture(bossbackgroundTexture);
     screenUI.loadResources("StartUi.png", "PixelOperator8.ttf");
     gameStarted = false;
 
@@ -49,6 +53,7 @@ void Game::run() {
         // Check if game has started
         if (!gameStarted) {
             // Update and render only the start screen
+
             sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
             screenUI.update(mousePos);
 
@@ -64,7 +69,6 @@ void Game::run() {
             }
             continue;  // Skip main game update and render
         }
-
         // Normal game update and render
         update();
         render();
@@ -84,6 +88,7 @@ void Game::update() {
     if (!gameStarted || isGameOver || isVictory) {
         return;
     }
+
     // Game Over 조건
     if (mainTower.getHealth() <= 0 || warrior.getHealth()<=0) {
         isGameOver = true;
@@ -94,7 +99,6 @@ void Game::update() {
         screenUI.setVictory(true);  // ScreenUI에 victory 상태 설정
         return;
     }
-
     else if (upgradeUI.getIsVisible()) {
         sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -199,6 +203,9 @@ void Game::render() {
         upgradeUI.draw(window); // UI가 활성화된 경우에만 그리기
     }
     else {
+        if (waveManager.isBossSpawned()) {
+            backgroundSprite.setTexture(bossbackgroundTexture);
+        }
         for (int i = -5; i < 10; i++) {
             for (int j = -5; j < 10; j++) {
                 sf::Vector2f backgroundPosition(i * 300, j * 200);

@@ -30,6 +30,10 @@ private:
     sf::RenderWindow window;
 	sf::Texture backgroundTexture;
 	sf::Sprite backgroundSprite;
+
+    sf::Texture bossbackgroundTexture;
+    sf::Sprite bossbackgroundSprite;
+
     Character warrior;
     sf::Texture mainTowerTexture;
     sf::Sprite towerSprite;
@@ -58,6 +62,8 @@ private:
     bool isGameOver;
     bool isVictory;  
     bool mainBossDefeated;
+    bool mainBossSpawned;
+
 };
 
 #endif // GAME_H

@@ -7,78 +7,31 @@
 #include "BaseSkill.h"
 #include "Character.h"
 #include "Monster.h"
-class BladeWhirlVFX {
-public:
-    BladeWhirlVFX(Character* character, float radius, float rotationSpeed)
-        : character(character), radius(radius), rotationSpeed(rotationSpeed) {
-        // 날개 생성
-        wing.setRadius(radius);
-        wing.setFillColor(sf::Color(178, 58, 238, 0)); // 내부 투명
-        wing.setOutlineColor(sf::Color(178, 58, 238)); // 테두리 자주색
-        wing.setOutlineThickness(4.f); // 테두리 두께        wing.setOrigin(radius, radius);
-        wing.setOrigin(radius, radius);
-       // wing.setPosition(position);
-    }
-   /* void setPosition(sf::Vector2f newPosition) {
-        position = newPosition;
-        wing.setPosition(position);
-    }*/
-    void update(float deltaTime) {
-        // 날개 위치를 캐릭터 위치로 설정
-        sf::Vector2f characterPos = character->getPosition();
-        wing.setPosition(characterPos);
-
-        // 날개 회전
-        angle += rotationSpeed * deltaTime;
-        wing.setRotation(angle);
-    }
-
-    void draw(sf::RenderTarget& target) {
-        target.draw(wing);
-    }
-private:
-    sf::CircleShape wing;
-    Character* character;
-    float radius;
-    float rotationSpeed;
-    float angle = 0.f;
-};
-
-
-
-
-
 
 class BladeWhirl : public BaseSkill {
 private:
     Character* character;
     std::vector<std::unique_ptr<Monster>>& monsters;
-    float range;  //스킬이 적중할 수 있는 거리
+    float range;
     float damage;
-    float activeDuration; //스킬의 지속 시간
+    float activeDuration;
     float elapsedTime;
 
-    // 검 휘두르기 관련 변수들
-    float currentAngle;  //회전 각도
+    float currentAngle;
     float startAngle;
     float endAngle;
-    float swingSpeed;  //회전 속도
-    float handleLength;// 손잡이 길이
-    float bladeLength; //검의 칼날 길이
-    float handleFixed; // 검 손잡이와 캐릭터 위치 사이의 고정 거리
+    float swingSpeed;
+    float handleLength;
+    float bladeLength;
+    float handleFixed;
     float lastDamageAngle;
 
-    // 검의 시각적 표현
-    sf::RectangleShape handleSprite;      // 손잡이
-    sf::RectangleShape guardSprite;       // 가드(십자가)
-    sf::ConvexShape bladeSprite;          // 칼날
-    sf::RectangleShape bladeCenterLine;   // 칼날 중앙선
+    sf::Texture swordTexture;
+    sf::Sprite swordSprite;
 
-    //날개 효과
-   // std::unique_ptr<BladeWhirlVFX> vfx;
 public:
     BladeWhirl(Character* character, std::vector<std::unique_ptr<Monster>>& monsters)
-        : BaseSkill("Blade Whirl", sf::Keyboard::Q, 2.0f), // 쿨 2초
+        : BaseSkill("Blade Whirl", sf::Keyboard::Q, 2.0f),
         character(character),
         monsters(monsters),
         range(150.0f),
@@ -88,45 +41,15 @@ public:
         currentAngle(-45.0f),
         startAngle(-45.0f),
         endAngle(225.0f),
-        swingSpeed(720.0f),
-        handleLength(40.0f),
-        bladeLength(100.0f),
+        swingSpeed(540.0f),
         handleFixed(20.0f),
-        lastDamageAngle(-45.0f)
-    {
-        // 손잡이 설정
-        handleSprite.setSize(sf::Vector2f(handleLength, 8.0f));
-        handleSprite.setFillColor(sf::Color(139, 69, 19));  // 갈색
-        handleSprite.setOrigin(0, 4.0f);
-
-        // 가드(십자가) 설정
-        guardSprite.setSize(sf::Vector2f(30.0f, 6.0f));
-        guardSprite.setFillColor(sf::Color(192, 192, 192)); // 은색
-        guardSprite.setOrigin(15.0f, 3.0f);
-
-        // 칼날 설정
-        bladeSprite.setPointCount(5);
-        bladeSprite.setPoint(0, sf::Vector2f(0, -8));
-        bladeSprite.setPoint(1, sf::Vector2f(bladeLength * 0.9f, -6));
-        bladeSprite.setPoint(2, sf::Vector2f(bladeLength, 0));
-        bladeSprite.setPoint(3, sf::Vector2f(bladeLength * 0.9f, 6));
-        bladeSprite.setPoint(4, sf::Vector2f(0, 8));
-        bladeSprite.setFillColor(sf::Color(211, 211, 211));
-        bladeSprite.setOrigin(0, 0);
-
-        // 칼날 중앙선 설정
-        bladeCenterLine.setSize(sf::Vector2f(bladeLength * 0.85f, 2.0f));
-        bladeCenterLine.setFillColor(sf::Color(160, 160, 160));
-        bladeCenterLine.setOrigin(0, 1.0f);
-
-        // 날개 효과 생성
-            //vfx = std::make_unique<BladeWhirlVFX>(
-            //    character,
-            //    200.f, // 날개 반경
-            //    180.f  // 초당 180도 회전
-           // );
+        lastDamageAngle(-45.0f) {
+        if (!swordTexture.loadFromFile("sss.png")) {
+            // 이미지 로드 실패 처리
+        }
+        swordSprite.setTexture(swordTexture);
+        swordSprite.setScale(0.3f, 0.3f);
     }
-
 
     void applyEffect() override {
         if (elapsedTime >= cooldown) {
@@ -142,7 +65,6 @@ public:
                 << cooldown - elapsedTime << "s" << std::endl;
         }
     }
-
 
     void update(float deltaTime) override {
         elapsedTime += deltaTime;
@@ -161,18 +83,13 @@ public:
                     lastDamageAngle = currentAngle;
                 }
             }
-           // vfx->update(deltaTime);
         }
     }
 
     void draw(sf::RenderTarget& target) {
         if (isActive) {
-            target.draw(handleSprite);
-            target.draw(guardSprite);
-            target.draw(bladeSprite);
-            target.draw(bladeCenterLine);
+            target.draw(swordSprite);
         }
-       // vfx->draw(target);
     }
 
 private:
@@ -183,24 +100,12 @@ private:
         float handleX = characterPos.x + std::cos(angleRad) * handleFixed;
         float handleY = characterPos.y + std::sin(angleRad) * handleFixed;
 
-        handleSprite.setPosition(handleX, handleY);
-        handleSprite.setRotation(currentAngle);
-
-        float guardX = handleX + std::cos(angleRad) * handleLength;
-        float guardY = handleY + std::sin(angleRad) * handleLength;
-
-        guardSprite.setPosition(guardX, guardY);
-        guardSprite.setRotation(currentAngle);
-
-        bladeSprite.setPosition(guardX, guardY);
-        bladeSprite.setRotation(currentAngle);
-
-        bladeCenterLine.setPosition(guardX, guardY);
-        bladeCenterLine.setRotation(currentAngle);
+        swordSprite.setPosition(handleX, handleY);
+        swordSprite.setRotation(currentAngle);
     }
 
     void applyDamageInArc() {
-        sf::Vector2f bladePos = bladeSprite.getPosition();
+        sf::Vector2f bladePos = swordSprite.getPosition();
         float damageArcAngle = 60.0f;
 
         for (auto& monster : monsters) {
