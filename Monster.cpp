@@ -10,6 +10,8 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
     ,attackRange(50),skillDuration(5.0f), isSkillActive(false), isCloneActive(false)
     , cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f)
     {
+    font.loadFromFile("arial.ttf"); // 폰트 로드 (폰트 파일이 필요합니다)
+    damageText.setFont(font);
     shape.setSize(sf::Vector2f(30.0f, 30.0f));
     shape.setFillColor(sf::Color::Blue);
     shape.setPosition(x, y);
@@ -197,7 +199,7 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
 }
 
 // draw 함수 구현
-void Monster::draw(sf::RenderTarget& target)const {
+void Monster::draw(sf::RenderTarget& target) {
     if (isCloneActive) {
         for (const auto& cloneSprite : cloneSprites) {
             target.draw(cloneSprite);
@@ -208,12 +210,9 @@ void Monster::draw(sf::RenderTarget& target)const {
     drawProjectiles(target); //투사체 그리기
 
     if (isTakingDamage) {
-        sf::Font font;
-        font.loadFromFile("arial.ttf"); // 폰트 로드 (폰트 파일이 필요합니다)
-        sf::Text damageText;
-        damageText.setFont(font);
+        
         damageText.setString(std::to_string(static_cast<int>(damageTaken))); // 피해량을 문자열로 변환
-        damageText.setCharacterSize(15);
+        damageText.setCharacterSize(30);
         damageText.setFillColor(sf::Color::White);
 
 
@@ -320,7 +319,7 @@ void Monster::Fir_useSkill(Character& character, MainTower& mainTower) {
         createClones();
 
         // 시각적 효과
-        sprite.setColor(sf::Color::Magenta);
+        sprite.setColor(sf::Color::Black);
         printf("Mid Boss uses Berserk!\n");
     }
     else if (texturePath == "mainboss.PNG") {

@@ -7,6 +7,14 @@ SkillManager::SkillManager() {
     skillStates["Teleport"] = false;
 }
 
+BaseSkill* SkillManager::getSkill(const std::string& skillName) {
+    auto it = skills.find(skillName);
+    if (it != skills.end()) {
+        return it->second.get();  // std::unique_ptr에서 포인터를 반환
+    }
+    return nullptr;
+}
+
 void SkillManager::addSkill(const std::string& name, std::unique_ptr<BaseSkill> skill) {
     skills[name] = std::move(skill);
     skillStates[name] = true; // 스킬 추가 시 잠금 해제

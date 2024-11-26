@@ -22,7 +22,7 @@ public:
     void update(const sf::Vector2f& CharacterPos,const sf::Vector2f& MainTowerPos, float deltaTime,Character& character,MainTower& mainTower);
 
     // ���͸� �����쿡 �׸��� �Լ�
-    void draw(sf::RenderTarget& target)const;
+    void draw(sf::RenderTarget& target);
 
     // ������ ���� ��ġ ��ȯ �Լ�
     sf::Vector2f getPosition();
@@ -47,6 +47,15 @@ public:
     void updateProjectiles(float deltaTime, Character& character, MainTower& mainTower);
     void shootProjectile(const sf::Vector2f& targetPos);
     void drawProjectiles(sf::RenderTarget& target) const;
+    MonsterType getBossMonsterType() const {
+        if (texturePath == "mainboss.PNG") {
+            return MonsterType::Main_Boss;
+        }
+        else
+            return MonsterType::Mid_Boss;
+
+
+    }
 private:
     sf::RectangleShape shape; // ������ ���
     float movementSpeed; // ������ �̵� �ӵ�
@@ -64,7 +73,8 @@ private:
     std::string texturePath;
     sf::Texture texture;
     sf::Sprite sprite;
-
+    sf::Font font;
+    sf::Text damageText;
     //mid,main boss skill variable
     sf::Clock skillCooldown;
     sf::Clock rangedAttackCooldown;

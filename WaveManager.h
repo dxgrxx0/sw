@@ -33,6 +33,9 @@ public:
     void update(float deltaTime);           // 매 프레임마다 호출, 스폰 및 업데이트
     void drawMonsters(sf::RenderTarget& target); // 몬스터 그리기
 
+    bool isBossSpawned() const {
+        return mainBossSpawned;
+    }
 private:
     void spawnMonsterAtSpecificDistance();   // 특정 거리에서 몬스터 스폰
     float calculateDistance(const sf::Vector2f& pos1, const sf::Vector2f& pos2);
