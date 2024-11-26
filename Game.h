@@ -15,6 +15,7 @@
 #include "UpgradeUI.h"
 #include "SkillManager.h"
 #include "SubTowerManager.h"
+#include "ScreenUi.h"
 class Game {
 public:
     Game();
@@ -28,6 +29,8 @@ private:
 
     sf::RenderWindow window;
 	sf::Texture backgroundTexture;
+    sf::Texture bossbackgroundTexture;
+
 	sf::Sprite backgroundSprite;
     Character warrior;
     sf::Texture mainTowerTexture;
@@ -51,6 +54,13 @@ private:
     UpgradeUI upgradeUI;
     SkillManager skillManager;
 	SubTowerManager subTowerManager;
+
+    //screen 변수들
+    ScreenUi screenUI;
+    bool gameStarted;
+    bool isGameOver;
+    bool isVictory;
+    bool mainBossDefeated;
 };
 
 #endif // GAME_H

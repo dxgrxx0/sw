@@ -47,6 +47,15 @@ public:
     void updateProjectiles(float deltaTime, Character& character, MainTower& mainTower);
     void shootProjectile(const sf::Vector2f& targetPos);
     void drawProjectiles(sf::RenderTarget& target) const;
+    MonsterType getBossMonsterType() const {
+        if (texturePath == "mainboss.PNG") {
+            return MonsterType::Main_Boss;
+        }
+        else
+            return MonsterType::Mid_Boss;
+
+
+    }
 private:
     sf::RectangleShape shape; // ������ ���
     float movementSpeed; // ������ �̵� �ӵ�

@@ -319,7 +319,7 @@ void Monster::Fir_useSkill(Character& character, MainTower& mainTower) {
         createClones();
 
         // 시각적 효과
-        sprite.setColor(sf::Color::Magenta);
+        sprite.setColor(sf::Color::Black);
         printf("Mid Boss uses Berserk!\n");
     }
     else if (texturePath == "mainboss.PNG") {

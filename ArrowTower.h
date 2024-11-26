@@ -48,7 +48,7 @@ public:
             }
 
             // 충돌하거나 화면 밖으로 나간 투사체 제거
-            if (collided || it->isDestroyed()||it->isOutofBound()) {
+            if (collided || it->isToBeDestroyed()||it->isOutofBound()) {
                 it = projectiles.erase(it);
             }
             else {
