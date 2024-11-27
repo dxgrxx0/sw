@@ -6,6 +6,7 @@
 #include "WizardTower.h"
 #include "TrainingTower.h"
 #include "BombTower.h"
+#include "Dash.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -238,6 +239,10 @@ void Game::onLevelUp() {
         skillManager.addSkill("BulkUp", std::make_unique<BulkUp>(&warrior));
     }
     if (level == 4) {
+        skillManager.unlockSkill("Dash");
+		skillManager.addSkill("Dash", std::make_unique<Dash>(&warrior));
+    }
+    if (level == 5) {
         skillManager.unlockSkill("Teleport");
         skillManager.addSkill("Teleport", std::make_unique<Teleport>(&warrior,&mainTower));
     }
