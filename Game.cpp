@@ -30,6 +30,7 @@ Game::Game() :
     mainBossDefeated(false),
     isVictory(false)
 {
+	loadResources();
     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정
     font.loadFromFile("arial.ttf");
 	backgroundTexture.loadFromFile("background.png");
@@ -228,7 +229,7 @@ void Game::onLevelUp() {
         skillManager.unlockSkill("BladeWhirl");
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
         subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(350,326)));
-        subTowerManager.addTower(std::make_unique<BombTower>(sf::Vector2f(950, 326)));
+        subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(950, 326)));
         subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
     }
     if (level == 3) {
@@ -242,4 +243,17 @@ void Game::onLevelUp() {
     upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
     std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
     upgradeUI.showOptions(options); // UI에 업그레이드 옵션 표시
+}
+void Game::loadResources() {
+    ResourceManager& rm = ResourceManager::getInstance();
+    rm.loadTexture("ArrowTower", "ArrowTower.png");
+    rm.loadTexture("WizardTower", "WizardTower.png");
+    rm.loadTexture("TrainingTower", "TrainingTower.png");
+    rm.loadTexture("BombTower", "BombTower.png");
+    rm.loadTexture("SpeedMonster", "speedMonster.png");
+    rm.loadTexture("AttackMonster", "attackMonster.png");
+    rm.loadTexture("BasicMonster", "basicMonster.png");
+    rm.loadTexture("DefenseMonster", "defenseMonster.png");
+    rm.loadTexture("MainBoss", "mainboss.png");
+    rm.loadTexture("MidBoss", "midboss.png");
 }

@@ -16,6 +16,7 @@
 #include "SkillManager.h"
 #include "SubTowerManager.h"
 #include "ScreenUi.h"
+#include "ResourceManager.h"
 class Game {
 public:
     Game();
@@ -26,6 +27,7 @@ private:
     void update();
     void render();
     void onLevelUp();
+	void loadResources();
 
     sf::RenderWindow window;
 	sf::Texture backgroundTexture;

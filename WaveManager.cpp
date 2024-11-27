@@ -61,6 +61,18 @@ void WaveManager::spawnMonsterAtSpecificDistance() {
         float angle = static_cast<float>(rand()) / RAND_MAX * 360;
         float radianAngle = angle * 3.141592f / 180;
 
+		int random = std::rand() % 2;
+        sf::Vector2f randomPos;
+		random % 2 == 0 ? randomPos = heroinePos : randomPos = towerPos;
+		spawnPos = sf::Vector2f(
+			randomPos.x + 1000 * std::cos(radianAngle),
+			randomPos.y + 1000 * std::sin(radianAngle)
+		);
+		if (std::abs(calculateDistance(spawnPos, heroinePos)) > 1000 &&
+			std::abs(calculateDistance(spawnPos, towerPos)) > 1000) {
+			validPosition = true;
+		}
+        /*
         sf::Vector2f midpoint = (heroinePos + towerPos) / 2.0f;
         spawnPos = sf::Vector2f(
             midpoint.x + 1000 * std::cos(radianAngle),
@@ -70,8 +82,8 @@ void WaveManager::spawnMonsterAtSpecificDistance() {
         if (std::abs(calculateDistance(spawnPos, heroinePos) - 1000) < 1.0f &&
             std::abs(calculateDistance(spawnPos, towerPos) - 1000) < 1.0f) {
             validPosition = true;
-        }
-        validPosition = true;
+        }*/
+        else validPosition = false; printf("XXX\n");
     }
     MonsterType type = static_cast<MonsterType>(std::rand() % 4);
     auto monster = std::make_unique<Monster>(spawnPos.x, spawnPos.y, 50.0f, type);

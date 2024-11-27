@@ -3,6 +3,7 @@
 #define MONSTER_H
 
 #include <SFML/Graphics.hpp>
+#include "ResourceManager.h"
 class Character;
 class MainTower;
 enum class MonsterType {
@@ -48,7 +49,7 @@ public:
     void shootProjectile(const sf::Vector2f& targetPos);
     void drawProjectiles(sf::RenderTarget& target) const;
     MonsterType getBossMonsterType() const {
-        if (texturePath == "mainboss.PNG") {
+        if (textureName == "MainBoss") {
             return MonsterType::Main_Boss;
         }
         else
@@ -70,7 +71,7 @@ private:
     sf::Clock attackTimer; // 공격 타이머 추가
     float attackCooldown = 1.0f; // 1초 주기
 
-    std::string texturePath;
+    std::string textureName;
     sf::Texture texture;
     sf::Sprite sprite;
     sf::Font font;
@@ -78,6 +79,7 @@ private:
     //mid,main boss skill variable
     sf::Clock skillCooldown;
     sf::Clock rangedAttackCooldown;
+	MonsterType monsterType;
     float skillDuration;
     bool isSkillActive;
     float originalSpeed;

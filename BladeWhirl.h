@@ -14,15 +14,12 @@ private:
     std::vector<std::unique_ptr<Monster>>& monsters;
     float range;
     float damage;
-    float activeDuration;
     float elapsedTime;
 
     float currentAngle;
     float startAngle;
     float endAngle;
     float swingSpeed;
-    float handleLength;
-    float bladeLength;
     float handleFixed;
     float lastDamageAngle;
 
@@ -36,7 +33,6 @@ public:
         monsters(monsters),
         range(330.0f),
         damage(44.0f),
-        activeDuration(0.5f),
         elapsedTime(0.0f),
         currentAngle(-45.0f),
         startAngle(0.0f),
