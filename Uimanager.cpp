@@ -40,8 +40,9 @@ UIManager::UIManager(sf::Font& font, Character* character, sf::RenderWindow& win
 
 
     skillText.setFont(font);
-    skillPositions["BladeWhirl"] = sf::Vector2i(window.getSize().x-130, 700);
-    skillPositions["BulkUp"] = sf::Vector2i(window.getSize().x - 130, 800);
+    skillPositions["BladeWhirl"] = sf::Vector2i(window.getSize().x-130, 600);
+    skillPositions["BulkUp"] = sf::Vector2i(window.getSize().x - 130, 700);
+	skillPositions["Dash"] = sf::Vector2i(window.getSize().x - 130, 800);
     skillPositions["Teleport"] = sf::Vector2i(window.getSize().x - 130, 900);
 }
 

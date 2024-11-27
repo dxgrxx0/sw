@@ -35,6 +35,9 @@ public:
     void updateSkills(float deltaTime);*/
     void setPosition(sf::Vector2f pos);
     void setScale(float scale);
+    int getDirection() {
+		return facingDirection/90;
+    }
 private:
     sf::Sprite sprite;
     sf::Texture texture;
