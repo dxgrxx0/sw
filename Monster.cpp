@@ -8,7 +8,7 @@
 Monster::Monster(float x, float y, float speed,MonsterType type)
     : movementSpeed(speed),damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f),attackPower(0),defense(0)
     ,attackRange(50),skillDuration(5.0f), isSkillActive(false), isCloneActive(false)
-    , cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f)
+    , cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f),monsterType(type)
     {
     font.loadFromFile("arial.ttf"); // 폰트 로드 (폰트 파일이 필요합니다)
     damageText.setFont(font);
@@ -23,7 +23,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
     originalattackRange = attackRange;
     switch (type) {
     case MonsterType::Speed:  //이속 3배,체력 1/2배
-        texturePath = ("speedMonster.PNG");
+        textureName = ("SpeedMonster");
         movementSpeed = 150.0f;
         healthPoint = 50.0f;
         attackPower = 10.0f;
@@ -31,7 +31,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         shape.setFillColor(sf::Color::Cyan);
         break;
     case MonsterType::Attack: //공격력 3배
-        texturePath = ("attackMonster.PNG");
+        textureName = ("AttackMonster");
         movementSpeed = 50.0f;
         healthPoint = 100.0f;
         defense = 10.0f;
@@ -39,7 +39,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         shape.setFillColor(sf::Color::Red);
         break;
     case MonsterType::Defense: //방어력3배,체력2배
-        texturePath = ("defenseMonster.PNG");
+        textureName = ("DefenseMonster");
         movementSpeed = 50.0f;
         healthPoint = 200.0f;
         attackPower = 10.0f;
@@ -47,7 +47,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         shape.setFillColor(sf::Color::Magenta);
         break;
     case MonsterType::Mid_Boss: // 미드보스
-        texturePath = "midboss.PNG";
+        textureName = "MidBoss";
         movementSpeed = 100.0f;
         healthPoint = 1000.0f;
         attackPower = 50.0f;
@@ -57,7 +57,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         break;
 
     case MonsterType::Main_Boss: // 메인보스
-        texturePath = "mainboss.PNG";
+        textureName = "MainBoss";
         movementSpeed = 80.0f;
         healthPoint = 5000.0f;
         attackPower = 100.0f;
@@ -67,7 +67,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         break;
     case MonsterType::Basic:
     default:
-        texturePath = ("basicMonster.PNG");
+        textureName = ("BasicMonster");
         movementSpeed = 50.0f;
         healthPoint = 100.0f;
         attackPower = 10.0f;
@@ -76,18 +76,18 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         break;
 
     }
-    if (!texture.loadFromFile(texturePath)) {
+    /*if (!texture.loadFromFile(texturePath)) {
         std::cerr << "Failed to load texture: " << texturePath << std::endl;
         // 텍스처 로딩 실패시 기본 색상 설정
         shape.setFillColor(sf::Color::White);
-    }
-    else {
-        sprite.setTexture(texture);
-        sprite.setScale(0.1f, 0.1f);
-        sprite.setPosition(x, y);
-        //sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
-        sprite.setOrigin(500, 500);
-    }
+    }*/
+    texture = ResourceManager::getInstance().getTexture(textureName);
+    sprite.setTexture(texture);
+    sprite.setScale(0.1f, 0.1f);
+    sprite.setPosition(x, y);
+    //sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
+    sprite.setOrigin(500, 500);
+    
 }
 void Monster::createClones() {
     if (!isCloneActive) {
@@ -171,31 +171,34 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
             damageTaken = 0.0f; // 피해량 초기화
         }
     }
-    // 메인 스킬 (15초 쿨타임)
-    if (skillCooldown.getElapsedTime().asSeconds() >= 15.0f) {
-        Fir_useSkill(character, mainTower);
-    }
+    if (monsterType == MonsterType::Main_Boss || monsterType == MonsterType::Mid_Boss) {
+        // 메인 스킬 (15초 쿨타임)
+        if (skillCooldown.getElapsedTime().asSeconds() >= 15.0f) {
+            Fir_useSkill(character, mainTower);
+        }
 
-    // 원거리 공격 스킬 (5초 쿨타임)
-    if (rangedAttackCooldown.getElapsedTime().asSeconds() >= 5.0f) {
-        Sec_useSkill(character, mainTower);
-        rangedAttackCooldown.restart();
-    }
+        // 원거리 공격 스킬 (5초 쿨타임)
+        if (rangedAttackCooldown.getElapsedTime().asSeconds() >= 5.0f) {
+            Sec_useSkill(character, mainTower);
+            rangedAttackCooldown.restart();
+        }
 
-    // 스킬 지속시간 체크
-    if (isSkillActive && skillCooldown.getElapsedTime().asSeconds() >= skillDuration) {
-        removeSkillEffects();
-    }
+        // 스킬 지속시간 체크
+        if (isSkillActive && skillCooldown.getElapsedTime().asSeconds() >= skillDuration) {
+            removeSkillEffects();
+        }
 
-    //분신 업데이트
-    if (isCloneActive) {
-        updateClones(deltaTime);
-    }
+        //분신 업데이트
+        if (isCloneActive) {
+            updateClones(deltaTime);
+        }
 
-    if (isSkillActive && skillCooldown.getElapsedTime().asSeconds() >= skillDuration) {
-        removeSkillEffects();
-        removeClones();
+        if (isSkillActive && skillCooldown.getElapsedTime().asSeconds() >= skillDuration) {
+            removeSkillEffects();
+            removeClones();
+        }
     }
+    
 }
 
 // draw 함수 구현
@@ -310,7 +313,7 @@ void Monster::drawProjectiles(sf::RenderTarget& target) const {
 }
 
 void Monster::Fir_useSkill(Character& character, MainTower& mainTower) {
-    if (texturePath == "midboss.PNG") {
+    if (textureName == "MidBoss") {
         // 미드보스 스킬: "광폭화" - 이동속도와 공격력 증가
         movementSpeed = originalSpeed * 2.5f;
         attackPower = originalAttackPower * 1.5f;
@@ -322,7 +325,7 @@ void Monster::Fir_useSkill(Character& character, MainTower& mainTower) {
         sprite.setColor(sf::Color::Black);
         printf("Mid Boss uses Berserk!\n");
     }
-    else if (texturePath == "mainboss.PNG") {
+    else if (textureName == "MainBoss") {
         // 메인보스 스킬: "절대방어" - 방어력 대폭 증가,주변 광역 공격
         defense = originalDefense * 3.0f;
         movementSpeed = originalSpeed * 4.5f;
@@ -348,7 +351,7 @@ void Monster::Fir_useSkill(Character& character, MainTower& mainTower) {
 }
 
 void Monster::Sec_useSkill(Character& character, MainTower& mainTower) {
-    if (texturePath == "midboss.PNG") {
+    if (textureName == "MidBoss") {
         // 미드보스의 원거리 공격
         for (int i = 0; i < 8; ++i) {
             float angle = i * 45.0f * 3.14159f / 180.0f;
@@ -358,7 +361,7 @@ void Monster::Sec_useSkill(Character& character, MainTower& mainTower) {
         }
         printf("Mid Boss uses Ranged Attack!\n");
     }
-    else if (texturePath == "mainboss.PNG") {
+    else if (textureName == "MainBoss") {
         // 메인보스의 원거리 공격
         sf::Vector2f targetPos;
         float distanceToHeroine = calculateDistance(sprite.getPosition(), character.getPosition());
