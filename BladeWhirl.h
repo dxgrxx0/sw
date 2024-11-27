@@ -44,7 +44,7 @@ public:
         swingSpeed(540.0f),
         handleFixed(20.0f),
         lastDamageAngle(-45.0f) {
-        if (!swordTexture.loadFromFile("sss.png")) {
+        if (!swordTexture.loadFromFile("bladewhirl_han.png")) {
             // 이미지 로드 실패 처리
         }
         swordSprite.setTexture(swordTexture);

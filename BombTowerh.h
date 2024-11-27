@@ -1,3 +1,4 @@
+#pragma once
 #ifndef BOMB_TOWER_H
 #define BOMB_TOWER_H
 
@@ -11,9 +12,10 @@ private:
     std::vector<Projectile> bombProjectiles;
     sf::Texture projectileTexture; // 기본 텍스처
 
+    float explosionRadius; //범위반경
 public:
     BombTower(sf::Vector2f position)
-        : SubTower(position, 300.0f, 0.5f, 30.0f) {
+        : SubTower(position, 300.0f, 0.5f, 30.0f), explosionRadius(100.0f) {
         texture.loadFromFile("BombTower.png");
         sprite.setTexture(texture);
         sprite.setPosition(position);
@@ -38,24 +40,44 @@ public:
         for (auto it = bombProjectiles.begin(); it != bombProjectiles.end();) {
             it->update(deltaTime);
 
-            // 몬스터와의 충돌 검사
+            // 충돌 검사
             bool collided = false;
             for (auto& monster : monsters) {
                 if (it->checkCollision(*monster)) {
-                    monster->takeDamage(attackDamage); // 몬스터에게 피해 적용
+                    // 충돌한 지점의 위치를 별도로 저장
+                    sf::Vector2f collisionPosition = it->getPosition();
+                    // 범위 피해 적용
+                    applyAreaDamage(collisionPosition, monsters);
                     collided = true;
                     break;
                 }
             }
 
-            if (collided) {
-                it = bombProjectiles.erase(it); // 충돌 시 투사체 제거
+            // 충돌했거나 화면 밖으로 나가면 투사체 제거
+            if (collided || it->isOutofBound()) {
+                it = bombProjectiles.erase(it);
             }
             else {
                 ++it;
             }
         }
     }
+
+
+    void applyAreaDamage(const sf::Vector2f& explosionCenter, std::vector<std::unique_ptr<Monster>>& monsters) {
+        for (auto& monster : monsters) {
+            // 몬스터와 폭발 중심 사이의 거리 계산
+            sf::Vector2f monsterPos = monster->getPosition();
+            float distance = std::sqrt(std::pow(monsterPos.x - explosionCenter.x, 2) +
+                std::pow(monsterPos.y - explosionCenter.y, 2));
+
+            // 폭발 반경 내의 몬스터에게 피해 적용
+            if (distance <= explosionRadius) {
+                monster->takeDamage(attackDamage);
+            }
+        }
+    }
+
 
     void draw(sf::RenderTarget& target) override {
         target.draw(sprite);

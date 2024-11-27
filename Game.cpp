@@ -90,11 +90,11 @@ void Game::update() {
     }
 
     // Game Over 조건
-    if (mainTower.getHealth() <= 0 || warrior.getHealth()<=0) {
+   /* if (mainTower.getHealth() <= 0 || warrior.getHealth()<=0) {
         isGameOver = true;
         screenUI.setGameOver(true);
-    }
-    else if (mainBossDefeated) {
+    }*/
+    if (mainBossDefeated) {
         isVictory = true;
         screenUI.setVictory(true);  // ScreenUI에 victory 상태 설정
         return;
@@ -190,11 +190,11 @@ void Game::render() {
 
     window.clear();
 
-    if (isGameOver) {
+    /*if (isGameOver) {
         window.setView(window.getDefaultView());
         screenUI.draw(window);
-    }
-    else if (isVictory) {
+    }*/
+    if (isVictory) {
         window.setView(window.getDefaultView());
         screenUI.draw(window);
     }
@@ -262,7 +262,7 @@ void Game::onLevelUp() {
 
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
         subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(350,326)));
-        subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(950, 326)));
+        subTowerManager.addTower(std::make_unique<BombTower>(sf::Vector2f(950, 326)));
         subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
     }
     if (level == 3) {

@@ -246,6 +246,7 @@ void Monster::takeDamage(float attackDamage) {
 
     }
 }
+
 float Monster::getHealthPoint()const {
     return healthPoint;
 }
