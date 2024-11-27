@@ -22,6 +22,7 @@ public:
     Game();
     void run();
     void addExp(float exp);
+	void initialize();
 private:
     void handleEvents();
     void update();

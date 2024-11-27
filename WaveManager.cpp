@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 WaveManager::WaveManager(Character* heroine, MainTower* mainTower, std::vector<std::unique_ptr<Monster>>* monsters, float mapWidth, float mapHeight)
-    : heroine(heroine), mainTower(mainTower), monsters(monsters){
+    : heroine(heroine), mainTower(mainTower), monsters(monsters),gameClock(0){
     maxDistance = std::sqrt(mapWidth * mapWidth + mapHeight * mapHeight);
     spawnInterval = maxSpawnInterval; // 초기 스폰 간격은 최대값으로 설정
 }
@@ -18,17 +18,17 @@ float WaveManager::calculateSpawnInterval() {
 }
 
 void WaveManager::update(float deltaTime) {
-    float elapsedTime = gameClock.getElapsedTime().asSeconds();
+    gameClock += deltaTime;
 
 
     // Mid-Boss 스폰 (5분에 등장)
-    if (elapsedTime >= 10.0f && !midBossSpawned) {
+    if (gameClock >= 10.0f && !midBossSpawned) {
         spawnBoss(MonsterType::Mid_Boss);
         midBossSpawned = true;
     } //(10.0f -> 300.0f)
 
     // Main-Boss 스폰 (10분에 등장)
-    if (elapsedTime >= 30.0f && !mainBossSpawned) {
+    if (gameClock >= 30.0f && !mainBossSpawned) {
         spawnBoss(MonsterType::Main_Boss);
         mainBossSpawned = true;
     } //(20.0f -> 600.0f)
