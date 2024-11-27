@@ -34,7 +34,7 @@ public:
         range(330.0f),
         damage(44.0f),
         elapsedTime(0.0f),
-        currentAngle(-45.0f),
+        currentAngle(0.0f),
         startAngle(0.0f),
         endAngle(360.0f),
         swingSpeed(540.0f),
@@ -48,18 +48,17 @@ public:
     }
 
     void applyEffect() override {
-        if (elapsedTime >= cooldown) {
-            isActive = true;
-            elapsedTime = 0.0f;
-            currentAngle = startAngle;
-            lastDamageAngle = startAngle;
-            std::cout << "Blade Whirl activated!" << std::endl;
-            applyDamageInArc();
-        }
-        else {
+        
+        elapsedTime = 0.0f;
+        currentAngle = startAngle;
+        lastDamageAngle = startAngle;
+        std::cout << "Blade Whirl activated!" << std::endl;
+        applyDamageInArc();
+        
+        /*else {
             std::cout << "Blade Whirl is on cooldown! Time remaining: "
                 << cooldown - elapsedTime << "s" << std::endl;
-        }
+        }*/
     }
 
     void update(float deltaTime) override {
