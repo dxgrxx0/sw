@@ -5,6 +5,7 @@
 #include <string>
 #include "Character.h"
 #include "SkillManager.h"
+#include "ResourceManager.h"
 class UIManager {
 public:
     // UI 요소들

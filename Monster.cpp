@@ -10,7 +10,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
     ,attackRange(50),skillDuration(5.0f), isSkillActive(false), isCloneActive(false)
     , cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f),monsterType(type)
     {
-    font.loadFromFile("arial.ttf"); // 폰트 로드 (폰트 파일이 필요합니다)
+	font = ResourceManager::getInstance().getFont("Arial");
     damageText.setFont(font);
     shape.setSize(sf::Vector2f(30.0f, 30.0f));
     shape.setFillColor(sf::Color::Blue);
