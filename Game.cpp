@@ -118,6 +118,9 @@ void Game::update() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
         skillManager.activateSkill(sf::Keyboard::E); // E스킬 활성화
     }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+        skillManager.activateSkill(sf::Keyboard::R); // R스킬 활성화
+    }
     warrior.updateAnimation(deltaTime);
 
 
