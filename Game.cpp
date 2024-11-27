@@ -55,6 +55,7 @@ void Game::run() {
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 if (screenUI.handleClick(mousePos)) {
                     gameStarted = true;
+                    clock.restart();
                 }
             }
             continue;  // Skip main game update and render
@@ -256,4 +257,5 @@ void Game::loadResources() {
     rm.loadTexture("DefenseMonster", "defenseMonster.png");
     rm.loadTexture("MainBoss", "mainboss.png");
     rm.loadTexture("MidBoss", "midboss.png");
+    rm.loadFont("Arial", "arial.ttf");
 }

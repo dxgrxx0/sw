@@ -22,13 +22,13 @@ void WaveManager::update(float deltaTime) {
 
 
     // Mid-Boss 스폰 (5분에 등장)
-    if (elapsedTime >= 150.0f && !midBossSpawned) {
+    if (elapsedTime >= 10.0f && !midBossSpawned) {
         spawnBoss(MonsterType::Mid_Boss);
         midBossSpawned = true;
     } //(10.0f -> 300.0f)
 
     // Main-Boss 스폰 (10분에 등장)
-    if (elapsedTime >= 300.0f && !mainBossSpawned) {
+    if (elapsedTime >= 30.0f && !mainBossSpawned) {
         spawnBoss(MonsterType::Main_Boss);
         mainBossSpawned = true;
     } //(20.0f -> 600.0f)
