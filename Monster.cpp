@@ -5,12 +5,12 @@
 #include "MainTower.h"
 #include <iostream>
 // 생성자
-Monster::Monster(float x, float y, float speed,MonsterType type)
-    : movementSpeed(speed),damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f),attackPower(0),defense(0)
-    ,attackRange(50),skillDuration(5.0f), isSkillActive(false), isCloneActive(false)
-    , cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f),monsterType(type)
-    {
-	font = ResourceManager::getInstance().getFont("Arial");
+Monster::Monster(float x, float y, float speed, MonsterType type)
+    : movementSpeed(speed), damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f), attackPower(0), defense(0)
+    , attackRange(50), skillDuration(5.0f), isSkillActive(false), isCloneActive(false)
+    , cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f), monsterType(type)
+{
+    font = ResourceManager::getInstance().getFont("Arial");
     damageText.setFont(font);
     shape.setSize(sf::Vector2f(30.0f, 30.0f));
     shape.setFillColor(sf::Color::Blue);
@@ -87,7 +87,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
     sprite.setPosition(x, y);
     //sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
     sprite.setOrigin(500, 500);
-    
+
 }
 void Monster::createClones() {
     if (!isCloneActive) {
@@ -198,11 +198,11 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
             removeClones();
         }
     }
-    
+
 }
 
 // draw 함수 구현
-void Monster::draw(sf::RenderTarget& target)const {
+void Monster::draw(sf::RenderTarget& target) {
     if (isCloneActive) {
         for (const auto& cloneSprite : cloneSprites) {
             target.draw(cloneSprite);
@@ -213,12 +213,9 @@ void Monster::draw(sf::RenderTarget& target)const {
     drawProjectiles(target); //투사체 그리기
 
     if (isTakingDamage) {
-        sf::Font font;
-        font.loadFromFile("arial.ttf"); // 폰트 로드 (폰트 파일이 필요합니다)
-        sf::Text damageText;
-        damageText.setFont(font);
+
         damageText.setString(std::to_string(static_cast<int>(damageTaken))); // 피해량을 문자열로 변환
-        damageText.setCharacterSize(15);
+        damageText.setCharacterSize(30);
         damageText.setFillColor(sf::Color::White);
 
 
@@ -251,7 +248,6 @@ void Monster::takeDamage(float attackDamage) {
 
     }
 }
-
 float Monster::getHealthPoint()const {
     return healthPoint;
 }

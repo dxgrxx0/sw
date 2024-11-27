@@ -9,10 +9,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-
-#include "BladeWhirl.h"
-#include "WaveManager.h"
-
 Game::Game() :
     window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),
     warrior("knight.png", 600, 500, 1.0f, 100.0f),
@@ -34,18 +30,17 @@ Game::Game() :
     mainBossDefeated(false),
     isVictory(false)
 {
-	loadResources();
+    loadResources();
     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정
     font.loadFromFile("arial.ttf");
-	backgroundTexture.loadFromFile("background.png");
+    backgroundTexture.loadFromFile("background.png");
     bossbackgroundTexture.loadFromFile("Bossbackground.png");
-	backgroundSprite.setTexture(backgroundTexture);
+    backgroundSprite.setTexture(backgroundTexture);
     screenUI.loadResources("StartUi.png", "PixelOperator8.ttf");
     gameStarted = false;
 }
 
 void Game::run() {
-
     while (window.isOpen()) {
         handleEvents();
         // Check if game has started
@@ -69,7 +64,6 @@ void Game::run() {
         update();
         render();
     }
-
 }
 
 void Game::handleEvents() {
@@ -107,7 +101,7 @@ void Game::update() {
         }
         return; // 업그레이드 UI가 활성화된 동안 다른 게임 업데이트 중단
     }
- 
+
     deltaTime = clock.restart().asSeconds();
     /*if (spawnClock.getElapsedTime().asSeconds() > spawnInterval) {
         spawnMonster();
@@ -131,23 +125,8 @@ void Game::update() {
 
         warrior.setAttackApplied(true);  // 공격 적용 완료 플래그 설정
     }
+    // 체력이 0 이하인 몬스터들을 한 번에 제거
     monsters.erase(std::remove_if(monsters.begin(), monsters.end(),
-        [this](const std::unique_ptr<Monster>& monster) {
-
-            if (monster->getHealthPoint() <= 0) {
-                if (monster->getBossMonsterType() == MonsterType::Main_Boss) {
-                    mainBossDefeated = true;  // 메인 보스 처치 표시
-                    printf("Main Boss has been defeated!\n");
-                }
-                addExp(100);
-                return true;
-            }
-            return false;
-        }),
-        monsters.end());
-
-    //체력이 0 이하인 몬스터들을 한 번에 제거
-   /* monsters.erase(std::remove_if(monsters.begin(), monsters.end(),
         [this](const std::unique_ptr<Monster>& monster) {
             if (monster->getHealthPoint() <= 0) {
                 if (monster->getBossMonsterType() == MonsterType::Main_Boss) {
@@ -158,8 +137,7 @@ void Game::update() {
             }
             return monster->getHealthPoint() <= 0;
         }),
-        monsters.end());*/
-
+        monsters.end());
     if (experience >= experienceToNextLevel) {
         onLevelUp();
     }
@@ -181,13 +159,11 @@ void Game::update() {
     uiManager.updateTowerDurability(mainTower.getHealth(), mainTower.getMaxHealth());
     mainTower.healNearbyCharacter(deltaTime, warrior);
     skillManager.updateSkills(deltaTime);
-    subTowerManager.updateTowers(monsters,deltaTime);
-    
+    subTowerManager.updateTowers(monsters, deltaTime);
+
 }
 
 void Game::render() {
-    
-
     window.clear();
     if (isGameOver) {
         window.setView(window.getDefaultView());
@@ -232,21 +208,8 @@ void Game::render() {
         minimap.draw(window);
         uiManager.draw(window);// UI 그리기
         uiManager.updateSkillCoolTime(skillManager);
-		subTowerManager.drawTowers(window);
+        subTowerManager.drawTowers(window);
     }
-
-    if (skillManager.hasSkill("BladeWhirl")) {
-        BaseSkill* skill = skillManager.getSkill("BladeWhirl");
-        // dynamic_cast로 BladeWhirl로 안전하게 변환
-        BladeWhirl* bladeWhirl = dynamic_cast<BladeWhirl*>(skill);
-        if (bladeWhirl) {
-            bladeWhirl->draw(window);
-        }
-    }
-
-    minimap.draw(window);
-    uiManager.draw(window);
-    uiManager.updateSkillCoolTime(skillManager);
 
     window.display();
 }
@@ -259,17 +222,15 @@ void Game::spawnMonster() {
 void Game::addExp(float exp) {
     experience += exp;
 }
-
 void Game::onLevelUp() {
     experience -= experienceToNextLevel;
     experienceToNextLevel *= 1.5f;
     level += 1;
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");
-
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
-        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(350,326)));
-        subTowerManager.addTower(std::make_unique<BombTower>(sf::Vector2f(950, 326)));
+        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(350, 326)));
+        subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(950, 326)));
         subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
     }
     if (level == 3) {
