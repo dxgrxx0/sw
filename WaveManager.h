@@ -25,8 +25,7 @@ private:
 
     bool midBossSpawned;           // Mid-Boss 스폰 여부
     bool mainBossSpawned;          // Main-Boss 스폰 여부
-
-    sf::Clock gameClock;           // 게임 시간 트래킹용
+    float gameClock;           // 게임 시간 트래킹용
 
     sf::Clock blinkClock; //깜빡임 효과
 
@@ -36,6 +35,7 @@ public:
     bool loadResources();
     void update(float deltaTime);           // 매 프레임마다 호출, 스폰 및 업데이트
     void drawMonsters(sf::RenderTarget& target); // 몬스터 그리기
+
     bool isBossSpawned() const {
         return mainBossSpawned;
     }

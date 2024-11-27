@@ -10,7 +10,7 @@ class ScreenUi {
 private:
     sf::Sprite background;            // 배경 이미지
     sf::Texture backgroundTexture;    // 배경 텍스처
-    sf::Font font;  
+    sf::Font font;
     bool isVisible;                   // 화면 표시 여부
 
     sf::RectangleShape startButton;  //시작 버튼
@@ -25,9 +25,9 @@ private:
     sf::Sprite gameOverSprite;
     bool isGameOver;
     //gameclear
-    bool isVictory;  
-    sf::Texture victoryTexture;  
-    sf::Sprite victorySprite;   
+    bool isVictory;
+    sf::Texture victoryTexture;
+    sf::Sprite victorySprite;
 
 public:
     ScreenUi(const sf::Vector2f& windowSize);

@@ -5,6 +5,7 @@
 #include "ArrowTower.h"
 #include "WizardTower.h"
 #include "TrainingTower.h"
+#include "BombTower.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -31,40 +32,35 @@ Game::Game() :
     screenUI(sf::Vector2f(window.getSize())),  // Add ScreenUI initialization
     isGameOver(false),
     mainBossDefeated(false),
-    isVictory(false),
-    mainBossSpawned(false)
+    isVictory(false)
 {
+	loadResources();
     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정
     font.loadFromFile("arial.ttf");
-    backgroundTexture.loadFromFile("background.png");
-    backgroundSprite.setTexture(backgroundTexture);
+	backgroundTexture.loadFromFile("background.png");
     bossbackgroundTexture.loadFromFile("Bossbackground.png");
-    bossbackgroundSprite.setTexture(bossbackgroundTexture);
+	backgroundSprite.setTexture(backgroundTexture);
     screenUI.loadResources("StartUi.png", "PixelOperator8.ttf");
     gameStarted = false;
-
 }
 
 void Game::run() {
 
     while (window.isOpen()) {
         handleEvents();
-
         // Check if game has started
         if (!gameStarted) {
             // Update and render only the start screen
-
             sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
             screenUI.update(mousePos);
-
             window.clear();
             screenUI.draw(window);
             window.display();
-
             // Check for start button click
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 if (screenUI.handleClick(mousePos)) {
                     gameStarted = true;
+                    clock.restart();
                 }
             }
             continue;  // Skip main game update and render
@@ -88,18 +84,18 @@ void Game::update() {
     if (!gameStarted || isGameOver || isVictory) {
         return;
     }
-
     // Game Over 조건
-   /* if (mainTower.getHealth() <= 0 || warrior.getHealth()<=0) {
+    if (mainTower.getHealth() <= 0 || warrior.getHealth() <= 0) {
         isGameOver = true;
         screenUI.setGameOver(true);
-    }*/
-    if (mainBossDefeated) {
+    }
+    else if (mainBossDefeated) {
         isVictory = true;
         screenUI.setVictory(true);  // ScreenUI에 victory 상태 설정
         return;
     }
-    else if (upgradeUI.getIsVisible()) {
+
+    if (upgradeUI.getIsVisible()) {
         sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             int choice = upgradeUI.handleClick(mousePos);
@@ -154,6 +150,10 @@ void Game::update() {
    /* monsters.erase(std::remove_if(monsters.begin(), monsters.end(),
         [this](const std::unique_ptr<Monster>& monster) {
             if (monster->getHealthPoint() <= 0) {
+                if (monster->getBossMonsterType() == MonsterType::Main_Boss) {
+                    mainBossDefeated = true;  // 메인 보스 처치 표시
+                    printf("Main Boss has been defeated!\n");
+                }
                 addExp(100);
             }
             return monster->getHealthPoint() <= 0;
@@ -189,12 +189,11 @@ void Game::render() {
     
 
     window.clear();
-
-    /*if (isGameOver) {
+    if (isGameOver) {
         window.setView(window.getDefaultView());
         screenUI.draw(window);
-    }*/
-    if (isVictory) {
+    }
+    else if (isVictory) {
         window.setView(window.getDefaultView());
         screenUI.draw(window);
     }
@@ -220,6 +219,14 @@ void Game::render() {
 
         waveManager.drawMonsters(window);
         warrior.draw(window);
+        if (skillManager.hasSkill("BladeWhirl")) {
+            BaseSkill* skill = skillManager.getSkill("BladeWhirl");
+            // dynamic_cast로 BladeWhirl로 안전하게 변환
+            BladeWhirl* bladeWhirl = dynamic_cast<BladeWhirl*>(skill);
+            if (bladeWhirl) {
+                bladeWhirl->draw(window);
+            }
+        }
 
         // 미니맵 그리기
         minimap.draw(window);
@@ -276,4 +283,18 @@ void Game::onLevelUp() {
     upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
     std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
     upgradeUI.showOptions(options); // UI에 업그레이드 옵션 표시
+}
+void Game::loadResources() {
+    ResourceManager& rm = ResourceManager::getInstance();
+    rm.loadTexture("ArrowTower", "ArrowTower.png");
+    rm.loadTexture("WizardTower", "WizardTower.png");
+    rm.loadTexture("TrainingTower", "TrainingTower.png");
+    rm.loadTexture("BombTower", "BombTower.png");
+    rm.loadTexture("SpeedMonster", "speedMonster.png");
+    rm.loadTexture("AttackMonster", "attackMonster.png");
+    rm.loadTexture("BasicMonster", "basicMonster.png");
+    rm.loadTexture("DefenseMonster", "defenseMonster.png");
+    rm.loadTexture("MainBoss", "mainboss.png");
+    rm.loadTexture("MidBoss", "midboss.png");
+    rm.loadFont("Arial", "arial.ttf");
 }

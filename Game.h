@@ -16,22 +16,26 @@
 #include "SkillManager.h"
 #include "SubTowerManager.h"
 #include "ScreenUi.h"
+#include "ResourceManager.h"
 class Game {
 public:
     Game();
     void run();
     void addExp(float exp);
+	void initialize();
 private:
     void handleEvents();
     void update();
     void render();
     void onLevelUp();
+	void loadResources();
 
     sf::RenderWindow window;
 	sf::Texture backgroundTexture;
+    sf::Texture bossbackgroundTexture;
+
 	sf::Sprite backgroundSprite;
 
-    sf::Texture bossbackgroundTexture;
     sf::Sprite bossbackgroundSprite;
 
     Character warrior;
@@ -56,14 +60,13 @@ private:
     SkillManager skillManager;
     UpgradeUI upgradeUI;
 	SubTowerManager subTowerManager;
+
     //screen 변수들
     ScreenUi screenUI;
     bool gameStarted;
     bool isGameOver;
-    bool isVictory;  
+    bool isVictory;
     bool mainBossDefeated;
-    bool mainBossSpawned;
-
 };
 
 #endif // GAME_H

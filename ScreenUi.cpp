@@ -5,7 +5,7 @@
 ScreenUi::ScreenUi(const sf::Vector2f& windowSize) : isVisible(true), isGameOver(false), isVictory(false) {
     // 시작 버튼 설정
     startButton.setSize(sf::Vector2f(300.f, 60.f));
-    startButton.setFillColor(sf::Color(129,193,71)); 
+    startButton.setFillColor(sf::Color(129, 193, 71)); // 보라색
     startButton.setPosition(
         windowSize.x / 2 - startButton.getSize().x / 2,
         windowSize.y * 0.7f
@@ -39,7 +39,7 @@ void ScreenUi::loadResources(const std::string& backgroundPath, const std::strin
     // 배경 이미지 로드
     if (backgroundTexture.loadFromFile(backgroundPath)) {
         background.setTexture(backgroundTexture);
-        
+
         // 윈도우 크기에 맞게 배경 크기 조정
         sf::Vector2u textureSize = backgroundTexture.getSize();
         float scaleX = 1600.0f / textureSize.x;  // 창의 너비에 맞춘 비율
@@ -73,7 +73,7 @@ void ScreenUi::loadResources(const std::string& backgroundPath, const std::strin
         sf::FloatRect startTextBounds = startButtonText.getLocalBounds();
         startButtonText.setPosition(
             startButton.getPosition().x + (startButton.getSize().x - startTextBounds.width) / 2,
-            startButton.getPosition().y + (startButton.getSize().y - startTextBounds.height) / 2-2
+            startButton.getPosition().y + (startButton.getSize().y - startTextBounds.height) / 2 - 2
         );
 
         // EXIT 텍스트 설정
@@ -86,7 +86,7 @@ void ScreenUi::loadResources(const std::string& backgroundPath, const std::strin
         sf::FloatRect exitTextBounds = exitButtonText.getLocalBounds();
         exitButtonText.setPosition(
             exitButton.getPosition().x + (exitButton.getSize().x - exitTextBounds.width) / 2,
-            exitButton.getPosition().y + (exitButton.getSize().y - exitTextBounds.height) / 2-2
+            exitButton.getPosition().y + (exitButton.getSize().y - exitTextBounds.height) / 2 - 2
         );
     }
 

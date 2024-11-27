@@ -3,6 +3,7 @@
 #define MONSTER_H
 
 #include <SFML/Graphics.hpp>
+#include "ResourceManager.h"
 class Character;
 class MainTower;
 enum class MonsterType {
@@ -22,7 +23,7 @@ public:
     void update(const sf::Vector2f& CharacterPos, const sf::Vector2f& MainTowerPos, float deltaTime, Character& character, MainTower& mainTower);
 
     // ���͸� �����쿡 �׸��� �Լ�
-    void draw(sf::RenderTarget& target)const;
+    void draw(sf::RenderTarget& target);
 
     // ������ ���� ��ġ ��ȯ �Լ�
     sf::Vector2f getPosition();
@@ -47,17 +48,15 @@ public:
     void updateProjectiles(float deltaTime, Character& character, MainTower& mainTower);
     void shootProjectile(const sf::Vector2f& targetPos);
     void drawProjectiles(sf::RenderTarget& target) const;
-
-
     MonsterType getBossMonsterType() const {
-        if (texturePath == "mainboss.PNG") {
+        if (textureName == "MainBoss") {
             return MonsterType::Main_Boss;
         }
-        else   
+        else
             return MonsterType::Mid_Boss;
-       
-    }
 
+
+    }
 private:
     sf::RectangleShape shape; // ������ ���
     float movementSpeed; // ������ �̵� �ӵ�
@@ -72,13 +71,15 @@ private:
     sf::Clock attackTimer; // 공격 타이머 추가
     float attackCooldown = 1.0f; // 1초 주기
 
-    std::string texturePath;
+    std::string textureName;
     sf::Texture texture;
     sf::Sprite sprite;
-
+    sf::Font font;
+    sf::Text damageText;
     //mid,main boss skill variable
     sf::Clock skillCooldown;
     sf::Clock rangedAttackCooldown;
+    MonsterType monsterType;
     float skillDuration;
     bool isSkillActive;
     float originalSpeed;

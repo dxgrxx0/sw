@@ -14,15 +14,12 @@ private:
     std::vector<std::unique_ptr<Monster>>& monsters;
     float range;
     float damage;
-    float activeDuration;
     float elapsedTime;
 
     float currentAngle;
     float startAngle;
     float endAngle;
     float swingSpeed;
-    float handleLength;
-    float bladeLength;
     float handleFixed;
     float lastDamageAngle;
 
@@ -34,21 +31,20 @@ public:
         : BaseSkill("Blade Whirl", sf::Keyboard::Q, 2.0f),
         character(character),
         monsters(monsters),
-        range(300.0f),
-        damage(25.0f),
-        activeDuration(0.5f),
+        range(330.0f),
+        damage(44.0f),
         elapsedTime(0.0f),
         currentAngle(-45.0f),
-        startAngle(-45.0f),
-        endAngle(225.0f),
+        startAngle(0.0f),
+        endAngle(360.0f),
         swingSpeed(540.0f),
         handleFixed(20.0f),
         lastDamageAngle(-45.0f) {
-        if (!swordTexture.loadFromFile("bladewhirl_han.png")) {
+        if (!swordTexture.loadFromFile("QSlash.png")) {
             // 이미지 로드 실패 처리
         }
         swordSprite.setTexture(swordTexture);
-        swordSprite.setScale(0.3f, 0.3f);
+        //swordSprite.setScale(0.3f, 0.3f);
     }
 
     void applyEffect() override {
