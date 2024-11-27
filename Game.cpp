@@ -81,8 +81,8 @@ void Game::update() {
     }
     // Game Over 조건
     if (mainTower.getHealth() <= 0 || warrior.getHealth() <= 0) {
-        isGameOver = true;
-        screenUI.setGameOver(true);
+        //isGameOver = true;
+       // screenUI.setGameOver(true);
     }
     else if (mainBossDefeated) {
         isVictory = true;
@@ -185,8 +185,8 @@ void Game::render() {
         if (waveManager.isBossSpawned()) {
             backgroundSprite.setTexture(bossbackgroundTexture);
         }
-        for (int i = -5; i < 10; i++) {
-            for (int j = -5; j < 10; j++) {
+        for (int i = -20; i < 20; i++) {
+            for (int j = -20; j < 20; j++) {
                 sf::Vector2f backgroundPosition(i * 300, j * 200);
                 backgroundSprite.setPosition(backgroundPosition);
                 window.draw(backgroundSprite);
@@ -265,5 +265,6 @@ void Game::loadResources() {
     rm.loadTexture("DefenseMonster", "defenseMonster.png");
     rm.loadTexture("MainBoss", "mainboss.png");
     rm.loadTexture("MidBoss", "midboss.png");
+    rm.loadTexture("BossExplode", "BossExplode.png");
     rm.loadFont("Arial", "arial.ttf");
 }

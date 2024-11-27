@@ -53,6 +53,10 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         attackPower = 50.0f;
         defense = 20.0f;
         skillDuration = 5.0f;
+        bossExplodeTexture = ResourceManager::getInstance().getTexture("BossExplode");
+        bossExplodeSprite.setTexture(bossExplodeTexture);
+        bossExplodeCircle.setRadius(200);
+        bossExplodeCircle.setTexture(&bossExplodeTexture);
         //shape.setFillColor(sf::Color::Yellow);
         break;
 
@@ -63,6 +67,10 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         attackPower = 100.0f;
         defense = 50.0f;
         skillDuration = 8.0f;
+        bossExplodeTexture = ResourceManager::getInstance().getTexture("BossExplode");
+        bossExplodeSprite.setTexture(bossExplodeTexture);
+        bossExplodeCircle.setRadius(200);
+        bossExplodeCircle.setTexture(&bossExplodeTexture);
         //shape.setFillColor(sf::Color::Black);
         break;
     case MonsterType::Basic:
@@ -173,10 +181,10 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
     }
     if (monsterType == MonsterType::Main_Boss || monsterType == MonsterType::Mid_Boss) {
         // 메인 스킬 (15초 쿨타임)
-        if (skillCooldown.getElapsedTime().asSeconds() >= 15.0f) {
+        /*if (skillCooldown.getElapsedTime().asSeconds() >= 15.0f) {
             Fir_useSkill(character, mainTower);
         }
-
+        */
         // 원거리 공격 스킬 (5초 쿨타임)
         if (rangedAttackCooldown.getElapsedTime().asSeconds() >= 5.0f) {
             Sec_useSkill(character, mainTower);
@@ -197,12 +205,26 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
             removeSkillEffects();
             removeClones();
         }
+        // 세 번째 스킬 업데이트
+        if (thirdSkillTimer.getElapsedTime().asSeconds() >= 10.0f) {
+            Third_useSkill(character);
+        }
+        if (isThirdSkillActive) {
+            updateThirdSkill(deltaTime, character);
+        }
+        if (circularAttacking) {
+            updateCircularAttack(character, deltaTime,playerPosition);
+        }
     }
     
 }
 
 // draw 함수 구현
 void Monster::draw(sf::RenderTarget& target) {
+    if (circularAttacking) {
+        drawTrails(target); // 흔적 그리기
+        if(drawingBossExplode)target.draw(bossExplodeCircle);
+    }
     if (isCloneActive) {
         for (const auto& cloneSprite : cloneSprites) {
             target.draw(cloneSprite);
@@ -399,6 +421,112 @@ void Monster::Sec_useSkill(Character& character, MainTower& mainTower) {
         printf("Main Boss uses Ranged Attack!\n");
     }
 }
+void Monster::Third_useSkill(Character& character) {
+    if (!isThirdSkillActive) {
+        isThirdSkillActive = true;      // 스킬 활성화
+        thirdSkillTimer.restart();      // 스킬 타이머 초기화
+        alpha = 255;                    // 투명도 초기화
+        oscillationTime = 0.0f;         // 진동 시간 초기화
+    }
+}
+
+void Monster::updateThirdSkill(float deltaTime, Character& character) {
+    if (isThirdSkillActive) {
+        // 진동 효과
+        oscillationTime += deltaTime;
+        float oscillationOffset = std::sin(oscillationTime * 15.0f) * 100.0f; // 진동 속도와 범위
+        sprite.move(oscillationOffset * deltaTime, 0); // 좌우 이동
+
+        // 투명도 감소
+        alpha -= 50 * deltaTime; // 투명도 감소 속도
+        if (alpha < 0) alpha = 0;
+        sprite.setColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(alpha))); // 투명도 적용
+
+        // 순간이동 처리
+        if (alpha <= 0) {
+            // 플레이어 주변 50 거리 내로 순간이동
+            float angle = static_cast<float>(std::rand() % 360) * 3.14159f / 180.0f; // 랜덤 각도
+            float teleportDistance = 50.0f;
+            sf::Vector2f teleportOffset(std::cos(angle) * teleportDistance, std::sin(angle) * teleportDistance);
+            sf::Vector2f teleportPosition = character.getPosition() + teleportOffset;
+
+            sprite.setPosition(teleportPosition); // 순간이동
+            printf("Boss teleports to position: (%f, %f)\n", teleportPosition.x, teleportPosition.y);
+            circularAttacking = false;
+            CircularAttack(character);
+            
+            // 스킬 종료
+            removeSkillEffects(); // 기존 스킬 효과 제거
+            isThirdSkillActive = false; // 스킬 비활성화
+        }
+    }
+}
+void Monster::CircularAttack(Character& character) {
+    if (!circularAttacking) {        
+        drawingBossExplode = false;
+        circularAttacking = true;
+        // 원형 이동 초기화
+        circularAngle = 0.0f;
+        circularTimer.restart();        // 원형 이동 지속 시간 타이머 초기화
+        trails.clear();                 // 이전 흔적 제거
+        playerPosition = character.getPosition();
+        bossExplodeSprite.setPosition(playerPosition.x-200,playerPosition.y-200);
+        bossExplodeCircle.setPosition(playerPosition.x - 200, playerPosition.y - 200);
+        bossExplodeFrameClock = 0.0f;
+        bossExplodeCurrentFrame = 0;
+
+    }
+}
+void Monster::updateCircularAttack(Character& character,float deltaTime, sf::Vector2f playerPosition) {
+    circularAngle += circularSpeed * deltaTime; // 각도 업데이트
+    if (circularAngle >= 360.0f) {
+        circularAngle -= 360.0f; // 각도 초기화
+    }
+
+    // 플레이어를 중심으로 원형 궤적 계산
+    float radians = circularAngle * 3.14159f / 180.0f; // 각도를 라디안으로 변환
+    float xOffset = circularRadius * std::cos(radians);
+    float yOffset = circularRadius * std::sin(radians);
+
+    sprite.setPosition(playerPosition.x + xOffset, playerPosition.y + yOffset); // 원형 위치 갱신
+
+    // 흔적 남기기
+    sf::CircleShape trailCircle(5.0f); // 흔적의 크기
+    trailCircle.setFillColor(sf::Color::Black);
+    trailCircle.setOutlineColor(sf::Color::Black); // 테두리 색상
+    trailCircle.setOutlineThickness(2.0f);
+    trailCircle.setPosition(sprite.getPosition().x - 5.0f, sprite.getPosition().y - 5.0f); // 중심 맞추기
+    trails.push_back(trailCircle);
+    /*
+    // 흔적 관리 (지속 시간 초과 시 제거)
+    if (trailTimer.getElapsedTime().asSeconds() > trailLifetime) {
+        if (!trails.empty()) {
+            trails.erase(trails.begin()); // 가장 오래된 흔적 제거
+        }
+        trailTimer.restart();
+    }*/
+    if (circularTimer.getElapsedTime().asSeconds() >= 0.5f) {
+        drawingBossExplode = true;
+        bossExplodeFrameClock += deltaTime;
+    }
+    if (bossExplodeFrameClock >= 1.0f / 16.0f) {
+        bossExplodeCurrentFrame++;
+        int frameX = (bossExplodeCurrentFrame % 4) * 400;
+        int frameY = (bossExplodeCurrentFrame / 4) * 400;
+        bossExplodeCircle.setTextureRect(sf::IntRect(frameX, frameY, 400, 400));
+        bossExplodeFrameClock = 0;
+    }
+
+    // 스킬 종료
+    if (circularTimer.getElapsedTime().asSeconds() >= circularDuration) {
+        circularAttacking = false;
+    }
+}
+void Monster::drawTrails(sf::RenderTarget& target) {
+    for (const auto& trail : trails) {
+        target.draw(trail); // 각 흔적 그리기
+    }
+}
 
 void Monster::removeSkillEffects() {
     // 스킬 효과 제거
@@ -406,9 +534,8 @@ void Monster::removeSkillEffects() {
     attackPower = originalAttackPower;
     defense = originalDefense;
     attackRange = originalattackRange;
-    // 시각적 효과 제거
-    sprite.setColor(sf::Color::White);
-
+    // 시각적 효과 복구
+    sprite.setColor(sf::Color(255, 255, 255, 255)); // 원래 흰색으로 복원
     removeClones();
 
     isSkillActive = false;
