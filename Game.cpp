@@ -57,6 +57,7 @@ void Game::run() {
                 if (screenUI.handleClick(mousePos)) {
                     gameStarted = true;
                     clock.restart();
+                  
                 }
             }
             continue;  // Skip main game update and render
@@ -79,12 +80,12 @@ void Game::update() {
     if (!gameStarted || isGameOver || isVictory) {
         return;
     }
-    // Game Over 조건
-    if (mainTower.getHealth() <= 0 || warrior.getHealth() <= 0) {
-        isGameOver = true;
-        screenUI.setGameOver(true);
-    }
-    else if (mainBossDefeated) {
+    //// Game Over 조건
+    //if (mainTower.getHealth() <= 0 || warrior.getHealth() <= 0) {
+    //    isGameOver = true;
+    //    screenUI.setGameOver(true);
+    //}
+    if (mainBossDefeated) {
         isVictory = true;
         screenUI.setVictory(true);  // ScreenUI에 victory 상태 설정
         return;
@@ -150,6 +151,8 @@ void Game::update() {
     /*for (auto& monster : monsters) {
         monster.update(warriorPosition, deltaTime);
     }*/
+   
+
     waveManager.update(deltaTime);
     mainView.setCenter(warriorPosition);
 
@@ -169,11 +172,11 @@ void Game::update() {
 
 void Game::render() {
     window.clear();
-    if (isGameOver) {
+  /*  if (isGameOver) {
         window.setView(window.getDefaultView());
         screenUI.draw(window);
-    }
-    else if (isVictory) {
+    }*/
+    if (isVictory) {
         window.setView(window.getDefaultView());
         screenUI.draw(window);
     }
@@ -228,7 +231,7 @@ void Game::addExp(float exp) {
 }
 void Game::onLevelUp() {
     experience -= experienceToNextLevel;
-    experienceToNextLevel *= 1.5f;
+    experienceToNextLevel *= 10.5f;
     level += 1;
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");
