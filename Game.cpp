@@ -38,6 +38,7 @@ Game::Game() :
     bossbackgroundTexture.loadFromFile("Bossbackground.png");
 	backgroundSprite.setTexture(backgroundTexture);
     screenUI.loadResources("StartUi.png", "PixelOperator8.ttf");
+    cacheBackground();
     gameStarted = false;
 }
 
@@ -184,19 +185,16 @@ void Game::render() {
     else {
         if (waveManager.isBossSpawned()) {
             backgroundSprite.setTexture(bossbackgroundTexture);
+			cacheBackground();
         }
-        for (int i = -20; i < 20; i++) {
-            for (int j = -20; j < 20; j++) {
-                sf::Vector2f backgroundPosition(i * 300, j * 200);
-                backgroundSprite.setPosition(backgroundPosition);
-                window.draw(backgroundSprite);
-            }
-        }
+        window.draw(cachedBackgroundSprite);
+        
+
         window.setView(mainView);
         window.draw(towerSprite);
 
         mainTower.draw(window);
-
+        subTowerManager.drawTowers(window);
         waveManager.drawMonsters(window);
         warrior.draw(window);
         if (skillManager.hasSkill("BladeWhirl")) {
@@ -212,7 +210,7 @@ void Game::render() {
         minimap.draw(window);
         uiManager.draw(window);// UI 그리기
         uiManager.updateSkillCoolTime(skillManager);
-		subTowerManager.drawTowers(window);
+		
     }
     
     window.display();
@@ -267,4 +265,21 @@ void Game::loadResources() {
     rm.loadTexture("MidBoss", "midboss.png");
     rm.loadTexture("BossExplode", "BossExplode.png");
     rm.loadFont("Arial", "arial.ttf");
+}
+void Game::cacheBackground() {
+	backgroundCache.create(4800, 3000);
+	backgroundCache.clear();
+    int horizontalTiles =17;  // 타일 갯수 계산
+    int verticalTiles = 16;
+    for (int i = 0; i < horizontalTiles; ++i) {
+        for (int j = 0; j < verticalTiles; ++j) {
+            backgroundSprite.setPosition(i * 300, j * 200);
+            backgroundCache.draw(backgroundSprite);
+        }
+    }
+    backgroundCache.display(); // 렌더링 완료
+
+    // RenderTexture의 텍스처를 Sprite에 설정
+    cachedBackgroundSprite.setTexture(backgroundCache.getTexture());
+	cachedBackgroundSprite.setPosition(-1600, -1000);
 }

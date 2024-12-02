@@ -313,8 +313,8 @@ void Monster::updateProjectiles(float deltaTime, Character& character, MainTower
         }
 
         // 화면 밖으로 나간 투사체 제거
-        if (projectilePos.x < -100 || projectilePos.x > 2100 ||
-            projectilePos.y < -100 || projectilePos.y > 2100) {
+        if (projectilePos.x < -1000 || projectilePos.x > 2100 ||
+            projectilePos.y < -1000 || projectilePos.y > 2100) {
             projectile.active = false;
         }
     }
