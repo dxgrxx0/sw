@@ -28,7 +28,10 @@ private:
     void render();
     void onLevelUp();
 	void loadResources();
-
+    void cacheBackground();
+    sf::RenderTexture backgroundCache;
+    sf::Sprite cachedBackgroundSprite;
+    bool isBackgroundCached = false;
     sf::RenderWindow window;
 	sf::Texture backgroundTexture;
     sf::Texture bossbackgroundTexture;
