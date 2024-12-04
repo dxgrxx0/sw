@@ -16,6 +16,9 @@ void UpgradeManager::generateUpgradeOptions() {
         currentOptions.resize(3); // 최대 3개의 옵션만 제공
     }
 }*/
+
+//2,4,7 배치 후 업그레이드 추가
+//설치창도 따로 만들기 ㅎㅎ;
 void UpgradeManager::generateUpgradeOptions() {
     currentOptions.clear();
 

@@ -6,6 +6,7 @@
 #include "WizardTower.h"
 #include "TrainingTower.h"
 #include "BombTower.h"
+#include "CannonTower.h"
 #include "Dash.h"
 #include <cstdlib>
 #include <ctime>
@@ -38,6 +39,7 @@ Game::Game() :
     bossbackgroundTexture.loadFromFile("Bossbackground.png");
 	backgroundSprite.setTexture(backgroundTexture);
     screenUI.loadResources("StartUi.png", "PixelOperator8.ttf");
+    cacheBackground();
     gameStarted = false;
 }
 
@@ -80,12 +82,12 @@ void Game::update() {
     if (!gameStarted || isGameOver || isVictory) {
         return;
     }
-    //// Game Over 조건
-    //if (mainTower.getHealth() <= 0 || warrior.getHealth() <= 0) {
-    //    isGameOver = true;
-    //    screenUI.setGameOver(true);
-    //}
-    if (mainBossDefeated) {
+    // Game Over 조건
+    if (mainTower.getHealth() <= 0 || warrior.getHealth() <= 0) {
+        //isGameOver = true;
+       // screenUI.setGameOver(true);
+    }
+    else if (mainBossDefeated) {
         isVictory = true;
         screenUI.setVictory(true);  // ScreenUI에 victory 상태 설정
         return;
@@ -187,19 +189,16 @@ void Game::render() {
     else {
         if (waveManager.isBossSpawned()) {
             backgroundSprite.setTexture(bossbackgroundTexture);
+			cacheBackground();
         }
-        for (int i = -5; i < 10; i++) {
-            for (int j = -5; j < 10; j++) {
-                sf::Vector2f backgroundPosition(i * 300, j * 200);
-                backgroundSprite.setPosition(backgroundPosition);
-                window.draw(backgroundSprite);
-            }
-        }
+        window.draw(cachedBackgroundSprite);
+        
+
         window.setView(mainView);
         window.draw(towerSprite);
 
         mainTower.draw(window);
-
+        subTowerManager.drawTowers(window);
         waveManager.drawMonsters(window);
         warrior.draw(window);
         if (skillManager.hasSkill("BladeWhirl")) {
@@ -215,7 +214,7 @@ void Game::render() {
         minimap.draw(window);
         uiManager.draw(window);// UI 그리기
         uiManager.updateSkillCoolTime(skillManager);
-		subTowerManager.drawTowers(window);
+		
     }
     
     window.display();
@@ -231,14 +230,15 @@ void Game::addExp(float exp) {
 }
 void Game::onLevelUp() {
     experience -= experienceToNextLevel;
-    experienceToNextLevel *= 10.5f;
+    experienceToNextLevel *= 1.5f;
     level += 1;
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
-        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(350,326)));
-        subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(950, 326)));
-        subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
+        subTowerManager.addTower(std::make_unique<BombTower>(sf::Vector2f(350, 326)));
+        subTowerManager.addTower(std::make_unique<CannonTower>(sf::Vector2f(620, 846)));
+        //subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(950, 326)));
+        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(950, 326)));
     }
     if (level == 3) {
         skillManager.unlockSkill("BulkUp");
@@ -260,6 +260,7 @@ void Game::loadResources() {
     ResourceManager& rm = ResourceManager::getInstance();
     rm.loadTexture("ArrowTower", "ArrowTower.png");
     rm.loadTexture("WizardTower", "WizardTower.png");
+    rm.loadTexture("Cannon", "Cannon.png");
     rm.loadTexture("TrainingTower", "TrainingTower.png");
     rm.loadTexture("BombTower", "BombTower.png");
     rm.loadTexture("SpeedMonster", "speedMonster.png");
@@ -268,5 +269,23 @@ void Game::loadResources() {
     rm.loadTexture("DefenseMonster", "defenseMonster.png");
     rm.loadTexture("MainBoss", "mainboss.png");
     rm.loadTexture("MidBoss", "midboss.png");
+    rm.loadTexture("BossExplode", "BossExplode.png");
     rm.loadFont("Arial", "arial.ttf");
+}
+void Game::cacheBackground() {
+	backgroundCache.create(4800, 3000);
+	backgroundCache.clear();
+    int horizontalTiles =17;  // 타일 갯수 계산
+    int verticalTiles = 16;
+    for (int i = 0; i < horizontalTiles; ++i) {
+        for (int j = 0; j < verticalTiles; ++j) {
+            backgroundSprite.setPosition(i * 300, j * 200);
+            backgroundCache.draw(backgroundSprite);
+        }
+    }
+    backgroundCache.display(); // 렌더링 완료
+
+    // RenderTexture의 텍스처를 Sprite에 설정
+    cachedBackgroundSprite.setTexture(backgroundCache.getTexture());
+	cachedBackgroundSprite.setPosition(-1600, -1000);
 }
