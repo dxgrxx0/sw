@@ -32,6 +32,7 @@ private:
     sf::RenderTexture backgroundCache;
     sf::Sprite cachedBackgroundSprite;
     bool isBackgroundCached = false;
+
     sf::RenderWindow window;
 	sf::Texture backgroundTexture;
     sf::Texture bossbackgroundTexture;

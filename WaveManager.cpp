@@ -28,7 +28,7 @@ void WaveManager::update(float deltaTime) {
     } //(10.0f -> 300.0f)
 
     // Main-Boss 스폰 (10분에 등장)
-    if (gameClock >= 30.0f && !mainBossSpawned) {
+    if (gameClock >= 200.0f && !mainBossSpawned) {
         spawnBoss(MonsterType::Main_Boss);
         mainBossSpawned = true;
     } //(20.0f -> 600.0f)
