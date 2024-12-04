@@ -7,9 +7,12 @@
 #include "TrainingTower.h"
 #include "BombTower.h"
 #include "Dash.h"
+#include "CannonTower.h"
+#include "BombTower.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <chrono>
 Game::Game() :
     window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),
     warrior("knight.png", 600, 500, 1.0f, 100.0f),
@@ -61,9 +64,9 @@ void Game::run() {
                 }
             }
             continue;  // Skip main game update and render
-        }
-        // Normal game update and render
+        }      
         update();
+        // Normal game update and render
         render();
     }
 }
@@ -75,7 +78,6 @@ void Game::handleEvents() {
             window.close();
     }
 }
-
 void Game::update() {
     if (!gameStarted || isGameOver || isVictory) {
         return;
@@ -178,14 +180,15 @@ void Game::render() {
         window.setView(window.getDefaultView());
         screenUI.draw(window);
     }
-    else if (upgradeUI.getIsVisible()) {
+    /*else if (upgradeUI.getIsVisible()) {
         window.setView(window.getDefaultView());  // 기본 뷰로 변경
         upgradeUI.draw(window); // UI가 활성화된 경우에만 그리기
-    }
+    }*/
     else {
-        if (waveManager.isBossSpawned()) {
+        if (waveManager.isBossSpawned()&&isBackgroundCached==false) {
             backgroundSprite.setTexture(bossbackgroundTexture);
 			cacheBackground();
+			isBackgroundCached = true;
         }
         window.draw(cachedBackgroundSprite);
         
@@ -212,7 +215,10 @@ void Game::render() {
         uiManager.updateSkillCoolTime(skillManager);
 		
     }
-    
+    if (upgradeUI.getIsVisible()) {
+        window.setView(window.getDefaultView());  // 기본 뷰로 변경
+        upgradeUI.draw(window); // UI가 활성화된 경우에만 그리기
+    }
     window.display();
 }
 /*
@@ -231,8 +237,8 @@ void Game::onLevelUp() {
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
-        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(350,326)));
-        subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(950, 326)));
+        subTowerManager.addTower(std::make_unique<CannonTower>(sf::Vector2f(350,326)));
+        subTowerManager.addTower(std::make_unique<BombTower>(sf::Vector2f(950, 326)));
         subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
     }
     if (level == 3) {

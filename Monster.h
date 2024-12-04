@@ -44,7 +44,7 @@ public:
     void updateClones(float deltaTime);
     void removeClones();
     void updateThirdSkill(float deltaTime, Character& character);
-    void updateCircularAttack(Character& character, float deltaTime, sf::Vector2f playerPosition);
+    void updateCircularAttack(float deltaTime, sf::Vector2f playerPosition);
     void drawTrails(sf::RenderTarget& target);
     //원거리 공격 로직 추가
     void updateProjectiles(float deltaTime, Character& character, MainTower& mainTower);
@@ -133,20 +133,27 @@ private:
     float circularRadius = 200.0f;       // 원형 이동 반지름
     sf::Clock circularTimer;             // 원형 이동 지속 시간 타이머
     float circularDuration = 1.5f;       // 원형 이동 지속 시간 (초)
-
+    sf::VertexArray circularPath; // 원형 궤적을 저장
+    int currentPathIndex = 0;              // 현재 정점 인덱스
+    void initializeCircularPath(int radius);
     // 흔적 관련 변수
+    //sf::Transform transform;
     std::vector<sf::CircleShape> trails; // 흔적을 저장할 벡터
+	sf::VertexArray trailVertices;       // 흔적을 그리기 위한 정점 배열
     sf::Clock trailTimer;                // 흔적 타이머
     float trailLifetime = 2.0f;          // 흔적 유지 시간 (초)
     sf::Vector2f playerPosition;
 
+
     //폭발 관련 변수
     sf::Texture bossExplodeTexture;
+    std::vector<sf::IntRect> bossExplosionFrames; // 프레임 저장
     sf::Sprite bossExplodeSprite;
     sf::CircleShape bossExplodeCircle;
     float bossExplodeFrameClock;
     int bossExplodeCurrentFrame;
     bool drawingBossExplode;
+
 };
 
 #endif // MONSTER_H

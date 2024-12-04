@@ -4,19 +4,20 @@
 #include "Character.h"
 #include "MainTower.h"
 #include <iostream>
+#include <chrono>
 // 생성자
-Monster::Monster(float x, float y, float speed,MonsterType type)
-    : movementSpeed(speed),damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f),attackPower(0),defense(0)
-    ,attackRange(50),skillDuration(5.0f), isSkillActive(false), isCloneActive(false)
-    , cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f),monsterType(type)
-    {
-	font = ResourceManager::getInstance().getFont("Arial");
+Monster::Monster(float x, float y, float speed, MonsterType type)
+    : movementSpeed(speed), damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f), attackPower(0), defense(0)
+    , attackRange(50), skillDuration(5.0f), isSkillActive(false), isCloneActive(false)
+    , cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f), monsterType(type)
+{
+    font = ResourceManager::getInstance().getFont("Arial");
     damageText.setFont(font);
     shape.setSize(sf::Vector2f(30.0f, 30.0f));
     shape.setFillColor(sf::Color::Blue);
     shape.setPosition(x, y);
     shape.setOrigin(shape.getGlobalBounds().width / 2, shape.getGlobalBounds().height / 2); // 원점을 중앙으로 설정
-	healthPoint = 100.0f;
+    healthPoint = 100.0f;
     originalSpeed = speed;
     originalDefense = defense;
     originalAttackPower = attackPower;
@@ -57,6 +58,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         bossExplodeSprite.setTexture(bossExplodeTexture);
         bossExplodeCircle.setRadius(200);
         bossExplodeCircle.setTexture(&bossExplodeTexture);
+        initializeCircularPath(200);
         //shape.setFillColor(sf::Color::Yellow);
         break;
 
@@ -71,6 +73,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
         bossExplodeSprite.setTexture(bossExplodeTexture);
         bossExplodeCircle.setRadius(200);
         bossExplodeCircle.setTexture(&bossExplodeTexture);
+        initializeCircularPath(200);
         //shape.setFillColor(sf::Color::Black);
         break;
     case MonsterType::Basic:
@@ -95,7 +98,7 @@ Monster::Monster(float x, float y, float speed,MonsterType type)
     sprite.setPosition(x, y);
     //sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
     sprite.setOrigin(500, 500);
-    
+
 }
 void Monster::createClones() {
     if (!isCloneActive) {
@@ -138,7 +141,7 @@ void Monster::removeClones() {
 }
 
 // update 함수 구현
-void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& towerPosition, float deltaTime,Character& character,MainTower& mainTower) {
+void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& towerPosition, float deltaTime, Character& character, MainTower& mainTower) {
     sf::Vector2f targetPosition;
     float distanceToHeroine = calculateDistance(sprite.getPosition(), heroinePosition);
     float distanceToTower = calculateDistance(sprite.getPosition(), towerPosition);
@@ -161,22 +164,24 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
                 mainTower.takeDamage(attackPower);
                 //printf("Tower takeDamage!");
             }
-            else { 
+            else {
                 character.takeDamage(attackPower);
                 //printf("character takeDamage!");
             } // 캐릭터에 피해 입힘
             attackTimer.restart(); // 타이머 초기화
         }
     }
-    else if (length >=attackRange) {
+    else if (length >= attackRange) {
         direction /= length; // 방향 정규화
         sprite.move(direction * movementSpeed * deltaTime); // 몬스터 이동
     }
     if (isTakingDamage) {
         damageDisplayTime += deltaTime;
+		sprite.setColor(sf::Color::Red); // 빨간색으로 변경
         if (damageDisplayTime >= damageDisplayDuration) {
             isTakingDamage = false; // 피해 표시 종료
             damageTaken = 0.0f; // 피해량 초기화
+			sprite.setColor(sf::Color::White); // 색상 원래대로 변경
         }
     }
     if (monsterType == MonsterType::Main_Boss || monsterType == MonsterType::Mid_Boss) {
@@ -186,6 +191,7 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
         }
         */
         // 원거리 공격 스킬 (5초 쿨타임)
+
         if (rangedAttackCooldown.getElapsedTime().asSeconds() >= 5.0f) {
             Sec_useSkill(character, mainTower);
             rangedAttackCooldown.restart();
@@ -213,17 +219,25 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
             updateThirdSkill(deltaTime, character);
         }
         if (circularAttacking) {
-            updateCircularAttack(character, deltaTime,playerPosition);
+            updateCircularAttack(deltaTime, playerPosition);
         }
     }
-    
+
 }
 
 // draw 함수 구현
 void Monster::draw(sf::RenderTarget& target) {
     if (circularAttacking) {
+        auto start = std::chrono::high_resolution_clock::now();
         drawTrails(target); // 흔적 그리기
-        if(drawingBossExplode)target.draw(bossExplodeCircle);
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> elapsed = end - start;
+        std::cout << "Elapsed time: " << elapsed.count() << " ms\n";
+        
+        if (drawingBossExplode) {
+            target.draw(bossExplodeCircle);
+
+        }
     }
     if (isCloneActive) {
         for (const auto& cloneSprite : cloneSprites) {
@@ -235,7 +249,7 @@ void Monster::draw(sf::RenderTarget& target) {
     drawProjectiles(target); //투사체 그리기
 
     if (isTakingDamage) {
-        
+
         damageText.setString(std::to_string(static_cast<int>(damageTaken))); // 피해량을 문자열로 변환
         damageText.setCharacterSize(30);
         damageText.setFillColor(sf::Color::White);
@@ -262,7 +276,7 @@ bool Monster::isNear(sf::Vector2f position, float radius) const {
 void Monster::takeDamage(float attackDamage) {
     attackDamage = attackDamage * (100 - defense) / 100;
     healthPoint -= attackDamage;
-    if (attackDamage>0) {
+    if (attackDamage > 0) {
         // 피해량 저장
         damageTaken = attackDamage;
         isTakingDamage = true;
@@ -270,7 +284,7 @@ void Monster::takeDamage(float attackDamage) {
 
     }
 }
-float Monster:: getHealthPoint()const {
+float Monster::getHealthPoint()const {
     return healthPoint;
 }
 
@@ -403,7 +417,7 @@ void Monster::Sec_useSkill(Character& character, MainTower& mainTower) {
             // 부채꼴 형태로 투사체 발사 (각도 범위를 좁힘)
             for (int i = 0; i < 8; ++i) {
                 float spreadAngle = (i - 3.5f) * 10.0f; // -35도에서 +35도 사이로 조정
-                float randomOffset = (rand() % 10 - 5) * 0.5f; // 약간의 랜덤성 추가
+                float randomOffset = (rand() % 10 - 5) * 0.5f; // 약간의 랜덤성 추가                 
                 float finalAngle = (spreadAngle + randomOffset) * 3.14159f / 180.0f;
 
                 // 회전 행렬 적용
@@ -454,7 +468,7 @@ void Monster::updateThirdSkill(float deltaTime, Character& character) {
             printf("Boss teleports to position: (%f, %f)\n", teleportPosition.x, teleportPosition.y);
             circularAttacking = false;
             CircularAttack(character);
-            
+
             // 스킬 종료
             removeSkillEffects(); // 기존 스킬 효과 제거
             isThirdSkillActive = false; // 스킬 비활성화
@@ -462,7 +476,7 @@ void Monster::updateThirdSkill(float deltaTime, Character& character) {
     }
 }
 void Monster::CircularAttack(Character& character) {
-    if (!circularAttacking) {        
+    if (!circularAttacking) {
         drawingBossExplode = false;
         circularAttacking = true;
         // 원형 이동 초기화
@@ -470,33 +484,41 @@ void Monster::CircularAttack(Character& character) {
         circularTimer.restart();        // 원형 이동 지속 시간 타이머 초기화
         trails.clear();                 // 이전 흔적 제거
         playerPosition = character.getPosition();
-        bossExplodeSprite.setPosition(playerPosition.x-200,playerPosition.y-200);
+        bossExplodeSprite.setPosition(playerPosition.x - 200, playerPosition.y - 200);
         bossExplodeCircle.setPosition(playerPosition.x - 200, playerPosition.y - 200);
         bossExplodeFrameClock = 0.0f;
         bossExplodeCurrentFrame = 0;
 
     }
 }
-void Monster::updateCircularAttack(Character& character,float deltaTime, sf::Vector2f playerPosition) {
+void Monster::updateCircularAttack(float deltaTime, sf::Vector2f playerPosition) {
     circularAngle += circularSpeed * deltaTime; // 각도 업데이트
+	float radians, xOffset, yOffset;
     if (circularAngle >= 360.0f) {
         circularAngle -= 360.0f; // 각도 초기화
+        // 플레이어를 중심으로 원형 궤적 계산
+        radians = circularAngle * 3.14159f / 180.0f; // 각도를 라디안으로 변환
+        xOffset = circularRadius * std::cos(radians);
+        yOffset = circularRadius * std::sin(radians);
+        circularAngle += 360.0f;
     }
-
+    else {
     // 플레이어를 중심으로 원형 궤적 계산
-    float radians = circularAngle * 3.14159f / 180.0f; // 각도를 라디안으로 변환
-    float xOffset = circularRadius * std::cos(radians);
-    float yOffset = circularRadius * std::sin(radians);
+        radians = circularAngle * 3.14159f / 180.0f; // 각도를 라디안으로 변환
+        xOffset = circularRadius * std::cos(radians);
+        yOffset = circularRadius * std::sin(radians);
+    }
+    
 
     sprite.setPosition(playerPosition.x + xOffset, playerPosition.y + yOffset); // 원형 위치 갱신
 
     // 흔적 남기기
-    sf::CircleShape trailCircle(5.0f); // 흔적의 크기
+    /*sf::CircleShape trailCircle(5.0f); // 흔적의 크기
     trailCircle.setFillColor(sf::Color::Black);
     trailCircle.setOutlineColor(sf::Color::Black); // 테두리 색상
     trailCircle.setOutlineThickness(2.0f);
     trailCircle.setPosition(sprite.getPosition().x - 5.0f, sprite.getPosition().y - 5.0f); // 중심 맞추기
-    trails.push_back(trailCircle);
+    trails.push_back(trailCircle);*/
     /*
     // 흔적 관리 (지속 시간 초과 시 제거)
     if (trailTimer.getElapsedTime().asSeconds() > trailLifetime) {
@@ -523,11 +545,36 @@ void Monster::updateCircularAttack(Character& character,float deltaTime, sf::Vec
     }
 }
 void Monster::drawTrails(sf::RenderTarget& target) {
-    for (const auto& trail : trails) {
-        target.draw(trail); // 각 흔적 그리기
-    }
-}
+    int vertexCount;
+	circularAngle >= 360.0f ? vertexCount = 360*4 : vertexCount = (int)circularAngle*4;
+    // Transform 객체 생성
+    sf::Transform transform;
+    // 원하는 중심 위치로 이동
+    transform.translate(playerPosition.x-200,playerPosition.y-200);
 
+    target.draw(&trailVertices[0], vertexCount, sf::Quads,transform); // 한 번의 draw 호출로 모든 흔적 그리기
+}
+void Monster::initializeCircularPath(int radius) {
+	int thickness = 20;
+    trailVertices.setPrimitiveType(sf::Quads);
+    trailVertices.resize(361* 4);  // 각 세그먼트마다 4개의 꼭짓점 필요
+	for (int i = 0; i <= 360; ++i) {
+		float angle = i * 3.14159f / 180.0f;
+        float nextAngle = (i + 1) * 3.14159f / 180.0f;
+        sf::Vector2f outer1(radius * cos(angle), radius * sin(angle));
+        sf::Vector2f outer2(radius * cos(nextAngle), radius * sin(nextAngle));
+        sf::Vector2f inner1((radius - thickness) * cos(angle), (radius - thickness) * sin(angle));
+        sf::Vector2f inner2((radius - thickness) * cos(nextAngle), (radius - thickness) * sin(nextAngle));
+        trailVertices[4 * i + 0].position = sf::Vector2f(radius, radius) + outer1;
+		trailVertices[4 * i + 1].position = sf::Vector2f(radius, radius) + outer2;
+		trailVertices[4 * i + 2].position = sf::Vector2f(radius, radius) + inner2;
+		trailVertices[4 * i + 3].position = sf::Vector2f(radius, radius) + inner1;
+        for (int j = 0; j < 4; j++) {
+            trailVertices[4 * i + j].color = sf::Color::Red;
+        }
+	}
+
+}
 void Monster::removeSkillEffects() {
     // 스킬 효과 제거
     movementSpeed = originalSpeed;
@@ -539,4 +586,5 @@ void Monster::removeSkillEffects() {
     removeClones();
 
     isSkillActive = false;
+
 }

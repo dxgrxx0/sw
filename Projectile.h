@@ -6,12 +6,10 @@
 
 class Projectile {
 protected:
-    sf::Sprite sprite;
     sf::Vector2f position;
     sf::Vector2f velocity;
     float speed;
     float damage;
-    bool toBeDestroyed = false;
 
 public:
     Projectile(const sf::Texture& texture, sf::Vector2f position, sf::Vector2f targetPosition, float speed, float damage);
@@ -23,6 +21,13 @@ public:
 
     bool isToBeDestroyed() const { return toBeDestroyed; }
     virtual bool isOutofBound(); // 기본 구현 제공
+    sf::Vector2f getPosition() const { return position; }
+    void setScale(float scaleX, float scaleY) {
+        sprite.setScale(scaleX, scaleY);
+    }
+    sf::Sprite sprite;
+    bool toBeDestroyed = false;
+
 };
 
 #endif // PROJECTILE_H

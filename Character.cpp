@@ -7,7 +7,8 @@ Character::Character(const std::string& textureFile, float x, float y, float sca
 
     currentFrameIndex(0), isSwinging(false), frameWidth(96), frameHeight(97), totalFrames(5),attackRange(200),attackDamage(50),attackApplied(true),facingDirection(90.0f),attackCoolDown(1.0f),health(100),maxHealth(100),defense(0){
 
-    if (!texture.loadFromFile(textureFile)) {
+    if (!texture.loadFromFile(textureFile)) {    
+
         std::cerr << "Failed to load texture" << std::endl;
         throw std::runtime_error("Failed to load texture");
     }
@@ -18,13 +19,17 @@ Character::Character(const std::string& textureFile, float x, float y, float sca
     sprite.setPosition(x + sprite.getGlobalBounds().width / 2, y + sprite.getGlobalBounds().height / 2);
     sprite.setScale(scale, scale);
     // 슬래시 텍스처 로드
+
     if (!slashTexture.loadFromFile("slash.png")) {
         throw std::runtime_error("Failed to load slash texture");
     }
+
     slashSprite.setTexture(slashTexture);
     slashSprite.setOrigin(48, 48);
     currentFrame = sf::IntRect(0, 0, frameWidth, frameHeight);
+
     sprite.setTextureRect(currentFrame);
+
 }
 
 void Character::handleInput(float deltaTime) {
