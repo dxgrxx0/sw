@@ -237,7 +237,7 @@ void Game::onLevelUp() {
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
-        subTowerManager.addTower(std::make_unique<CannonTower>(sf::Vector2f(350,326)));
+        subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(350,326)));
         subTowerManager.addTower(std::make_unique<BombTower>(sf::Vector2f(950, 326)));
         subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
     }

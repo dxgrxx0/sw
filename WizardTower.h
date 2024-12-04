@@ -28,6 +28,11 @@ private:
     sf::Texture lightningTexture; // 번개 텍스처
     std::vector<LightningEffect> activeLightning; // 활성화된 번개 효과
     float lightningDuration; // 번개 효과 지속 시간
+    sf::Texture wizardTexture;
+	sf::Sprite wizardSprite;
+	sf::IntRect wizardRect;
+    float wizardFrameIndex;
+	float elapsedTime;
 public:
     WizardTower(sf::Vector2f position)
 		: SubTower(position, 500.0f, 1.0f, 10.0f), lightningDuration(0.2f) {//위치, 공격범위, 공격속도, 공격력
@@ -36,10 +41,31 @@ public:
         sprite.setPosition(position);
         sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
 		lightningTexture.loadFromFile("lightning.png");
+		wizardTexture.loadFromFile("wizard.png");
+		wizardSprite.setTexture(wizardTexture);
+		wizardRect = sf::IntRect(0, 0, 90, 96);
+		wizardSprite.setTextureRect(wizardRect);
+        wizardFrameIndex = 0;
+        elapsedTime = 0;
+		wizardSprite.setOrigin(wizardSprite.getGlobalBounds().width / 2, wizardSprite.getGlobalBounds().height / 2);
+		wizardSprite.setPosition(position.x, position.y - 90);
     }
 
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {
         if (attackClock.getElapsedTime().asSeconds() >= 1.0f / attackSpeed) {
+			elapsedTime += deltaTime;
+			if (elapsedTime >= 0.2f) {
+                wizardFrameIndex++;
+				elapsedTime = 0;
+				wizardRect.left = wizardRect.width * int(wizardFrameIndex);
+				wizardSprite.setTextureRect(wizardRect);
+			}
+            if (wizardFrameIndex == 4) { 
+                attackClock.restart(); 
+				wizardFrameIndex = 0;
+            }
+        }
+        if (wizardFrameIndex == 2) {
             int attackCount = 0;
             for (auto& monster : monsters) {
                 if (isInRange(monster->getPosition())) {
@@ -48,15 +74,15 @@ public:
                     monster->takeDamage(attackDamage);
                     attackCount++;
                     if (attackCount >= 5) break;
-                    
+
                 }
             }
-            attackClock.restart();
         }
     }
 
     void draw(sf::RenderTarget& target) override {
         target.draw(sprite);
+		target.draw(wizardSprite);
         for (auto& lightning : activeLightning) {
             target.draw(lightning.sprite);
         }
