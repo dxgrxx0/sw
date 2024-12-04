@@ -54,7 +54,6 @@ public:
                     // 타겟 몬스터의 위치로 투사체 발사
 
                     projectiles.emplace_back(projectileTexture, position, monster->getPosition(), 200.0f, attackDamage);
-                    projectiles.back().setScale(0.1f, 0.1f); //투사체 크기 축소
                     attackClock.restart();
                     break;
                 }
@@ -67,7 +66,7 @@ public:
         for (auto it = projectiles.begin(); it != projectiles.end();) {
             it->update(deltaTime);
             bool projectileDestroyed = false;
-
+			it->sprite.rotate(10.0f); // 투사체 회전
             if (it->isOutofBound()) {
                 it = projectiles.erase(it);
                 continue;

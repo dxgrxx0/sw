@@ -3,10 +3,11 @@
 #include "Utility.h"
 
 Projectile::Projectile(const sf::Texture& texture, sf::Vector2f position, sf::Vector2f targetPosition, float speed, float damage)
-    : position(position), speed(speed), damage(damage) {
+    : position(position), speed(speed), damage(damage),targetPosition(targetPosition) {
     sprite.setTexture(texture);
     sprite.setPosition(position);
     sprite.setScale(0.5f, 0.5f);
+	sprite.setOrigin(100,100);
 
     sf::Vector2f direction = targetPosition - position;
     float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);

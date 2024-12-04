@@ -7,7 +7,9 @@
 class Projectile {
 protected:
     sf::Vector2f position;
+    sf::Vector2f direction;
     sf::Vector2f velocity;
+	sf::Vector2f targetPosition;
     float speed;
     float damage;
 
