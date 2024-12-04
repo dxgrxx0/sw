@@ -497,6 +497,8 @@ void Monster::updateCircularAttack(Character& character,float deltaTime, sf::Vec
     trailCircle.setOutlineThickness(2.0f);
     trailCircle.setPosition(sprite.getPosition().x - 5.0f, sprite.getPosition().y - 5.0f); // 중심 맞추기
     trails.push_back(trailCircle);
+    printf("%.2f\n", circularAngle);
+
     /*
     // 흔적 관리 (지속 시간 초과 시 제거)
     if (trailTimer.getElapsedTime().asSeconds() > trailLifetime) {

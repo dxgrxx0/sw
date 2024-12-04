@@ -6,6 +6,7 @@
 #include "WizardTower.h"
 #include "TrainingTower.h"
 #include "BombTower.h"
+#include "CannonTower.h"
 #include "Dash.h"
 #include <cstdlib>
 #include <ctime>
@@ -231,7 +232,7 @@ void Game::onLevelUp() {
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
-        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(350,326)));
+        subTowerManager.addTower(std::make_unique<CannonTower>(sf::Vector2f(350,326)));
         subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(950, 326)));
         subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
     }
@@ -254,6 +255,7 @@ void Game::onLevelUp() {
 void Game::loadResources() {
     ResourceManager& rm = ResourceManager::getInstance();
     rm.loadTexture("ArrowTower", "ArrowTower.png");
+    rm.loadTexture("CannonTower", "CannonTower.png");
     rm.loadTexture("WizardTower", "WizardTower.png");
     rm.loadTexture("TrainingTower", "TrainingTower.png");
     rm.loadTexture("BombTower", "BombTower.png");

@@ -147,6 +147,7 @@ private:
     float bossExplodeFrameClock;
     int bossExplodeCurrentFrame;
     bool drawingBossExplode;
+
 };
 
 #endif // MONSTER_H
