@@ -7,7 +7,7 @@
 class SubTowerManager {
 private:
     std::vector<std::unique_ptr<SubTower>> towers;
-    int maxTowers = 3; // 최대 타워 개수
+    int maxTowers = 5; // 최대 타워 개수
 
 public:
     void addTower(std::unique_ptr<SubTower> tower);

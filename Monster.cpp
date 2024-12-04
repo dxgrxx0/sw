@@ -37,7 +37,7 @@ Monster::Monster(float x, float y, float speed, MonsterType type)
         healthPoint = 100.0f;
         defense = 10.0f;
         attackPower = 30.0f; // 추가 공격력
-        shape.setFillColor(sf::Color::Red);
+        shape.setFillColor(sf::Color::Black);
         break;
     case MonsterType::Defense: //방어력3배,체력2배
         textureName = ("DefenseMonster");
@@ -570,7 +570,7 @@ void Monster::initializeCircularPath(int radius) {
 		trailVertices[4 * i + 2].position = sf::Vector2f(radius, radius) + inner2;
 		trailVertices[4 * i + 3].position = sf::Vector2f(radius, radius) + inner1;
         for (int j = 0; j < 4; j++) {
-            trailVertices[4 * i + j].color = sf::Color::Red;
+            trailVertices[4 * i + j].color = sf::Color::Black;
         }
 	}
 

@@ -88,6 +88,10 @@ void UIManager::updateTimer(float dt) {
     timerText.setPosition(window.mapPixelToCoords(sf::Vector2i(window.getSize().x / 2 - textWidth / 2, 50)));
 }
 void UIManager::updateSkillCoolTime(SkillManager& skillManager) {
+    skillPositions["BladeWhirl"] = sf::Vector2i(window.getSize().x - 130, window.getSize().y - 400);
+    skillPositions["BulkUp"] = sf::Vector2i(window.getSize().x - 130, window.getSize().y - 300);
+    skillPositions["Dash"] = sf::Vector2i(window.getSize().x - 130, window.getSize().y - 200);
+    skillPositions["Teleport"] = sf::Vector2i(window.getSize().x - 130, window.getSize().y-100);
     for (const auto& skillPair : skillPositions) {
         const std::string& skillName = skillPair.first;             // 키 (스킬 이름)
         const sf::Vector2i skillPosition = skillPair.second; // 값 (스킬 객체)
@@ -96,7 +100,7 @@ void UIManager::updateSkillCoolTime(SkillManager& skillManager) {
         float remainingCooldown = skillManager.getRemainingCooldown(skillName);
 
         // 사각형 배경
-        skillBoxBackground.setSize(sf::Vector2f(120, 90));
+        skillBoxBackground.setSize(sf::Vector2f(window.getSize().x*3/40, window.getSize().y*9/100));
         skillBoxBackground.setPosition(window.mapPixelToCoords(skillPosition));
         skillBoxBackground.setFillColor(isUnlocked ? sf::Color(50, 50, 50) : sf::Color(100, 100, 100));
         window.draw(skillBoxBackground);

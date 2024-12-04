@@ -38,7 +38,7 @@ public:
     void updateProjectiles(float deltaTime, std::vector<std::unique_ptr<Monster>>& monsters) {
         for (auto it = projectiles.begin(); it != projectiles.end();) {
             it->update(deltaTime);
-
+			it->sprite.rotate(10.0f); // 투사체 회전
             // 몬스터와의 충돌 검사
             bool collided = false;
             for (auto& monster : monsters) {
