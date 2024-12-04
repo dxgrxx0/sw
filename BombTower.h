@@ -34,11 +34,6 @@ private:
     float splashRadius = 100.0f;
     float explosionDuration = 0.2f;
 
-    // AOE 범위 표시를 위한 원
-    sf::CircleShape aoeIndicator;
-    bool showingAOE = false;
-    sf::Vector2f currentAOEPosition;
-
 public:
     BombTower(sf::Vector2f position)
         : SubTower(position, 400.0f, 1.5f, 15.0f) {
@@ -47,16 +42,9 @@ public:
         sprite.setPosition(position);
         sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
 
-        projectileTexture.loadFromFile("Bomb.png");   
+        projectileTexture.loadFromFile("Bomb.png");
 
         explosionTexture.loadFromFile("Bomb_explosion.png");
-
-        // AOE 표시기 설정
-        aoeIndicator.setRadius(splashRadius);
-        aoeIndicator.setOrigin(splashRadius, splashRadius);
-        aoeIndicator.setFillColor(sf::Color(255, 0, 0, 64));  // 반투명 빨간색
-        aoeIndicator.setOutlineColor(sf::Color(255, 0, 0, 128));
-        aoeIndicator.setOutlineThickness(2.0f);
     }
 
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {
@@ -64,7 +52,7 @@ public:
             for (auto& monster : monsters) {
                 if (isInRange(monster->getPosition())) {
                     // 타겟 몬스터의 위치로 투사체 발사
-                   
+
                     projectiles.emplace_back(projectileTexture, position, monster->getPosition(), 200.0f, attackDamage);
                     projectiles.back().setScale(0.1f, 0.1f); //투사체 크기 축소
                     attackClock.restart();
@@ -103,11 +91,6 @@ public:
                     // 폭발 효과 추가 (몬스터 위치)
                     activeExplosions.emplace_back(explosionTexture, explosionCenter, explosionDuration);
 
-                    // AOE 범위 표시 (몬스터 위치)
-                    showingAOE = true;
-                    currentAOEPosition = explosionCenter;
-                    aoeIndicator.setPosition(currentAOEPosition);
-
                     projectileDestroyed = true;
                     break;
                 }
@@ -130,11 +113,6 @@ public:
             projectile.draw(target);
         }
 
-        // AOE 범위 표시
-        if (showingAOE) {
-            target.draw(aoeIndicator);
-        }
-
         // 폭발 효과 그리기
         for (auto& explosion : activeExplosions) {
             float elapsedTime = explosion.timer.getElapsedTime().asSeconds();
@@ -151,4 +129,4 @@ public:
         );
     }
 };
-#endif 
+#endif

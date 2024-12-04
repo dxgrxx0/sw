@@ -28,8 +28,8 @@ public:
             for (auto& monster : monsters) {
                 if (isInRange(monster->getPosition())) {
                     projectiles.emplace_back(projectileTexture, sprite.getPosition(), monster->getPosition(), 300.0f, attackDamage);
-                    projectiles.back().setScale(1.5f, 1.5f); //투사체 크기 확대
-
+                    projectiles.back().setScale(5.5f, 5.5f); //투사체 크기 확대
+               
                    
                     attackClock.restart();
                     break;
@@ -38,6 +38,7 @@ public:
         }
         updateProjectiles(deltaTime, monsters);
     }
+
     void updateProjectiles(float deltaTime, std::vector<std::unique_ptr<Monster>>& monsters) {
         for (auto it = projectiles.begin(); it != projectiles.end();) {
             it->update(deltaTime);

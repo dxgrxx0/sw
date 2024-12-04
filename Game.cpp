@@ -236,7 +236,7 @@ void Game::onLevelUp() {
         skillManager.unlockSkill("BladeWhirl");
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
         subTowerManager.addTower(std::make_unique<BombTower>(sf::Vector2f(350, 326)));
-        subTowerManager.addTower(std::make_unique<CannonTower>(sf::Vector2f(620, 846)));
+        subTowerManager.addTower(std::make_unique<CannonTower>(sf::Vector2f(600, 846)));
         //subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(950, 326)));
         subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(950, 326)));
     }
@@ -260,7 +260,7 @@ void Game::loadResources() {
     ResourceManager& rm = ResourceManager::getInstance();
     rm.loadTexture("ArrowTower", "ArrowTower.png");
     rm.loadTexture("WizardTower", "WizardTower.png");
-    rm.loadTexture("Cannon", "Cannon.png");
+    rm.loadTexture("CannonTower", "Cannon.png");
     rm.loadTexture("TrainingTower", "TrainingTower.png");
     rm.loadTexture("BombTower", "BombTower.png");
     rm.loadTexture("SpeedMonster", "speedMonster.png");
