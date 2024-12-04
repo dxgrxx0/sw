@@ -12,9 +12,14 @@ protected:
 	sf::Vector2f targetPosition;
     float speed;
     float damage;
+    int type;
 
 public:
     Projectile(const sf::Texture& texture, sf::Vector2f position, sf::Vector2f targetPosition, float speed, float damage);
+    Projectile(const sf::Texture& texture, sf::Vector2f position, sf::Vector2f targetPosition, float speed, float damage,int type);
+
+	int getType() const { return type; }
+
     virtual ~Projectile() = default; // 소멸자를 가상으로 설정
 
     virtual void update(float deltaTime); // 가상 메서드로 선언

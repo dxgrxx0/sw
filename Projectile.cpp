@@ -6,8 +6,25 @@ Projectile::Projectile(const sf::Texture& texture, sf::Vector2f position, sf::Ve
     : position(position), speed(speed), damage(damage),targetPosition(targetPosition) {
     sprite.setTexture(texture);
     sprite.setPosition(position);
-    sprite.setScale(0.5f, 0.5f);
-	sprite.setOrigin(100,100);
+	sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
+
+    sf::Vector2f direction = targetPosition - position;
+    float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    if (magnitude != 0) {
+        velocity = direction / magnitude * speed;
+    }
+    else {
+        velocity = sf::Vector2f(0, 0);
+    }
+
+    float angle = std::atan2(direction.y, direction.x) * 180 / 3.14159265f;
+    sprite.setRotation(angle + 45); // 90도 보정
+}
+Projectile::Projectile(const sf::Texture& texture, sf::Vector2f position, sf::Vector2f targetPosition, float speed, float damage,int type)
+    : position(position), speed(speed), damage(damage), targetPosition(targetPosition),type(type) {
+    sprite.setTexture(texture);
+    sprite.setPosition(position);
+    sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
 
     sf::Vector2f direction = targetPosition - position;
     float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);

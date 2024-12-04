@@ -240,6 +240,9 @@ void Game::onLevelUp() {
         subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(350,326)));
         subTowerManager.addTower(std::make_unique<BombTower>(sf::Vector2f(950, 326)));
         subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
+
+        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(250, 846)));
+        subTowerManager.addTower(std::make_unique<CannonTower>(sf::Vector2f(1050, 846)));
     }
     if (level == 3) {
         skillManager.unlockSkill("BulkUp");
@@ -270,6 +273,14 @@ void Game::loadResources() {
     rm.loadTexture("MainBoss", "mainboss.png");
     rm.loadTexture("MidBoss", "midboss.png");
     rm.loadTexture("BossExplode", "BossExplode.png");
+	rm.loadTexture("GreenBomb", "greenBomb.png");
+	rm.loadTexture("GreenBombExplode", "greenBombExplode.png");
+	rm.loadTexture("PinkBomb", "pinkBomb.png");
+	rm.loadTexture("PinkBombExplode", "pinkBombExplode.png");
+	rm.loadTexture("YellowBomb", "yellowBomb.png");
+	rm.loadTexture("YellowBombExplode", "yellowBombExplode.png");
+	rm.loadTexture("BlueBomb", "blueBomb.png");
+	rm.loadTexture("BlueBombExplode", "blueBombExplode.png");
     rm.loadFont("Arial", "arial.ttf");
 }
 void Game::cacheBackground() {

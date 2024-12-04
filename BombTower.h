@@ -14,7 +14,6 @@ struct ExplosionEffect {
         sprite.setTexture(texture);
         sprite.setPosition(pos);
         sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
-        sprite.setScale(0.3f, 0.3f);
         duration = explosionDuration;
         timer.restart();
     }
@@ -27,8 +26,11 @@ struct ExplosionEffect {
 class BombTower : public SubTower {
 private:
     std::vector<Projectile> projectiles;
+    sf::Texture projectileTextures[4];
+    sf::Texture explosionTextures[4];
     sf::Texture projectileTexture;
-    sf::Texture explosionTexture;
+	sf::Texture explosionTexture;
+    sf::Texture bombTextures[4][2];
     std::vector<ExplosionEffect> activeExplosions;
 
     float splashRadius = 100.0f;
@@ -41,10 +43,24 @@ public:
         sprite.setTexture(texture);
         sprite.setPosition(position);
         sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
-
-        projectileTexture.loadFromFile("Bomb.png");
-
-        explosionTexture.loadFromFile("Bomb_explosion.png");
+		printf("BBBBB");
+        projectileTextures[0] = ResourceManager::getInstance().getTexture("GreenBomb");
+        printf("CCCCCC\n");
+		explosionTextures[0] = ResourceManager::getInstance().getTexture("GreenBombExplode");
+		projectileTextures[1] = ResourceManager::getInstance().getTexture("PinkBomb");
+		explosionTextures[1] = ResourceManager::getInstance().getTexture("PinkBombExplode");
+        printf("CCCCCC\n");
+		projectileTextures[2] = ResourceManager::getInstance().getTexture("BlueBomb");
+		explosionTextures[2] = ResourceManager::getInstance().getTexture("BlueBombExplode");
+        printf("CCCCCC\n");
+		projectileTextures[3] = ResourceManager::getInstance().getTexture("YellowBomb");
+		explosionTextures[3] = ResourceManager::getInstance().getTexture("YellowBombExplode");
+        printf("AAAAA");
+        for (int i = 0; i < 4; i++) {
+			bombTextures[i][0] = projectileTextures[i];
+			bombTextures[i][1] = explosionTextures[i];
+		}
+        printf("DDDDDD");
     }
 
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {
@@ -52,8 +68,8 @@ public:
             for (auto& monster : monsters) {
                 if (isInRange(monster->getPosition())) {
                     // 타겟 몬스터의 위치로 투사체 발사
-
-                    projectiles.emplace_back(projectileTexture, position, monster->getPosition(), 200.0f, attackDamage);
+                    int type = std::rand() % 4;
+                    projectiles.emplace_back(bombTextures[type][0], position, monster->getPosition(), 200.0f, attackDamage,type);
                     attackClock.restart();
                     break;
                 }
@@ -88,7 +104,8 @@ public:
                     }
 
                     // 폭발 효과 추가 (몬스터 위치)
-                    activeExplosions.emplace_back(explosionTexture, explosionCenter, explosionDuration);
+                    int type = it->getType();
+                    activeExplosions.emplace_back(bombTextures[type][1], explosionCenter, explosionDuration);
 
                     projectileDestroyed = true;
                     break;
