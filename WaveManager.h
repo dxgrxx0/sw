@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include "Monster.h"
 #include "MidBoss.h"   // MidBoss 생성에 필요
+#include "MainBoss.h"  // MainBoss 생성에 필요
 #include "Character.h"
 #include "MainTower.h"
 
