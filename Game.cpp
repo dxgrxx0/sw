@@ -105,12 +105,7 @@ void Game::update() {
         }
         return; // 업그레이드 UI가 활성화된 동안 다른 게임 업데이트 중단
     }
-
     deltaTime = clock.restart().asSeconds();
-    /*if (spawnClock.getElapsedTime().asSeconds() > spawnInterval) {
-        spawnMonster();
-        spawnClock.restart();
-    }*/
     warrior.handleInput(deltaTime);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
         skillManager.activateSkill(sf::Keyboard::Q); // Q스킬 활성화
@@ -281,6 +276,13 @@ void Game::loadResources() {
 	rm.loadTexture("YellowBombExplode", "yellowBombExplode.png");
 	rm.loadTexture("BlueBomb", "blueBomb.png");
 	rm.loadTexture("BlueBombExplode", "blueBombExplode.png");
+    rm.loadTexture("RedPen", "RedPen.png");
+	rm.loadTexture("OrangePen", "OrangePen.png");
+	rm.loadTexture("YellowPen", "YellowPen.png");
+	rm.loadTexture("GreenPen", "GreenPen.png");
+	rm.loadTexture("BluePen", "BluePen.png");
+	rm.loadTexture("NavyPen", "NavyPen.png");
+	rm.loadTexture("PurplePen", "PurplePen.png");
     rm.loadFont("Arial", "arial.ttf");
 }
 void Game::cacheBackground() {

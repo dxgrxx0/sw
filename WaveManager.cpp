@@ -108,15 +108,16 @@ void WaveManager::spawnBoss(MonsterType bossType) {
     }
 
     sf::Vector2f spawnPos = { 1000.0f, 1000.0f }; // 보스는 스폰 위치
-    float health = (bossType == MonsterType::Mid_Boss) ? 500.0f : 1000.0f;
     float speed = (bossType == MonsterType::Mid_Boss) ? 70.0f : 50.0f;
-
-    auto boss = std::make_unique<MidBoss>(spawnPos.x, spawnPos.y, speed, bossType);
-    //boss->setHealthPoint(health);
-
-    if (bossType == MonsterType::Main_Boss)
+    
+    if (bossType == MonsterType::Mid_Boss) { 
+        auto boss = std::make_unique<MidBoss>(spawnPos.x, spawnPos.y, speed, bossType); 
+        monsters->push_back(std::move(boss));
+    }
+    else if(bossType==MonsterType::Main_Boss) { 
+        auto boss = std::make_unique<MainBoss>(spawnPos.x, spawnPos.y, speed, bossType); 
         monsters->clear();
-
-    monsters->push_back(std::move(boss));
+        monsters->push_back(std::move(boss));
+    }
 
 }
