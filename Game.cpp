@@ -13,6 +13,8 @@
 #include <ctime>
 #include <iostream>
 #include <chrono>
+#include "UpgradeManager.h"
+
 Game::Game() :
     window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),
     warrior("knight.png", 600, 500, 1.0f, 100.0f),
@@ -27,7 +29,7 @@ Game::Game() :
     level(1),
     experienceToNextLevel(100),
     waveManager(&warrior, &mainTower, &monsters, 1600, 1000),
-    upgradeManager(&warrior, &mainTower),
+    upgradeManager(),
     upgradeUI(font, sf::Vector2f(window.getSize())),
     screenUI(sf::Vector2f(window.getSize())),  // Add ScreenUI initialization
     isGameOver(false),
@@ -252,8 +254,12 @@ void Game::onLevelUp() {
         skillManager.addSkill("Teleport", std::make_unique<Teleport>(&warrior,&mainTower));
     }
     upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
-    std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
-    upgradeUI.showOptions(options); // UI에 업그레이드 옵션 표시
+    // 설명과 이미지 경로 각각 가져오기
+    std::vector<std::string> descriptions = upgradeManager.getUpgradeDescriptions();
+    std::vector<std::string> imagePaths = upgradeManager.getUpgradeImagePaths();
+
+    // UI에 옵션 표시
+    upgradeUI.showOptions(descriptions, imagePaths);
 }
 void Game::loadResources() {
     ResourceManager& rm = ResourceManager::getInstance();
