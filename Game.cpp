@@ -290,6 +290,12 @@ void Game::loadResources() {
 	rm.loadTexture("NavyPen", "NavyPen.png");
 	rm.loadTexture("PurplePen", "PurplePen.png");
     rm.loadFont("Arial", "arial.ttf");
+
+
+    rm.loadTexture("health", "health.png");
+    rm.loadTexture("power", "power.png");
+    rm.loadTexture("range", "range.png");
+    
 }
 void Game::cacheBackground() {
 	backgroundCache.create(4800, 3000);

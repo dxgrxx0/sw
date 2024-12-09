@@ -65,7 +65,7 @@ void UpgradeUI::showOptions(const std::vector<std::string>& descriptions, const 
         sf::Text text;
         text.setFont(font);
         text.setString(descriptions[i]);
-        text.setCharacterSize(15);
+        text.setCharacterSize(17);
         text.setFillColor(sf::Color::White);
         text.setOrigin(text.getLocalBounds().width / 2.0f, 0);
         text.setPosition(xOffset, yOffset + boxSize.y / 4.0f);
@@ -81,13 +81,8 @@ void UpgradeUI::showOptions(const std::vector<std::string>& descriptions, const 
 
         optionBoxes.push_back(box);
 
-        // 디버그 출력
-        std::cout << "Loaded image: " << imagePaths[i] << ", Text: " << descriptions[i] << ", Box position: ("
-            << xOffset << ", " << yOffset << ")\n";
     }
 }
-
-
 
 
 
@@ -106,7 +101,7 @@ int UpgradeUI::handleClick(const sf::Vector2f& mousePos) {
 
     return -1; 
 
-}
+} 
 
 
 

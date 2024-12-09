@@ -48,16 +48,16 @@ void UpgradeManager::generateUpgradeOptions() {
     upgradeOptions.clear();
 
     // 업그레이드 옵션 추가
-    upgradeOptions.emplace_back("Reduce Cooldown\n", "C:\\Temp\\cooldown.png", []() {
+    upgradeOptions.emplace_back("Increase Range\n", "range.png", []() {
         std::cout << "Cooldown reduced!" << std::endl;
         });
 
 
-    upgradeOptions.emplace_back("Increase Health\n", "C:\\Temp\\health.png", []() {
+    upgradeOptions.emplace_back("Increase Health\n", "health.png", []() {
         std::cout << "Health increased!" << std::endl;
         });
 
-    upgradeOptions.emplace_back("Increase Attack Power\n", "C:\\Temp\\power.png", []() {
+    upgradeOptions.emplace_back("Increase Attack Power\n", "power.png", []() {
         std::cout << "Attack power increased!" << std::endl;
         });
     
