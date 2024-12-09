@@ -34,11 +34,11 @@ void UpgradeUI::showOptions(const std::vector<std::string>& descriptions, const 
     optionTextures.clear();
     optionTexts.clear();
 
-    float extraSpacing = 110.0f; // X축 간격 추가
-    sf::Vector2f boxSize(200.0f, 300.0f); // 박스 크기 설정
+    float extraSpacing = 110.0f;
+    sf::Vector2f boxSize(200.0f, 300.0f); 
 
     for (size_t i = 0; i < imagePaths.size(); ++i) {
-        // 1. 텍스처 로드
+
         sf::Texture texture;
         if (!texture.loadFromFile(imagePaths[i])) {
             std::cerr << "Failed to load image: " << imagePaths[i] << std::endl;
@@ -46,13 +46,13 @@ void UpgradeUI::showOptions(const std::vector<std::string>& descriptions, const 
         }
         optionTextures.push_back(std::move(texture));
 
-        // 2. 스프라이트 생성 및 위치 설정
+
         sf::Sprite sprite(optionTextures.back());
         sf::Vector2u textureSize = optionTextures.back().getSize();
         sprite.setOrigin(textureSize.x / 2.0f, textureSize.y / 4.0f);
 
-        // 박스의 X, Y 좌표 계산
-            float xOffset = background.getPosition().x + background.getSize().x / 2.0f
+
+        float xOffset = background.getPosition().x + background.getSize().x / 2.0f
             - (imagePaths.size() - 1) * (boxSize.x + extraSpacing) / 2.0f
             + i * (boxSize.x + extraSpacing);
         float yOffset = background.getPosition().y + background.getSize().y / 2.0f;
@@ -62,7 +62,6 @@ void UpgradeUI::showOptions(const std::vector<std::string>& descriptions, const 
 
         optionSprites.push_back(sprite);
 
-        // 3. 텍스트 생성 및 위치 설정
         sf::Text text;
         text.setFont(font);
         text.setString(descriptions[i]);
@@ -73,9 +72,8 @@ void UpgradeUI::showOptions(const std::vector<std::string>& descriptions, const 
 
         optionTexts.push_back(text);
 
-        // 4. 네모 박스 생성 및 설정
         sf::RectangleShape box(boxSize);
-        box.setFillColor(sf::Color(0, 0, 0, 150)); // 반투명 검은색
+        box.setFillColor(sf::Color(0, 0, 0, 150)); 
         box.setOutlineColor(sf::Color::White);
         box.setOutlineThickness(2);
         box.setOrigin(boxSize.x / 2.0f, boxSize.y / 2.0f);
@@ -100,13 +98,14 @@ void UpgradeUI::hide() {
 int UpgradeUI::handleClick(const sf::Vector2f& mousePos) {
     if (!isVisible) return -1;
 
-    for (size_t i = 0; i < optionSprites.size(); ++i) {
-        if (optionSprites[i].getGlobalBounds().contains(mousePos)) {
-            return static_cast<int>(i); // 클릭된 옵션 인덱스 반환
+    for (size_t i = 0; i < optionBoxes.size(); ++i) {
+        if (optionBoxes[i].getGlobalBounds().contains(mousePos)) {
+            return static_cast<int>(i);
         }
     }
 
-    return -1; // 클릭되지 않음
+    return -1; 
+
 }
 
 
@@ -121,7 +120,7 @@ void UpgradeUI::draw(sf::RenderWindow& window) {
 
 
     window.draw(background);
-    // 스프라이트 및 텍스트 그리기
+
     for (size_t i = 0; i < optionSprites.size(); ++i) {
         window.draw(optionBoxes[i]);  // 네모 박스
         window.draw(optionSprites[i]); // 이미지
