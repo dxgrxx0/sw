@@ -6,9 +6,8 @@
 #include "WizardTower.h"
 #include "TrainingTower.h"
 #include "BombTower.h"
-#include "Dash.h"
 #include "CannonTower.h"
-#include "BombTower.h"
+#include "Dash.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -27,12 +26,13 @@ Game::Game() :
     level(1),
     experienceToNextLevel(100),
     waveManager(&warrior, &mainTower, &monsters, 1600, 1000),
-    upgradeManager(&warrior, &mainTower),
+    upgradeManager(&warrior, &mainTower,monsters,&level),
     upgradeUI(font, sf::Vector2f(window.getSize())),
     screenUI(sf::Vector2f(window.getSize())),  // Add ScreenUI initialization
     isGameOver(false),
     mainBossDefeated(false),
-    isVictory(false)
+    isVictory(false),
+    selectTower(false)
 {
 	loadResources();
     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정
@@ -237,12 +237,11 @@ void Game::onLevelUp() {
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
-        subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(350,326)));
-        subTowerManager.addTower(std::make_unique<BombTower>(sf::Vector2f(950, 326)));
-        subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
-
-        subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(250, 846)));
-        subTowerManager.addTower(std::make_unique<CannonTower>(sf::Vector2f(1050, 846)));
+        /*  subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(350,326)));
+          subTowerManager.addTower(std::make_unique<BombTower>(sf::Vector2f(950, 326)));
+          subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
+          subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(250, 846)));
+          subTowerManager.addTower(std::make_unique<CannonTower>(sf::Vector2f(1050, 846)));*/
     }
     if (level == 3) {
         skillManager.unlockSkill("BulkUp");
@@ -250,15 +249,27 @@ void Game::onLevelUp() {
     }
     if (level == 4) {
         skillManager.unlockSkill("Dash");
-		skillManager.addSkill("Dash", std::make_unique<Dash>(&warrior));
+        skillManager.addSkill("Dash", std::make_unique<Dash>(&warrior));
+
     }
     if (level == 5) {
         skillManager.unlockSkill("Teleport");
-        skillManager.addSkill("Teleport", std::make_unique<Teleport>(&warrior,&mainTower));
+        skillManager.addSkill("Teleport", std::make_unique<Teleport>(&warrior, &mainTower));
     }
-    upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
-    std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
-    upgradeUI.showOptions(options); // UI에 업그레이드 옵션 표시
+    if (level == 2 || level == 4 || level == 6 || !selectTower) {
+        //서브타워 선택 옵션 추가
+        upgradeManager.generateSubTowerUpgradeOptions();
+        std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
+
+        upgradeUI.showOptions(options);
+        selectTower = true;
+    }
+    if (selectTower) {
+        upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
+        std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
+        upgradeUI.showOptions(options); // UI에 업그레이드 옵션 표시
+        selectTower = false;
+    }
 }
 void Game::loadResources() {
     ResourceManager& rm = ResourceManager::getInstance();

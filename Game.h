@@ -67,6 +67,8 @@ private:
     bool isGameOver;
     bool isVictory;
     bool mainBossDefeated;
+
+    bool selectTower;
 };
 
 #endif // GAME_H

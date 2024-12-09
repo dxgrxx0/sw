@@ -3,6 +3,7 @@
 #include <string>
 #include "Monster.h"
 #include "Utility.h"
+#include"BaseSkill.h"
 //#include "SkillManager.h"
 class Character {
 public:
@@ -38,6 +39,21 @@ public:
     int getDirection() {
 		return facingDirection/90;
     }
+   
+    void addSkill(std::unique_ptr<BaseSkill> skill) {
+        skills.push_back(std::move(skill));
+    }
+
+    // 템플릿 멤버 함수로 getSkill 구현
+    template<typename T>
+    T* getSkill() {
+        for (auto& skill : skills) {
+            if (T* castedSkill = dynamic_cast<T*>(skill.get())) {
+                return castedSkill;
+            }
+        }
+        return nullptr;
+    }
 private:
     sf::Sprite sprite;
     sf::Texture texture;
@@ -62,4 +78,5 @@ private:
     float maxHealth;    //최대체력
     float health;//현재체력
     //SkillManager skillManager;
+    std::vector<std::unique_ptr<BaseSkill>> skills;
 };

@@ -7,12 +7,13 @@
 class BulkUp : public BaseSkill {
 private:
     Character* character;
-    float duration;    // 지속 시간
+    float Baseduration;    // 지속 시간
+    float addtionduration;
     float elapsedTime; // 경과 시간
 
 public:
     BulkUp(Character* character)
-        : BaseSkill("Bulk Up", sf::Keyboard::W, 10.0f), character(character),duration(5),elapsedTime(0) {}
+        : BaseSkill("Bulk Up", sf::Keyboard::W, 10.0f), character(character),Baseduration(5),elapsedTime(0), addtionduration(0.0f) {}
 
     void applyEffect() override {
         isActive = true;
@@ -24,9 +25,10 @@ public:
         character->setScale(3);
     }
     void update(float deltaTime) override {
+        float dur = Baseduration + addtionduration;
         if (isActive) {
             elapsedTime += deltaTime;
-            if (elapsedTime >= duration) {
+            if (elapsedTime >= dur) {
                 isActive = false;
                 std::cout << name << " effect ended." << std::endl;
                 // 히로인의 스탯 원상 복구
@@ -36,6 +38,14 @@ public:
                 character->setScale(1);
             }
         }
+    }
+
+    void increaseDuration(float additionalTime) {
+        addtionduration += additionalTime;
+    }
+
+    void coolTimeDown(float amount) {
+        cooldown -= amount;
     }
 };
 

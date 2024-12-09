@@ -13,7 +13,6 @@ private:
     Character* character;
     std::vector<std::unique_ptr<Monster>>& monsters;
     float range;
-    float damage;
     float elapsedTime;
 
     float currentAngle;
@@ -26,29 +25,37 @@ private:
     sf::Texture swordTexture;
     sf::Sprite swordSprite;
 
+    float baseDamage;      // 기본 데미지
+    float additionalDamage; // 추가된 업그레이드 데미지
+    int upgradelevel;
 public:
     BladeWhirl(Character* character, std::vector<std::unique_ptr<Monster>>& monsters)
         : BaseSkill("Blade Whirl", sf::Keyboard::Q, 2.0f),
         character(character),
         monsters(monsters),
         range(330.0f),
-        damage(44.0f),
         elapsedTime(0.0f),
         currentAngle(0.0f),
         startAngle(0.0f),
         endAngle(360.0f),
         swingSpeed(540.0f),
         handleFixed(20.0f),
-        lastDamageAngle(-45.0f) {
+        baseDamage(44.0f),
+        additionalDamage(0.0f),
+        lastDamageAngle(-45.0f),
+        upgradelevel(0)
+
+    {
         if (!swordTexture.loadFromFile("QSlash.png")) {
             // 이미지 로드 실패 처리
         }
         swordSprite.setTexture(swordTexture);
         //swordSprite.setScale(0.3f, 0.3f);
+       
     }
 
     void applyEffect() override {
-        
+
         elapsedTime = 0.0f;
         currentAngle = startAngle;
         lastDamageAngle = startAngle;
@@ -86,7 +93,28 @@ public:
             target.draw(swordSprite);
         }
     }
+    void upgradeDamage(float upgrade) {
+        upgradelevel++;
+        additionalDamage += upgrade * upgradelevel;
+        std::cout << "Damage upgraded. Base: " << baseDamage
+            << ", Additional: " << additionalDamage
+            << ", Total: " << (baseDamage + additionalDamage) << std::endl;
+    }
 
+    float getCurrentDamage() const {
+        return baseDamage + additionalDamage;
+    }
+
+    void reduceSkillCooldown(float reduction) {
+        cooldown -= reduction;
+    }
+    float getBaseDamage() const {
+        return baseDamage;
+    }
+
+    float getAdditionalDamage() const {
+        return additionalDamage;
+    }
 private:
     void updateWeaponPosition() {
         sf::Vector2f characterPos = character->getPosition();
@@ -100,6 +128,7 @@ private:
     }
 
     void applyDamageInArc() {
+        float currentDamage = getCurrentDamage();
         sf::Vector2f bladePos = swordSprite.getPosition();
         float damageArcAngle = 60.0f;
 
@@ -116,7 +145,10 @@ private:
 
                 float angleDiff = std::abs(angleToMonster - currentNormalizedAngle);
                 if (angleDiff <= damageArcAngle / 2.0f || angleDiff >= (360.0f - damageArcAngle / 2.0f)) {
-                    monster->takeDamage(damage);
+                    std::cout << "Dealing damage: " << currentDamage
+                        << " (Base: " << baseDamage
+                        << ", Additional: " << additionalDamage << ")" << std::endl;
+                    monster->takeDamage(currentDamage);
                 }
             }
         }
