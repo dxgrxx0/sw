@@ -283,6 +283,10 @@ void Game::loadResources() {
 	rm.loadTexture("BluePen", "BluePen.png");
 	rm.loadTexture("NavyPen", "NavyPen.png");
 	rm.loadTexture("PurplePen", "PurplePen.png");
+	rm.loadImage("MainBossYellowSkill", "MainBossYellowSkill.png");
+	rm.loadImage("MainBossRedSkill", "MainBossRedSkill.png");
+	rm.loadImage("MainBossSkillPurple", "MainBossSkillPurple.png");
+	rm.loadImage("tempred", "tempred.png");
     rm.loadFont("Arial", "arial.ttf");
 }
 void Game::cacheBackground() {
