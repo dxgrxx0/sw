@@ -251,10 +251,10 @@ void Game::onLevelUp() {
         skillManager.unlockSkill("Teleport");
         skillManager.addSkill("Teleport", std::make_unique<Teleport>(&warrior,&mainTower));
     }
-    upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
-    std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
-	std::vector<std::string> imagePaths = upgradeManager.getUpgradeImagePaths();
-    upgradeUI.showOptions(options,imagePaths); // UI에 업그레이드 옵션 표시
+ //   upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
+ //   std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
+	//std::vector<std::string> imagePaths = upgradeManager.getUpgradeImagePaths();
+ //   upgradeUI.showOptions(options,imagePaths); // UI에 업그레이드 옵션 표시
 }
 void Game::loadResources() {
     ResourceManager& rm = ResourceManager::getInstance();

@@ -22,7 +22,7 @@ void WaveManager::update(float deltaTime) {
 
 
     // Mid-Boss 스폰 (5분에 등장)
-    if (gameClock >= 400.0f && !midBossSpawned) {
+    if (gameClock >= 1000.0f && !midBossSpawned) {
         spawnBoss(MonsterType::Mid_Boss);
         midBossSpawned = true;
     } //(10.0f -> 300.0f)
@@ -33,7 +33,7 @@ void WaveManager::update(float deltaTime) {
         mainBossSpawned = true;
     } //(20.0f -> 600.0f)
 
-    if (!mainBossSpawned) { // Main-Boss가 등장하면 일반 몬스터 스폰 중지
+    if (!mainBossSpawned ) { // Main-Boss가 등장하면 일반 몬스터 스폰 중지
         spawnInterval = calculateSpawnInterval();
         timeSinceLastSpawn += deltaTime;
 
@@ -49,6 +49,7 @@ void WaveManager::update(float deltaTime) {
 		mainBoss->setSpawnMidBoss(false);
         
     }
+
     // 몬스터 업데이트
     for (auto& monster : *monsters) {
         monster->update(heroine->getPosition(), mainTower->getPosition(), deltaTime,*heroine,*mainTower);

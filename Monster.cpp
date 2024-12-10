@@ -3,6 +3,8 @@
 #include "Character.h"
 #include "MainTower.h"
 #include <iostream>
+
+
 // 생성자
 Monster::Monster(float x, float y, float speed, MonsterType type)
     : movementSpeed(speed), damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f), attackPower(0), defense(0)
