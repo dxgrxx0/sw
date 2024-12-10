@@ -20,10 +20,10 @@ public:
         isActive = true;
         std::cout << name << "w start" << std::endl;
         elapsedTime = 0.0f;
-        character->increaseAttackPower(20);
-        character->increaseSpeed(50);
-        character->increaseAttackRange(200);
-        character->setScale(3);
+        character->increaseAttackPower(powerBoost);
+        character->increaseSpeed(speedBoost);
+        character->increaseAttackRange(rangeBoost);
+        character->setScale(scaleBoost);
     }
     void update(float deltaTime) override {
         if (isActive) {
@@ -32,9 +32,9 @@ public:
                 isActive = false;
                 std::cout << name << " effect ended." << std::endl;
                 // 히로인의 스탯 원상 복구
-                character->increaseAttackPower(-20);
-                character->increaseSpeed(-50);
-                character->increaseAttackRange(-200);
+                character->increaseAttackPower(-powerBoost);
+                character->increaseSpeed(-speedBoost);
+                character->increaseAttackRange(-rangeBoost);
                 character->setScale(1);
             }
         }
