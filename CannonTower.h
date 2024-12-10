@@ -22,7 +22,11 @@ public:
         projectileTexture.loadFromFile("cannon.png");
         type = "CannonTower";
     }
-
+    void upgrade() {
+		range += 50.0f;
+		attackSpeed += 0.5f;
+		attackDamage += 5.0f;
+    }
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {
         if (attackClock.getElapsedTime().asSeconds() >= 1.0f / attackSpeed) {
             for (auto& monster : monsters) {

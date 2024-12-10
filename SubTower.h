@@ -22,7 +22,7 @@ public:
     virtual void draw(sf::RenderTarget& target);                         // 타워 그리기
     sf::Vector2f getPosition() const;
     bool isInRange(const sf::Vector2f& targetPosition) const;
-    
+    virtual void upgrade() = 0; // 순수 가상 함수
     virtual ~SubTower() = default;
 };
 
