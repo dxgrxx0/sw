@@ -1,4 +1,5 @@
 #include "UpgradeUI.h"
+#include "ResourceManager.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 UpgradeUI::UpgradeUI(sf::Font& font, const sf::Vector2f& windowSize)
@@ -10,7 +11,7 @@ UpgradeUI::UpgradeUI(sf::Font& font, const sf::Vector2f& windowSize)
     background.setOutlineColor(sf::Color::White);
     background.setOutlineThickness(2);
 
-    // 업그레이드 옵션 텍스트 초기화
+    /*// 업그레이드 옵션 텍스트 초기화
     for (int i = 0; i < 3; ++i) {
         sf::Text optionText;
         optionText.setFont(font);
@@ -20,7 +21,7 @@ UpgradeUI::UpgradeUI(sf::Font& font, const sf::Vector2f& windowSize)
         optionTexts.push_back(optionText);
     }
     optionSprites.clear();
-    optionTextures.clear();
+    optionTextures.clear();*/
 }
 
 void UpgradeUI::showOptions(const std::vector<std::string>& descriptions, const std::vector<std::string>& imagePaths) {
@@ -38,10 +39,13 @@ void UpgradeUI::showOptions(const std::vector<std::string>& descriptions, const 
             std::cerr << "Failed to load image: " << imagePaths[i] << std::endl;
             continue;
         }
-        optionTextures.push_back(std::move(texture));
+        size_t dotPos = imagePaths[i].find_last_of('.');
+        optionTextures.push_back(ResourceManager::getInstance().getTexture(imagePaths[i].substr(0, dotPos)));
         // 2. 스프라이트 생성 및 위치 설정
         sf::Sprite sprite;
-        sprite.setTexture(optionTextures.back());
+        //sprite.setTexture(optionTextures.back());
+        
+        sprite.setTexture(ResourceManager::getInstance().getTexture(imagePaths[i].substr(0, dotPos)));
         sf::Vector2u textureSize = optionTextures.back().getSize();
         sprite.setOrigin(textureSize.x / 2.0f, textureSize.y / 4.0f);
         // 박스의 X, Y 좌표 계산

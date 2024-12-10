@@ -309,7 +309,7 @@ void Game::addExp(float exp) {
 }
 void Game::onLevelUp() {
     experience -= experienceToNextLevel;
-    experienceToNextLevel *= 1.1f;
+    experienceToNextLevel *= 1.2f;
     level += 1;
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");
@@ -383,6 +383,19 @@ void Game::loadResources() {
 	rm.loadImage("MainBossRedSkill", "MainBossRedSkill.png");
 	rm.loadImage("MainBossSkillPurple", "MainBossSkillPurple.png");
     rm.loadImage("MainBossPencilSkill", "MainBossPencilSkill.png");
+	rm.loadTexture("UpgradeArrowTower", "UpgradeArrowTower.png");
+	rm.loadTexture("UpgradeWizardTower", "UpgradeWizardTower.png");
+	rm.loadTexture("UpgradeTrainingTower", "UpgradeTrainingTower.png");
+	rm.loadTexture("UpgradeBombTower", "UpgradeBombTower.png");
+	rm.loadTexture("UpgradeCannonTower", "UpgradeCannonTower.png");
+	rm.loadTexture("UpgradeAttackPower", "UpgradeAttackPower.png");
+	rm.loadTexture("UpgradeHealth", "UpgradeHealth.png");
+	rm.loadTexture("UpgradeBasicCooldown", "UpgradeBasicCooldown.png");
+	rm.loadTexture("UpgradePlayerSpeed", "UpgradePlayerSpeed.png");
+	rm.loadTexture("UpgradeBladeWhirl", "UpgradeBladeWhirl.png");
+	rm.loadTexture("UpgradeBulkUp", "UpgradeBulkUp.png");
+	rm.loadTexture("UpgradeDash", "UpgradeDash.png");
+
     rm.loadFont("Arial", "arial.ttf");
 }
 void Game::cacheBackground() {
