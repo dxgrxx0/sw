@@ -20,6 +20,7 @@ public:
         sprite.setPosition(position);
         sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
         projectileTexture.loadFromFile("cannon.png");
+        type = "CannonTower";
     }
 
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {

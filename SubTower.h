@@ -14,13 +14,15 @@ protected:
     sf::CircleShape rangeIndicator; // 시각적 범위 표시
 	sf::Texture texture;
 	sf::Sprite sprite;
+
 public:
     SubTower(sf::Vector2f position, float range, float attackSpeed, float attackDamage);
-
+    std::string type;
     virtual void attack(std::vector<std::unique_ptr<Monster>>& monsters,float deltaTime); // 공격 로직
     virtual void draw(sf::RenderTarget& target);                         // 타워 그리기
     sf::Vector2f getPosition() const;
     bool isInRange(const sf::Vector2f& targetPosition) const;
+    
     virtual ~SubTower() = default;
 };
 
