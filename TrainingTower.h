@@ -220,7 +220,12 @@ public:
         rangeIndicator.setOutlineThickness(2.0f);
         type = "TrainingTower";
     }
-
+	void upgrade() override {
+		range += 50.0f;
+		attackSpeed += 0.5f;
+		attackDamage += 5.0f;
+		maxKnights += 1;
+	}
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {
         if (attackClock.getElapsedTime().asSeconds() >= 1.0f / attackSpeed && knights.size() < maxKnights) {
             spawnKnight();

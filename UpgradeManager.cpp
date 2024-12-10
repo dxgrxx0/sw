@@ -1,9 +1,38 @@
 #include "UpgradeManager.h"
 #include <iostream>
 UpgradeManager::UpgradeManager(Character* character, MainTower* mainTower,SkillManager* skillManager,SubTowerManager* subTowerManager,int& level)
-    : character(character), mainTower(mainTower),skillManager(skillManager), gameLevel(level), rng(std::random_device{}()) {
+    : character(character), mainTower(mainTower),skillManager(skillManager),subTowerManager(subTowerManager), gameLevel(level), rng(std::random_device{}()) {
 }
+void UpgradeManager::createSubTowerOptions() {
+    currentOptions.clear();
+	auto addOption = [&](const std::string& desc, std::function<std::string()> func, const std::string& imgPath) {
+		if (upgradeOptions.find(desc) == upgradeOptions.end()) {
+			upgradeOptions[desc] = UpgradeOption(desc, imgPath, func);
+		}
+		if (upgradeOptions[desc].currentLevel < upgradeOptions[desc].maxLevel) {
+			currentOptions.push_back(&upgradeOptions[desc]); // 포인터 추가
+		}
+		};
+    if (!(subTowerManager->hasTower("WizardTower")))addOption("Build WizardTower", [this]() { return "WizardTower"; }, "UpgradeWizardTower.png");
+    if (!(subTowerManager->hasTower("ArrowTower")))addOption("Build ArrowTower", [this]() { return "ArrowTower"; }, "UpgradeArrowTower.png");
+    if (!(subTowerManager->hasTower("TrainingTower")))addOption("Build TrainingTower", [this]() { return "TrainingTower"; }, "UpgradeTrainingTower.png");
+    if (!(subTowerManager->hasTower("CannonTower")))addOption("Build CannonTower", [this]() { return "CannonTower"; }, "UpgradeCannonTower.png");
+    if (!(subTowerManager->hasTower("BombTower")))addOption("Build BombTower", [this]() { return "BombTower"; }, "UpgradeBombTower.png");
+	std::shuffle(currentOptions.begin(), currentOptions.end(), rng);
 
+	if (currentOptions.size() > 3) {
+		currentOptions.resize(3);
+	}
+	else if (currentOptions.size() < 3) {
+		currentOptions.resize(currentOptions.size());
+	}
+}
+std::string UpgradeManager::getTowerName(int choice) const {
+	if (choice >= 0 && choice < currentOptions.size()) {
+		return currentOptions[choice]->getTowerName();
+	}
+	return "";
+}
 void UpgradeManager::generateUpgradeOptions() {
     currentOptions.clear();
 
@@ -21,11 +50,19 @@ void UpgradeManager::generateUpgradeOptions() {
     addOption("Reduce Skill Cooldown", [this]() { character->reduceCooldown(0.1f); },"UpgradeBasicCooldown.png");
     addOption("Increase Heroine Speed", [this]() {character->increaseSpeed(30.0f); },"UpgradePlayerSpeed.png");
     if (gameLevel >= 2) {
-        addOption("Upgrade BladeWhirl", [this]() { skillManager->upgradeSkill("BladeWhirl"); }, "UpgradePlayerSpeed.png");
+        addOption("Upgrade BladeWhirl", [this]() { skillManager->upgradeSkill("BladeWhirl"); }, "UpgradeBladeWhirl.png");
     }
-    if (gameLevel >= 3) {
-		addOption("Upgrade BulkUp", [this]() { skillManager->upgradeSkill("BulkUp"); }, "UpgradePlayerSpeed.png");
+    if (gameLevel >= 4) {
+		addOption("Upgrade BulkUp", [this]() { skillManager->upgradeSkill("BulkUp"); }, "UpgradeBulkUp.png");
     }
+    if (gameLevel >= 6) {
+		addOption("Upgrade Dash", [this]() { skillManager->upgradeSkill("Dash"); }, "UpgradeDash.png");
+    }
+	if (subTowerManager->hasTower("WizardTower"))addOption("Upgrade WizardTower", [this]() { subTowerManager->upgradeTower("WizardTower"); }, "UpgradeWizardTower.png");
+	if (subTowerManager->hasTower("ArrowTower"))addOption("Upgrade ArrowTower", [this]() { subTowerManager->upgradeTower("ArrowTower"); }, "UpgradeArrowTower.png");
+	if (subTowerManager->hasTower("TrainingTower"))addOption("Upgrade TrainingTower", [this]() { subTowerManager->upgradeTower("TrainingTower"); }, "UpgradeTrainingTower.png");
+	if (subTowerManager->hasTower("CannonTower"))addOption("Upgrade CannonTower", [this]() { subTowerManager->upgradeTower("CannonTower"); }, "UpgradeCannonTower.png");
+	if (subTowerManager->hasTower("BombTower"))addOption("Upgrade BombTower", [this]() { subTowerManager->upgradeTower("BombTower"); }, "UpgradeBombTower.png");
     std::shuffle(currentOptions.begin(), currentOptions.end(), rng);
 
     if (currentOptions.size() > 3) {

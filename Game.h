@@ -41,7 +41,7 @@ private:
     Character warrior;
     sf::Texture mainTowerTexture;
     sf::Sprite towerSprite;
-    sf::View mainView, towerView;
+    sf::View mainView, towerView,setSubTowerView;
     MiniMap minimap;
     sf::Clock clock, spawnClock;
     //std::vector<Monster> monsters;
@@ -67,6 +67,9 @@ private:
     bool isGameOver;
     bool isVictory;
     bool mainBossDefeated;
+    bool selectingTower = false;
+    std::string towerType;
+	bool wasMousePressed = true;
 };
 
 #endif // GAME_H

@@ -21,6 +21,7 @@ Game::Game() :
     mainView(sf::FloatRect(0, 0, 1600, 1000)),
     mainTower(sf::Vector2f(650.0f, 500.0f)), // MainTower 위치 설정
     towerView(sf::FloatRect(150, 0, 1000, 1000)),
+	setSubTowerView(sf::FloatRect(0, 0, 1600, 1000)),
     spawnInterval(1.0f),
     monsterSpeed(50.0f),
     experience(0),
@@ -43,6 +44,7 @@ Game::Game() :
 	backgroundSprite.setTexture(backgroundTexture);
     screenUI.loadResources("StartUi.png", "PixelOperator8.ttf");
     cacheBackground();
+	setSubTowerView.setCenter(mainTower.getPosition());
     gameStarted = false;
 }
 
@@ -98,13 +100,35 @@ void Game::update() {
         sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             int choice = upgradeUI.handleClick(mousePos);
-            if (choice != -1) {
+            if (choice != -1&&!selectingTower) {
                 upgradeManager.applyUpgrade(choice); // 선택된 업그레이드 적용
                 upgradeUI.hide(); // UI 숨기기 (업그레이드 완료)
                 clock.restart();
             }
+			else if (choice != -1 && selectingTower) {
+				towerType = upgradeManager.getTowerName(choice); // 선택된 업그레이드 적용
+				upgradeUI.hide(); // UI 숨기기 (업그레이드 완료)
+				clock.restart();
+			}
         }
         return; // 업그레이드 UI가 활성화된 동안 다른 게임 업데이트 중단
+    }
+	
+    if (selectingTower&&!upgradeUI.getIsVisible()) {
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)&&!wasMousePressed) {
+            sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+			if (calculateDistance(mousePos, mainTower.getPosition()) < 300|| calculateDistance(mousePos, mainTower.getPosition()) >500||!subTowerManager.isCorrectPos(mousePos)) return;
+            if (towerType == "ArrowTower")subTowerManager.addTower(std::make_unique<ArrowTower>(mousePos));
+            else if (towerType == "WizardTower")subTowerManager.addTower(std::make_unique<WizardTower>(mousePos));
+            else if (towerType == "TrainingTower")subTowerManager.addTower(std::make_unique<TrainingTower>(mousePos));
+            else if (towerType == "BombTower")subTowerManager.addTower(std::make_unique<BombTower>(mousePos));
+            else if (towerType == "CannonTower")subTowerManager.addTower(std::make_unique<CannonTower>(mousePos));
+            selectingTower = false;
+            clock.restart();
+		}
+        wasMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+		return; // 업그레이드 UI가 활성화된 동안 다른 게임 업데이트 중단
+        
     }
     deltaTime = clock.restart().asSeconds();
     warrior.handleInput(deltaTime);
@@ -215,6 +239,63 @@ void Game::render() {
         window.setView(window.getDefaultView());  // 기본 뷰로 변경
         upgradeUI.draw(window); // UI가 활성화된 경우에만 그리기
     }
+    // 타워 설치 모드일 때 UI 요소 렌더링
+    if (selectingTower && !upgradeUI.getIsVisible()) {
+        window.setView(setSubTowerView); // 기본 뷰로 변경
+        window.draw(cachedBackgroundSprite);
+		mainTower.draw(window);
+		subTowerManager.drawTowers(window);
+        sf::CircleShape wrongPlace;
+        sf::CircleShape rightPlace;
+        wrongPlace.setRadius(300);
+        wrongPlace.setOrigin(300, 300);
+        wrongPlace.setPosition(mainTower.getPosition());
+        wrongPlace.setFillColor(sf::Color(255, 0, 0, 128));
+        rightPlace.setRadius(500);
+        rightPlace.setOrigin(500, 500);
+        rightPlace.setPosition(mainTower.getPosition());
+        rightPlace.setFillColor(sf::Color(0, 255, 0, 128));
+        window.draw(rightPlace);
+        window.draw(wrongPlace);
+        sf::Text instructionText;
+        instructionText.setFont(font);
+        instructionText.setString("Click on the map to place your " + towerType);
+        instructionText.setCharacterSize(24);
+        instructionText.setFillColor(sf::Color::White);
+        instructionText.setPosition(50, 50);
+        window.draw(instructionText);
+
+        // 타워 미리보기 (선택 사항)
+        sf::Vector2i mousePixelPos = sf::Mouse::getPosition(window);
+        sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mousePixelPos, window.getView());
+
+        sf::Sprite previewSprite;
+        if (towerType == "WizardTower") {
+            previewSprite.setTexture(ResourceManager::getInstance().getTexture("WizardTower"));
+        }
+        else if (towerType == "ArrowTower") {
+            previewSprite.setTexture(ResourceManager::getInstance().getTexture("ArrowTower"));
+        }
+        else if (towerType == "BombTower") {
+            previewSprite.setTexture(ResourceManager::getInstance().getTexture("BombTower"));
+        }
+        else if (towerType == "TrainingTower") {
+            previewSprite.setTexture(ResourceManager::getInstance().getTexture("TrainingTower"));
+        }
+        else if (towerType == "CannonTower") {
+            previewSprite.setTexture(ResourceManager::getInstance().getTexture("CannonTower"));
+        }
+        else {
+            // 기본 처리 또는 에러 메시지
+        }
+        previewSprite.setPosition(mouseWorldPos);
+        previewSprite.setColor(sf::Color(255, 255, 255, 128)); // 반투명
+        if (calculateDistance(previewSprite.getPosition(), mainTower.getPosition()) < 300 || calculateDistance(previewSprite.getPosition(), mainTower.getPosition()) > 500||!subTowerManager.isCorrectPos(previewSprite.getPosition())) {
+			previewSprite.setColor(sf::Color(255, 0, 0, 128)); // 빨간색으로 변경
+        }
+        previewSprite.setOrigin(previewSprite.getTexture()->getSize().x / 2.0f, previewSprite.getTexture()->getSize().y / 2.0f);
+        window.draw(previewSprite);
+    }
     window.display();
 }
 /*
@@ -228,34 +309,45 @@ void Game::addExp(float exp) {
 }
 void Game::onLevelUp() {
     experience -= experienceToNextLevel;
-    experienceToNextLevel *= 1.5f;
+    experienceToNextLevel *= 1.1f;
     level += 1;
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
-        subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(350,326)));
+        /*subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(350, 326)));
         subTowerManager.addTower(std::make_unique<BombTower>(sf::Vector2f(950, 326)));
         subTowerManager.addTower(std::make_unique<TrainingTower>(sf::Vector2f(650, 846)));
 
         subTowerManager.addTower(std::make_unique<ArrowTower>(sf::Vector2f(250, 846)));
-        subTowerManager.addTower(std::make_unique<CannonTower>(sf::Vector2f(1050, 846)));
+        subTowerManager.addTower(std::make_unique<CannonTower>(sf::Vector2f(1050, 846)));*/
     }
-    if (level == 3) {
+
+    if (level == 4) {
         skillManager.unlockSkill("BulkUp");
         skillManager.addSkill("BulkUp", std::make_unique<BulkUp>(&warrior));
     }
-    if (level == 4) {
+    if (level == 6) {
         skillManager.unlockSkill("Dash");
 		skillManager.addSkill("Dash", std::make_unique<Dash>(&warrior));
     }
-    if (level == 5) {
+    if (level == 8) {
         skillManager.unlockSkill("Teleport");
         skillManager.addSkill("Teleport", std::make_unique<Teleport>(&warrior,&mainTower));
     }
-    upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
-    std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
-	std::vector<std::string> imagePaths = upgradeManager.getUpgradeImagePaths();
-    upgradeUI.showOptions(options,imagePaths); // UI에 업그레이드 옵션 표시
+	if (level == 3 || level == 5 || level == 7) {
+		upgradeManager.createSubTowerOptions(); // 서브 타워 옵션 생성
+		std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
+		std::vector<std::string> imagePaths = upgradeManager.getUpgradeImagePaths();
+		upgradeUI.showOptions(options, imagePaths); // UI에 업그레이드 옵션 표시
+        selectingTower = true;
+	}
+    else {
+        upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
+        std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
+	    std::vector<std::string> imagePaths = upgradeManager.getUpgradeImagePaths();
+        upgradeUI.showOptions(options,imagePaths); // UI에 업그레이드 옵션 표시
+    }
+    
 }
 void Game::loadResources() {
     ResourceManager& rm = ResourceManager::getInstance();
@@ -263,6 +355,7 @@ void Game::loadResources() {
     rm.loadTexture("WizardTower", "WizardTower.png");
     rm.loadTexture("TrainingTower", "TrainingTower.png");
     rm.loadTexture("BombTower", "BombTower.png");
+	rm.loadTexture("CannonTower", "CannonTower.png");
     rm.loadTexture("SpeedMonster", "speedMonster.png");
     rm.loadTexture("AttackMonster", "attackMonster.png");
     rm.loadTexture("BasicMonster", "basicMonster.png");
