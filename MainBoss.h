@@ -34,16 +34,18 @@ public:
     void update(const sf::Vector2f& CharacterPos, const sf::Vector2f& MainTowerPos,
         float deltaTime, Character& character, MainTower& mainTower) override;
     void draw(sf::RenderTarget& target) override;
-
+	bool isSpawnMidBoss() const { return spawnMidBoss; }
+	void setSpawnMidBoss(bool spawnMidBoss) { this->spawnMidBoss = spawnMidBoss; }
+    
 private:
-    bool initializeDrawingFromImage(DrawingSkillInstance& instance, const std::string& imagePath, float penThickness);
+    bool initializeDrawingFromImage(DrawingSkillInstance& instance, const std::string& imagePath, int imageIndex);
     void castSkill();
     bool getIsDrawing();
-    float skillCooldown = 5.0f; // 5초 주기
+    float skillCooldown = 10.0f; // 5초 주기
     float skillTimer = 0.0f;
 
-    std::vector<std::string> penNames = { "RedPen", "OrangePen", "YellowPen", "GreenPen", "BluePen", "NavyPen", "PurplePen" };
-    std::vector<std::string> imagePaths = { "MainBossYellowSkill.png","tempred.png","MainBossSkillPurple.png"}; // 실제 존재하는 이미지 파일명으로 변경
+    std::vector<std::string> penNames = { "RedPen",  "YellowPen","PurplePen", "pencil","OrangePen", "GreenPen", "BluePen", "NavyPen"};
+    std::vector<std::string> imagePaths = { "MainBossRedSkill.png","MainBossYellowSkill.png","MainBossSkillPurple.png","MainBossPencilSkill.png"}; // 실제 존재하는 이미지 파일명으로 변경
 
     std::vector<sf::Texture> penTextures;
     std::vector<sf::Sprite> penSprites;
@@ -56,5 +58,13 @@ private:
     float basicAttackTimer = 0.0f;       // 기본 공격 타이머
 
     void performBasicAttack(const sf::Vector2f& targetPos); // 기본 공격 함수
+
+	bool spawnMidBoss = false; // MidBoss 스폰 여부
+
+	const float dashDuration = 0.5f; // 대쉬 지속 시간
+	float dashTimeCheck = 0.0f;         // 대쉬 타이머
+    float dashCooldown = 0.0f;
+	bool isDashing = false;         // 대쉬 중인지 여부
+	sf::Vector2f dashDirection;     // 대쉬 방향
 
 };

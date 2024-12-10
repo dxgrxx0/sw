@@ -24,6 +24,7 @@ public:
     void updateSkills(float deltaTime);
 	float getRemainingCooldown(const std::string& name) const;
     BaseSkill* getSkill(const std::string& skillName);
+	void upgradeSkil(const std::string& skillName);
 };
 
 #endif // SKILL_MANAGER_H

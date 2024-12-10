@@ -7,7 +7,11 @@
 
 class UpgradeUI {
 private:
+	sf::Font& font;                            // 폰트
     sf::RectangleShape background;             // 업그레이드 창 배경
+    std::vector<sf::RectangleShape> optionBoxes; // 옵션 박스
+    std::vector<sf::Sprite> optionSprites;      // 옵션 이미지
+    std::vector<sf::Texture> optionTextures;    // 옵션 텍스처
     std::vector<sf::Text> optionTexts;         // 업그레이드 옵션 텍스트들
     bool isVisible;                            // 업그레이드 UI 표시 여부
 
@@ -16,7 +20,7 @@ public:
     UpgradeUI(sf::Font& font, const sf::Vector2f& windowSize);
 
     // 업그레이드 옵션을 화면에 표시
-    void showOptions(const std::vector<std::string>& options);
+    void showOptions(const std::vector<std::string>& descriptions, const std::vector<std::string>& imagePaths);
 
     // 업그레이드 UI 숨기기
     void hide();

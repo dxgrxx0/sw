@@ -45,7 +45,7 @@ MidBoss::MidBoss(float x, float y, float speed, MonsterType type) : Monster(x, y
     }
     texture = ResourceManager::getInstance().getTexture(textureName);
     sprite.setTexture(texture);
-    sprite.setScale(0.1f, 0.1f);
+    sprite.setScale(0.2f, 0.2f);
     sprite.setPosition(x, y);
     sprite.setOrigin(500, 500);
 }

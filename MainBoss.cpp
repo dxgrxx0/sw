@@ -29,7 +29,7 @@ MainBoss::MainBoss(float x, float y, float speed, MonsterType type) : Monster(x,
     switch (type) {
     case MonsterType::Main_Boss:
         textureName = "MainBoss";
-        movementSpeed = 8.0f;
+        movementSpeed = 10.0f;
         healthPoint = 5000.0f;
         attackPower = 100.0f;
         defense = 50.0f;
@@ -54,7 +54,7 @@ MainBoss::MainBoss(float x, float y, float speed, MonsterType type) : Monster(x,
     }
 }
 
-bool MainBoss::initializeDrawingFromImage(DrawingSkillInstance& instance, const std::string& imagePath, float penThickness) {
+bool MainBoss::initializeDrawingFromImage(DrawingSkillInstance& instance, const std::string& imagePath, int imageIndex) {
     sf::Image image;
     if (!image.loadFromFile(imagePath)) {
         std::cerr << "Failed to load drawing image: " << imagePath << std::endl;
@@ -79,12 +79,12 @@ bool MainBoss::initializeDrawingFromImage(DrawingSkillInstance& instance, const 
     }
 
     instance.currentPathIndex = 0;
-    instance.drawingDuration = 3.0f;
+    instance.drawingDuration = 1.0f;
     instance.pointsPerSecond = static_cast<float>(instance.drawingPath.size()) / instance.drawingDuration;
     instance.elapsedDrawingTime = 0.0f;
 
     // 펜 스프라이트 선택 (랜덤)
-    int penIndex = rand() % penSprites.size();
+    int penIndex = imageIndex;
     instance.penSprite = penSprites[penIndex];
     instance.penSprite.setOrigin(5, 95);
     //instance.penSprite.setScale(0.4f, 0.4f);
@@ -106,8 +106,11 @@ bool MainBoss::initializeDrawingFromImage(DrawingSkillInstance& instance, const 
 void MainBoss::castSkill() {
     DrawingSkillInstance instance;
     int imageIndex = rand() % imagePaths.size();
+    if (imageIndex == 3) {
+		imageIndex = rand() % imagePaths.size();
+    }
     std::string chosenImage = imagePaths[imageIndex];
-    if (!initializeDrawingFromImage(instance, chosenImage, 100.0f)) {
+    if (!initializeDrawingFromImage(instance, chosenImage, imageIndex)) {
         return;
     }
     skillInstances.push_back(instance);
@@ -131,6 +134,32 @@ void MainBoss::update(const sf::Vector2f& CharacterPos, const sf::Vector2f& Main
             basicAttackTimer = 0.0f;
             performBasicAttack(CharacterPos); // 캐릭터를 목표로 투사체 발사
         }
+        if (isDashing) {
+            dashTimeCheck += deltaTime;
+			sprite.move(dashDirection * 500.0f * deltaTime);
+			if (dashTimeCheck >= dashDuration) {
+				isDashing = false;
+				dashTimeCheck = 0.0f;
+				dashCooldown = 0.0f;
+			}
+        }
+        if (!isDashing) {
+            dashCooldown += deltaTime;
+            if (dashCooldown >= 5.0f) {
+			    float distance = calculateDistance(getPosition(), CharacterPos);
+                float deltaX = getPosition().x - CharacterPos.x;
+                float deltaY = getPosition().y - CharacterPos.y;
+                float magnitude = sqrt(deltaX * deltaX + deltaY * deltaY);
+
+                if (magnitude != 0) {
+                    dashDirection = sf::Vector2f(deltaX / magnitude, deltaY / magnitude);
+                }
+                if (distance <= 100) {
+                    isDashing = true;
+                }
+            }
+        }
+		
     }
     // 투사체 업데이트
     for (auto it = projectiles.begin(); it != projectiles.end();) {
@@ -157,7 +186,7 @@ void MainBoss::update(const sf::Vector2f& CharacterPos, const sf::Vector2f& Main
         ++it;
     }
 
-    if(!getIsDrawing())Monster::update(CharacterPos, MainTowerPos, deltaTime, character, mainTower);
+    Monster::update(CharacterPos, MainTowerPos, deltaTime, character, mainTower);
 
 
     skillTimer += deltaTime;
@@ -244,6 +273,10 @@ void MainBoss::update(const sf::Vector2f& CharacterPos, const sf::Vector2f& Main
         }
 
         if (inst.isThrowing) {
+            if (inst.imagePath == "MainBossPencilSkill.png") {
+                inst.isThrowing = false;
+                spawnMidBoss = true;
+            }
             // 던지는 중에는 오브젝트 이동
             sf::Vector2f offset = inst.throwDirection * inst.throwSpeed * deltaTime;
             for (size_t i = 0; i < inst.drawingVertices.getVertexCount(); ++i) {
@@ -261,6 +294,9 @@ void MainBoss::update(const sf::Vector2f& CharacterPos, const sf::Vector2f& Main
                 character.takeDamage(attackPower);
                 // 필요하다면 인스턴스 제거 등의 추가 처리
             }
+			if (inst.drawingOffset.x < -1000 || inst.drawingOffset.x > 3600 || inst.drawingOffset.y < -1000 || inst.drawingOffset.y > 2000) {
+				inst.isThrowing = false;
+			}
         }
     }
 

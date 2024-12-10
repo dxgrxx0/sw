@@ -21,5 +21,6 @@ public:
     void generateUpgradeOptions();                  // 업그레이드 옵션 생성
     void applyUpgrade(int choice);                  // 선택된 업그레이드 옵션 적용
     std::vector<std::string> getUpgradeDescriptions() const; // 업그레이드 설명 반환
+	std::vector<std::string> getUpgradeImagePaths() const; // 업그레이드 이미지 경로 반환
 };
 #endif // UPGRADEMANAGER_H

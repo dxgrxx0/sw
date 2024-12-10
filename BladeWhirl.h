@@ -86,6 +86,10 @@ public:
             target.draw(swordSprite);
         }
     }
+    void upgrade() override {
+		damage += 20.0f;
+		cooldown -= 0.2f;
+    }
 
 private:
     void updateWeaponPosition() {

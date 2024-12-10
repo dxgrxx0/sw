@@ -22,7 +22,7 @@ public:
     bool canActivate() const {
         return cooldownTimer.getElapsedTime().asSeconds() >= cooldown;
     }
-
+    
     virtual void activate() {
         if (canActivate()) {
             isActive = true;
@@ -42,6 +42,7 @@ public:
     virtual void applyEffect() = 0; // 각 스킬 효과 구현
 
     sf::Keyboard::Key getKey() const { return key; }
+    virtual void upgrade() = 0;
 };
 
 #endif // BASESKILL_H

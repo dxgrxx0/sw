@@ -17,6 +17,9 @@ public:
     void applyEffect() override {
         character->setPosition(mainTower->getPosition()); // 타워 위치로 이동
     }
+    void upgrade() override {
+		cooldown -= 1.0f;
+    }
 };
 
 #endif // TELEPORT_H
