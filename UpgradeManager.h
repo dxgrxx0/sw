@@ -7,6 +7,7 @@
 #include "Character.h"
 #include "MainTower.h"
 #include "SkillManager.h"
+#include "SubTowerManager.h"
 class UpgradeManager {
 private:
     Character* character;
@@ -17,7 +18,7 @@ private:
     std::mt19937 rng;
     int& gameLevel;
 public:
-    UpgradeManager(Character* character, MainTower* mainTower,SkillManager* skillManager,int& level);
+    UpgradeManager(Character* character, MainTower* mainTower,SkillManager* skillManager,SubTowerManager* subTowerManager,int& level);
 
     void generateUpgradeOptions();                  // 업그레이드 옵션 생성
     void applyUpgrade(int choice);                  // 선택된 업그레이드 옵션 적용

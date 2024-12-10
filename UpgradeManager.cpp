@@ -1,6 +1,6 @@
 #include "UpgradeManager.h"
 #include <iostream>
-UpgradeManager::UpgradeManager(Character* character, MainTower* mainTower,SkillManager* skillManager,int& level)
+UpgradeManager::UpgradeManager(Character* character, MainTower* mainTower,SkillManager* skillManager,SubTowerManager* subTowerManager,int& level)
     : character(character), mainTower(mainTower),skillManager(skillManager), gameLevel(level), rng(std::random_device{}()) {
 }
 
