@@ -15,10 +15,25 @@ void UpgradeManager::generateUpgradeOptions() {
         }
     };
 
+
     addOption("Increase Attack Power", [this]() { character->increaseAttackPower(10); },"UpgradeAttackPower.png");
     addOption("Increase Health", [this]() { character->increaseMaxHealth(20); },"UpgradeHealth.png");
     addOption("Reduce Skill Cooldown", [this]() { character->reduceCooldown(0.1f); },"UpgradeBasicCooldown.png");
     addOption("Increase Heroine Speed", [this]() {character->increaseSpeed(30.0f); },"UpgradePlayerSpeed.png");
+
+    addOption("Upgrade BulkUp", [this](){ character->increaseAttackPower(10); }, "UpgradeBulkUp.png");
+    addOption("Upgrade Dash", [this]() { character->increaseAttackPower(10); }, "UpgradeDash.png");
+    addOption("UpgradeBladeWhirl.png", [this]() { character->increaseAttackPower(10); }, "UpgradeBladeWhirl.png");
+
+
+    addOption("Increase Arrow Tower", [this]() { character->increaseAttackPower(10); }, "UpgradeArrowTower.png");
+    addOption("Increase Wizard Tower", [this]() { character->increaseAttackPower(10); }, "UpgradeWizardTower.png");
+    addOption("Increase Bomb Tower", [this]() { character->increaseAttackPower(10); }, "UpgradeBombTower.png");
+    addOption("Increase Cannon Tower", [this]() { character->increaseAttackPower(10); }, "UpgradeCannonTower.png");
+    addOption("Increase Training Tower", [this]() { character->increaseAttackPower(10); }, "UpgradeTrainingTower.png");
+
+
+
     std::shuffle(currentOptions.begin(), currentOptions.end(), rng);
 
     if (currentOptions.size() > 3) {
