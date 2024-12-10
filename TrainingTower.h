@@ -5,6 +5,7 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 
+
 class Knight {
 private:
     sf::Sprite sprite;
@@ -132,29 +133,66 @@ public:
         updateAnimation();
     }
 
-    void patrol(sf::Vector2f towerPos, float deltaTime) {
-        sf::Vector2f direction = towerPos - position;
+    void returnToTower(float deltaTime, const sf::Vector2f& towerPosition, int knightIndex) {
+        // 각 기사가 타워 주변에서 겹치지 않도록 오프셋 설정
+        float offset = 50.0f; // 기사 간 간격
+        sf::Vector2f offsetPosition = towerPosition + sf::Vector2f(knightIndex * offset - offset, 0);
+
+        sf::Vector2f direction = offsetPosition - position;
         float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-        if (distance > 50.0f) {  // 타워 주변 50 반경 내에서 순찰
-            direction /= distance;
+        if (distance > 10.0f) { // 타워 위치까지 일정 거리 이상 남아 있으면 이동
+            direction /= distance; // 방향 벡터 정규화
             position += direction * speed * deltaTime;
             sprite.setPosition(position);
 
-            if (direction.x < 0 && abs(direction.x) > abs(direction.y))facingLeft = 2;
-            else if (direction.x > 0 && abs(direction.x) > abs(direction.y))facingLeft = 3;
-            else if (direction.y < 0 && abs(direction.x) < abs(direction.y))facingLeft = 1;
-            else if (direction.y > 0 && abs(direction.x) < abs(direction.y))facingLeft = 0;
+            // 방향 업데이트
+            if (direction.x < 0 && std::abs(direction.x) > std::abs(direction.y)) facingLeft = 2;
+            else if (direction.x > 0 && std::abs(direction.x) > std::abs(direction.y)) facingLeft = 3;
+            else if (direction.y < 0 && std::abs(direction.x) < std::abs(direction.y)) facingLeft = 1;
+            else if (direction.y > 0 && std::abs(direction.x) < std::abs(direction.y)) facingLeft = 0;
 
             currentState = WALKING;
         }
         else {
-            // 타워 주변에서 가만히 있기
-            currentState = IDLE;
+            currentState = IDLE; // 타워에 도달하면 대기 상태로 전환
+            std::cout << "Knight has returned to training tower position (" << offsetPosition.x << ", " << offsetPosition.y << ").\n";
         }
-        isAttacking = false;
+
+        isAttacking = false; // 공격 상태 해제
         updateAnimation();
     }
+
+
+    void patrol(float deltaTime) {
+        sf::Vector2f direction = targetPosition - position;
+        float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+        if (distance > 10.0f) {  // 목표 위치까지 일정 거리 이상 남아 있으면 이동
+            direction /= distance; // 방향 벡터 정규화
+            position += direction * speed * deltaTime;
+            sprite.setPosition(position);
+
+            if (direction.x < 0 && std::abs(direction.x) > std::abs(direction.y)) facingLeft = 2;
+            else if (direction.x > 0 && std::abs(direction.x) > std::abs(direction.y)) facingLeft = 3;
+            else if (direction.y < 0 && std::abs(direction.x) < std::abs(direction.y)) facingLeft = 1;
+            else if (direction.y > 0 && std::abs(direction.x) < std::abs(direction.y)) facingLeft = 0;
+
+            currentState = WALKING;
+        }
+        else {
+            // 목표 지점에 도달하면 새로운 목표 위치로 순찰 경로를 설정
+            targetPosition = sf::Vector2f(
+                position.x + 100.0f * ((rand() % 3) - 1), // 새로운 X 방향 순찰 위치
+                position.y + 100.0f * ((rand() % 3) - 1)  // 새로운 Y 방향 순찰 위치
+            );
+            currentState = IDLE;
+        }
+
+        isAttacking = false; // 순찰 중에는 공격 상태가 아님
+        updateAnimation();
+    }
+
 
     void takeDamage(float damage) {
         currentHealth -= damage;
@@ -236,41 +274,51 @@ public:
     }
 
 private:
+
     void spawnKnight() {
-        knights.push_back(std::make_unique<Knight>(position, mainTowerPos));
+        if (knights.size() >= maxKnights) {
+            return; // 이미 최대 기사 수에 도달한 경우 새로 생성하지 않음
+        }
+
+        knights.push_back(std::make_unique<Knight>(position, position)); // 트레이닝타워 위치를 초기 목표로 설정
+        std::cout << "Spawned knight at training tower position: (" << position.x << ", " << position.y << ")\n";
     }
 
-    void updateKnights(float deltaTime, std::vector<std::unique_ptr<Monster>>& monsters) {
-        for (auto it = knights.begin(); it != knights.end();) {
-            if ((*it)->isDead()) {
-                it = knights.erase(it);
-                continue;
-            }
 
+    void updateKnights(float deltaTime, std::vector<std::unique_ptr<Monster>>& monsters) {
+        int knightIndex = 0; // 기사별 고유 복귀 위치를 위한 인덱스
+
+        for (auto& knight : knights) {
             // 가장 가까운 몬스터 찾기
             Monster* closestMonster = nullptr;
             float closestDistance = std::numeric_limits<float>::max();
 
             for (const auto& monster : monsters) {
-                float distance = getDistance((*it)->getPosition(), monster->getPosition());
+                float distance = getDistance(knight->getPosition(), monster->getPosition());
                 if (distance < closestDistance) {
                     closestDistance = distance;
                     closestMonster = monster.get();
                 }
-                
             }
 
-            // 타워 범위 내에 몬스터가 있으면 공격, 없으면 순찰
+            // 타워 범위 안에 몬스터가 있는 경우
             if (closestMonster && isInRange(closestMonster->getPosition())) {
-                (*it)->engage(closestMonster, deltaTime);
+                knight->engage(closestMonster, deltaTime);
             }
+            // 타워 범위 밖에 있고 몬스터가 없는 경우
+            else if (!isInRange(knight->getPosition())) {
+                knight->returnToTower(deltaTime, position, knightIndex); // 트레이닝타워 위치로 복귀
+            }
+            // 타워 범위 안에 있지만 몬스터가 없는 경우
             else {
-                (*it)->patrol(position, deltaTime);  // 메인타워가 아닌 훈련타워 주변을 순찰
+                knight->patrol(deltaTime); // 순찰
             }
 
-            ++it;
+            knightIndex++; // 기사 인덱스 증가
         }
     }
+
+
 
     float getDistance(const sf::Vector2f& pos1, const sf::Vector2f& pos2) {
         float dx = pos1.x - pos2.x;
