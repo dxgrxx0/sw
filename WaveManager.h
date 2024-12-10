@@ -27,7 +27,7 @@ private:
     bool midBossSpawned;           // Mid-Boss 스폰 여부
     bool mainBossSpawned;          // Main-Boss 스폰 여부
     float gameClock;           // 게임 시간 트래킹용
-
+    MainBoss* mainBoss = nullptr;
 
 public:
     WaveManager(Character* heroine, MainTower* mainTower, std::vector<std::unique_ptr<Monster>>* monsters, float mapWidth, float mapHeight);

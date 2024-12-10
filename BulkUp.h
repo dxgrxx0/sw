@@ -9,10 +9,12 @@ private:
     Character* character;
     float duration;    // 지속 시간
     float elapsedTime; // 경과 시간
+	float powerBoost, speedBoost, rangeBoost,scaleBoost;
 
 public:
     BulkUp(Character* character)
-        : BaseSkill("Bulk Up", sf::Keyboard::W, 10.0f), character(character),duration(5),elapsedTime(0) {}
+        : BaseSkill("Bulk Up", sf::Keyboard::W, 10.0f), character(character),duration(5),elapsedTime(0),powerBoost(20),
+        speedBoost(50),rangeBoost(100),scaleBoost(2) {}
 
     void applyEffect() override {
         isActive = true;
@@ -36,6 +38,13 @@ public:
                 character->setScale(1);
             }
         }
+    }
+    void upgrade() {
+		cooldown -= 1.0f;
+        powerBoost += 10;
+		speedBoost += 30;
+		rangeBoost += 100;
+        scaleBoost += 1;
     }
 };
 

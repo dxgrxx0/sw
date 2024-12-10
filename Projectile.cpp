@@ -18,7 +18,7 @@ Projectile::Projectile(const sf::Texture& texture, sf::Vector2f position, sf::Ve
     }
 
     float angle = std::atan2(direction.y, direction.x) * 180 / 3.14159265f;
-    sprite.setRotation(angle + 45); // 90도 보정
+    sprite.setRotation(angle +225); // 90도 보정
 }
 Projectile::Projectile(const sf::Texture& texture, sf::Vector2f position, sf::Vector2f targetPosition, float speed, float damage,int type)
     : position(position), speed(speed), damage(damage), targetPosition(targetPosition),type(type) {
@@ -36,7 +36,7 @@ Projectile::Projectile(const sf::Texture& texture, sf::Vector2f position, sf::Ve
     }
 
     float angle = std::atan2(direction.y, direction.x) * 180 / 3.14159265f;
-    sprite.setRotation(angle + 45); // 90도 보정
+    sprite.setRotation(angle + 225); // 90도 보정
 }
 
 void Projectile::update(float deltaTime) {
@@ -70,6 +70,23 @@ bool Projectile::checkCollision(Monster& monster) {
         return true;
     }
     return false;
+}
+bool Projectile::checkCollision(sf::Vector2f pos) {
+    sf::Vector2f projectilePosition = sprite.getPosition();
+	float projectileRadius = sprite.getGlobalBounds().width / 2.0f; // 투사체의 반지름
+	// 두 개체 간 거리 계산
+	float distance = std::sqrt(
+		std::pow(projectilePosition.x - pos.x, 2) +
+		std::pow(projectilePosition.y - pos.y, 2)
+	);
+
+	// 충돌 여부 판단 (거리 <= 두 개체 반지름의 합)
+	if (distance <= projectileRadius) {
+		toBeDestroyed = true;      // 투사체를 제거할 준비
+		return true;
+	}
+	return false;
+
 }
 
 bool Projectile::isOutofBound() {

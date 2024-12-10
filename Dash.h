@@ -45,6 +45,9 @@ public:
             }
         }
     }
+    void upgrade() override {
+		cooldown -= 0.2f;
+    }
 };
 
 #endif // BULKUP_H

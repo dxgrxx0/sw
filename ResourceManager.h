@@ -24,6 +24,12 @@ public:
 			throw std::runtime_error("Failed to load font: " + filename);
 		}
 	}
+    void loadImage(const std::string& name, const std::string& filename) {
+		auto& img = images[name];
+        if (!img.loadFromFile(filename)) {
+			throw std::runtime_error("Failed to load image: " + filename);
+		}
+	}
 
     sf::Texture& getTexture(const std::string& name) {
         return textures.at(name);  // Using at to get an exception if texture is not found
@@ -32,11 +38,14 @@ public:
 	sf::Font& getFont(const std::string& name) {
 		return fonts.at(name);  // Using at to get an exception if font is not found
 	}
-
+	sf::Image& getImage(const std::string& name) {
+		return images.at(name);  // Using at to get an exception if image is not found
+	}
 private:
     ResourceManager() {} // Private constructor for singleton pattern
     std::map<std::string, sf::Texture> textures;
 	std::map<std::string, sf::Font> fonts;
+	std::map<std::string, sf::Image> images;
 };
 
 #endif // RESOURCE_MANAGER_H

@@ -1,32 +1,70 @@
 #pragma once
 #include "Monster.h"
+#include "Projectile.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <string>
 
-class Character;
-class MainTower;
+struct DrawingSkillInstance {
+    sf::Sprite penSprite;
+    sf::VertexArray drawingVertices;
+    std::vector<sf::Vector2f> drawingPath;
+    size_t currentPathIndex = 0;
+
+    float drawingDuration = 3.0f;
+    float pointsPerSecond = 0.0f;
+    float elapsedDrawingTime = 0.0f;
+
+    bool isDrawing = true;
+    bool isThrowing = false;
+
+    sf::Vector2f throwDirection;
+    float throwSpeed = 500.0f;
+    sf::Vector2f drawingOffset;
+
+    std::string imagePath;
+
+    sf::FloatRect boundingBox; // 바운딩 박스
+};
 
 class MainBoss : public Monster {
 public:
     MainBoss(float x, float y, float speed, MonsterType type);
 
     void update(const sf::Vector2f& CharacterPos, const sf::Vector2f& MainTowerPos,
-        float deltaTime, Character& character, MainTower& mainTower);
+        float deltaTime, Character& character, MainTower& mainTower) override;
     void draw(sf::RenderTarget& target) override;
-
+	bool isSpawnMidBoss() const { return spawnMidBoss; }
+	void setSpawnMidBoss(bool spawnMidBoss) { this->spawnMidBoss = spawnMidBoss; }
+    
 private:
-    sf::Texture penTextures[7];                // 펜 텍스처 배열
-    sf::Sprite penSprites[7];                  // 펜 스프라이트 배열
-    sf::VertexArray drawingVertices{ sf::Quads }; // 두께가 있는 선 데이터
-    std::vector<sf::Vector2f> drawingPath;     // 경로 데이터
-    size_t currentPathIndex = 0;               // 현재 경로 인덱스
-    float drawingDuration;                     // 전체 그림 시간 (초)
-    float pointsPerSecond;                     // 초당 이동 점 수
-    float elapsedDrawingTime;                  // 그림 진행 시간
-	bool isDrawing = false;                    // 그리기 중인지 여부
-	bool isThrowing = false;				   // 던지는 중인지 여부
-	sf::Vector2f throwDirection;               // 던질 방향
-	float throwSpeed = 100.0f;                  // 던지는 속도
-    sf::Vector2f drawingOffset;
-    bool initializeDrawingFromImage(const std::string& imagePath, float penThickness); // 이미지 기반 경로 초기화
+    bool initializeDrawingFromImage(DrawingSkillInstance& instance, const std::string& imagePath, int imageIndex);
+    void castSkill();
+    bool getIsDrawing();
+    float skillCooldown = 10.0f; // 5초 주기
+    float skillTimer = 0.0f;
+
+    std::vector<std::string> penNames = { "RedPen",  "YellowPen","PurplePen", "pencil","OrangePen", "GreenPen", "BluePen", "NavyPen"};
+    std::vector<std::string> imagePaths = { "MainBossRedSkill.png","MainBossYellowSkill.png","MainBossSkillPurple.png","MainBossPencilSkill.png"}; // 실제 존재하는 이미지 파일명으로 변경
+
+    std::vector<sf::Texture> penTextures;
+    std::vector<sf::Sprite> penSprites;
+
+    std::vector<DrawingSkillInstance> skillInstances;
+
+
+    std::vector<Projectile> projectiles; // 보스가 발사한 투사체 목록
+    float basicAttackCooldown = 1.0f;    // 기본 공격 쿨다운
+    float basicAttackTimer = 0.0f;       // 기본 공격 타이머
+
+    void performBasicAttack(const sf::Vector2f& targetPos); // 기본 공격 함수
+
+	bool spawnMidBoss = false; // MidBoss 스폰 여부
+
+	const float dashDuration = 0.5f; // 대쉬 지속 시간
+	float dashTimeCheck = 0.0f;         // 대쉬 타이머
+    float dashCooldown = 0.0f;
+	bool isDashing = false;         // 대쉬 중인지 여부
+	sf::Vector2f dashDirection;     // 대쉬 방향
+
 };

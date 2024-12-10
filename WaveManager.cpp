@@ -28,7 +28,7 @@ void WaveManager::update(float deltaTime) {
     } //(10.0f -> 300.0f)
 
     // Main-Boss 스폰 (10분에 등장)
-    if (gameClock >= 5.0f && !mainBossSpawned) {
+    if (gameClock >= 500.0f && !mainBossSpawned) {
         spawnBoss(MonsterType::Main_Boss);
         mainBossSpawned = true;
     } //(20.0f -> 600.0f)
@@ -42,7 +42,13 @@ void WaveManager::update(float deltaTime) {
             timeSinceLastSpawn = 0.0f;
         }
     }
-
+    if (mainBossSpawned && mainBoss->isSpawnMidBoss() == true) {
+        sf::Vector2f spawnPos = mainBoss->getPosition();
+        auto boss = std::make_unique<MidBoss>(spawnPos.x, spawnPos.y, 50.0f, MonsterType::Mid_Boss);
+        monsters->push_back(std::move(boss));
+		mainBoss->setSpawnMidBoss(false);
+        
+    }
     // 몬스터 업데이트
     for (auto& monster : *monsters) {
         monster->update(heroine->getPosition(), mainTower->getPosition(), deltaTime,*heroine,*mainTower);
@@ -116,8 +122,10 @@ void WaveManager::spawnBoss(MonsterType bossType) {
     }
     else if(bossType==MonsterType::Main_Boss) { 
         auto boss = std::make_unique<MainBoss>(spawnPos.x, spawnPos.y, speed, bossType); 
+        mainBoss = boss.get();
         monsters->clear();
         monsters->push_back(std::move(boss));
     }
+
 
 }

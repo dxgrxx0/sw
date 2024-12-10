@@ -25,6 +25,8 @@ public:
     virtual void update(float deltaTime); // 가상 메서드로 선언
     virtual void draw(sf::RenderTarget& target);
     virtual bool checkCollision(Monster& monster);
+	virtual bool checkCollision(sf::Vector2f pos);
+
 
     bool isToBeDestroyed() const { return toBeDestroyed; }
     virtual bool isOutofBound(); // 기본 구현 제공

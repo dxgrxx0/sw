@@ -253,7 +253,8 @@ void Game::onLevelUp() {
     }
     upgradeManager.generateUpgradeOptions(); // 업그레이드 옵션 생성
     std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
-    upgradeUI.showOptions(options); // UI에 업그레이드 옵션 표시
+	std::vector<std::string> imagePaths = upgradeManager.getUpgradeImagePaths();
+    upgradeUI.showOptions(options,imagePaths); // UI에 업그레이드 옵션 표시
 }
 void Game::loadResources() {
     ResourceManager& rm = ResourceManager::getInstance();
@@ -283,6 +284,11 @@ void Game::loadResources() {
 	rm.loadTexture("BluePen", "BluePen.png");
 	rm.loadTexture("NavyPen", "NavyPen.png");
 	rm.loadTexture("PurplePen", "PurplePen.png");
+	rm.loadTexture("pencil", "pencil.png");
+	rm.loadImage("MainBossYellowSkill", "MainBossYellowSkill.png");
+	rm.loadImage("MainBossRedSkill", "MainBossRedSkill.png");
+	rm.loadImage("MainBossSkillPurple", "MainBossSkillPurple.png");
+    rm.loadImage("MainBossPencilSkill", "MainBossPencilSkill.png");
     rm.loadFont("Arial", "arial.ttf");
 }
 void Game::cacheBackground() {
