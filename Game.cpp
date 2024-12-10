@@ -27,7 +27,8 @@ Game::Game() :
     level(1),
     experienceToNextLevel(100),
     waveManager(&warrior, &mainTower, &monsters, 1600, 1000),
-    upgradeManager(&warrior, &mainTower),
+    skillManager(),
+    upgradeManager(&warrior, &mainTower,&skillManager,level),
     upgradeUI(font, sf::Vector2f(window.getSize())),
     screenUI(sf::Vector2f(window.getSize())),  // Add ScreenUI initialization
     isGameOver(false),

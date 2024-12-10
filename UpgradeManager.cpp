@@ -1,7 +1,8 @@
 #include "UpgradeManager.h"
 #include <iostream>
-UpgradeManager::UpgradeManager(Character* character, MainTower* mainTower)
-    : character(character), mainTower(mainTower), rng(std::random_device{}()) {}
+UpgradeManager::UpgradeManager(Character* character, MainTower* mainTower,SkillManager* skillManager,int& level)
+    : character(character), mainTower(mainTower),skillManager(skillManager), gameLevel(level), rng(std::random_device{}()) {
+}
 
 void UpgradeManager::generateUpgradeOptions() {
     currentOptions.clear();
@@ -19,6 +20,9 @@ void UpgradeManager::generateUpgradeOptions() {
     addOption("Increase Health", [this]() { character->increaseMaxHealth(20); },"UpgradeHealth.png");
     addOption("Reduce Skill Cooldown", [this]() { character->reduceCooldown(0.1f); },"UpgradeBasicCooldown.png");
     addOption("Increase Heroine Speed", [this]() {character->increaseSpeed(30.0f); },"UpgradePlayerSpeed.png");
+    if (gameLevel >= 2) {
+        addOption("Upgrade BladeWhirl", [this]() { skillManager->upgradeSkill("BladeWhirl"); }, "UpgradePlayerSpeed.png");
+    }
     std::shuffle(currentOptions.begin(), currentOptions.end(), rng);
 
     if (currentOptions.size() > 3) {

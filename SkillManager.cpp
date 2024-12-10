@@ -53,7 +53,7 @@ float SkillManager::getRemainingCooldown(const std::string& skillName) const {
     }
     return -1.0f; // 스킬이 존재하지 않으면 -1 반환
 }
-void SkillManager::upgradeSkil(const std::string& skillName) {
+void SkillManager::upgradeSkill(const std::string& skillName) {
     auto it = skills.find(skillName);
 	if (it != skills.end()) {
 		it->second->upgrade();
