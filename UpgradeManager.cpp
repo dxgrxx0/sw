@@ -23,6 +23,9 @@ void UpgradeManager::generateUpgradeOptions() {
     if (gameLevel >= 2) {
         addOption("Upgrade BladeWhirl", [this]() { skillManager->upgradeSkill("BladeWhirl"); }, "UpgradePlayerSpeed.png");
     }
+    if (gameLevel >= 3) {
+		addOption("Upgrade BulkUp", [this]() { skillManager->upgradeSkill("BulkUp"); }, "UpgradePlayerSpeed.png");
+    }
     std::shuffle(currentOptions.begin(), currentOptions.end(), rng);
 
     if (currentOptions.size() > 3) {

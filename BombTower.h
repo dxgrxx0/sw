@@ -40,27 +40,27 @@ public:
     BombTower(sf::Vector2f position)
         : SubTower(position, 400.0f, 1.5f, 15.0f) {
         texture.loadFromFile("BombTower.png");
+        type = "BombTower";
         sprite.setTexture(texture);
         sprite.setPosition(position);
         sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
-		printf("BBBBB");
+
         projectileTextures[0] = ResourceManager::getInstance().getTexture("GreenBomb");
-        printf("CCCCCC\n");
+
 		explosionTextures[0] = ResourceManager::getInstance().getTexture("GreenBombExplode");
 		projectileTextures[1] = ResourceManager::getInstance().getTexture("PinkBomb");
 		explosionTextures[1] = ResourceManager::getInstance().getTexture("PinkBombExplode");
-        printf("CCCCCC\n");
+
 		projectileTextures[2] = ResourceManager::getInstance().getTexture("BlueBomb");
 		explosionTextures[2] = ResourceManager::getInstance().getTexture("BlueBombExplode");
-        printf("CCCCCC\n");
+
 		projectileTextures[3] = ResourceManager::getInstance().getTexture("YellowBomb");
 		explosionTextures[3] = ResourceManager::getInstance().getTexture("YellowBombExplode");
-        printf("AAAAA");
+
         for (int i = 0; i < 4; i++) {
 			bombTextures[i][0] = projectileTextures[i];
 			bombTextures[i][1] = explosionTextures[i];
 		}
-        printf("DDDDDD");
     }
 
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {

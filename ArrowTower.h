@@ -19,6 +19,7 @@ public:
 		sprite.setPosition(position);
 		sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
 		projectileTexture.loadFromFile("Arrow.png");
+        type = "ArrowTower";
     }
 
     void attack(std::vector<std::unique_ptr<Monster>>& monsters,float deltaTime) override {

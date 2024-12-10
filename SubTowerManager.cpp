@@ -17,3 +17,4 @@ void SubTowerManager::drawTowers(sf::RenderTarget& target) {
         tower->draw(target);
     }
 }
+
