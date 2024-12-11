@@ -53,6 +53,7 @@ private:
     float experienceToNextLevel;
     float deltaTime;
     sf::Font font;
+    sf::Font pixelFont;
     UIManager uiManager;
     MainTower mainTower;
     WaveManager waveManager;

@@ -39,6 +39,7 @@ Game::Game() :
 	loadResources();
     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정
     font.loadFromFile("arial.ttf");
+	pixelFont.loadFromFile("PixelOperator8.ttf");  
 	backgroundTexture.loadFromFile("background.png");
     bossbackgroundTexture.loadFromFile("Bossbackground.png");
 	backgroundSprite.setTexture(backgroundTexture);
@@ -397,6 +398,7 @@ void Game::loadResources() {
 	rm.loadTexture("UpgradeDash", "UpgradeDash.png");
 
     rm.loadFont("Arial", "arial.ttf");
+	rm.loadFont("Pixel", "PixelOperator8.ttf");
 }
 void Game::cacheBackground() {
 	backgroundCache.create(4800, 3000);

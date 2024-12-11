@@ -10,7 +10,6 @@ struct DrawingSkillInstance {
     sf::VertexArray drawingVertices;
     std::vector<sf::Vector2f> drawingPath;
     size_t currentPathIndex = 0;
-
     float drawingDuration = 3.0f;
     float pointsPerSecond = 0.0f;
     float elapsedDrawingTime = 0.0f;
@@ -67,4 +66,8 @@ private:
 	bool isDashing = false;         // 대쉬 중인지 여부
 	sf::Vector2f dashDirection;     // 대쉬 방향
 
+
+    float maxHealth;
+    sf::RectangleShape healthBar;
+	sf::RectangleShape healthBarBack;
 };

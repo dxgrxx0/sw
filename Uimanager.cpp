@@ -1,16 +1,17 @@
 #include "UIManager.h"
 
-UIManager::UIManager(sf::Font& font, Character* character, sf::RenderWindow& window) :character(character), window(window) {
+UIManager::UIManager(sf::Font& font, Character* character, sf::RenderWindow& window)
+    : character(character), window(window) {
     // 캐릭터 체력바 초기화
     characterHealthBarBackground.setSize(sf::Vector2f(48, 10));
     characterHealthBarBackground.setFillColor(sf::Color(50, 50, 50));
     characterHealthBarBackground.setOutlineThickness(1);
     characterHealthBarBackground.setOutlineColor(sf::Color::White);
     characterHealthBarBackground.setPosition(character->getPosition().x - 24, character->getPosition().y - 55);
-    characterHealthBarForeground.setFillColor(sf::Color::Green);  // 전경색 설정
+    characterHealthBarForeground.setFillColor(sf::Color::Green);
     characterHealthBarForeground.setPosition(characterHealthBarBackground.getPosition().x + 1, characterHealthBarBackground.getPosition().y + 1);
 
-
+    // 레벨 바 초기화
     levelBarBackground.setSize(sf::Vector2f(window.getSize().x / 2, 30));
     levelBarBackground.setFillColor(sf::Color(50, 50, 50));
     levelBarBackground.setOutlineThickness(2);
@@ -21,14 +22,17 @@ UIManager::UIManager(sf::Font& font, Character* character, sf::RenderWindow& win
     levelText.setFillColor(sf::Color::White);
     levelText.setPosition(0, 0);
 
+    // 메인 타워 내구도 바 초기화
     mainTowerHealthBarBackground.setSize(sf::Vector2f(window.getSize().x / 2, 30));
     mainTowerHealthBarBackground.setFillColor(sf::Color(50, 50, 50));
     mainTowerHealthBarBackground.setOutlineThickness(2);
     mainTowerHealthBarBackground.setOutlineColor(sf::Color(101, 67, 33));
+
     towerText.setFont(font);
     towerText.setCharacterSize(20);
     towerText.setFillColor(sf::Color::White);
     towerText.setString("Main tower HP");
+
     currentTime = 0;
     elapsedTime = 0;
 
@@ -38,11 +42,11 @@ UIManager::UIManager(sf::Font& font, Character* character, sf::RenderWindow& win
     timerText.setFillColor(sf::Color::White);
     timerText.setPosition(800, 20);
 
-
+    // 스킬 텍스트 초기화
     skillText.setFont(font);
-    skillPositions["BladeWhirl"] = sf::Vector2i(window.getSize().x-130, 600);
+    skillPositions["BladeWhirl"] = sf::Vector2i(window.getSize().x - 130, 600);
     skillPositions["BulkUp"] = sf::Vector2i(window.getSize().x - 130, 700);
-	skillPositions["Dash"] = sf::Vector2i(window.getSize().x - 130, 800);
+    skillPositions["Dash"] = sf::Vector2i(window.getSize().x - 130, 800);
     skillPositions["Teleport"] = sf::Vector2i(window.getSize().x - 130, 900);
 }
 
@@ -53,6 +57,8 @@ void UIManager::updateCharacterHealth() {
     characterHealthBarForeground.setSize(sf::Vector2f(46 * healthPercentage, 8));
     characterHealthBarForeground.setPosition(characterHealthBarBackground.getPosition().x + 1, characterHealthBarBackground.getPosition().y + 1);
 }
+
+// 레벨 바 업데이트
 void UIManager::updateLevelBar(int level, float experience, float experienceToNextLevel) {
     levelBarBackground.setPosition(window.mapPixelToCoords(sf::Vector2i(0, 5)));
     float levelPercentage = experience / experienceToNextLevel;
@@ -60,8 +66,6 @@ void UIManager::updateLevelBar(int level, float experience, float experienceToNe
     levelBarForeground.setFillColor(sf::Color(135, 206, 250));
     levelBarForeground.setPosition(levelBarBackground.getPosition().x, levelBarBackground.getPosition().y + 5);
     levelText.setString("Level: " + std::to_string(level));
-
-    float textWidth = levelText.getLocalBounds().width;
     levelText.setPosition(levelBarBackground.getPosition().x + 5, levelBarBackground.getPosition().y + 5);
 }
 
@@ -87,44 +91,46 @@ void UIManager::updateTimer(float dt) {
     float textWidth = timerText.getLocalBounds().width;
     timerText.setPosition(window.mapPixelToCoords(sf::Vector2i(window.getSize().x / 2 - textWidth / 2, 50)));
 }
+
+// 스킬 쿨타임 업데이트
 void UIManager::updateSkillCoolTime(SkillManager& skillManager) {
-    skillPositions["BladeWhirl"] = sf::Vector2i(window.getSize().x - 130, window.getSize().y - 400);
-    skillPositions["BulkUp"] = sf::Vector2i(window.getSize().x - 130, window.getSize().y - 300);
-    skillPositions["Dash"] = sf::Vector2i(window.getSize().x - 130, window.getSize().y - 200);
-    skillPositions["Teleport"] = sf::Vector2i(window.getSize().x - 130, window.getSize().y-100);
     for (const auto& skillPair : skillPositions) {
-        const std::string& skillName = skillPair.first;             // 키 (스킬 이름)
-        const sf::Vector2i skillPosition = skillPair.second; // 값 (스킬 객체)
+        const std::string& skillName = skillPair.first;
+        const sf::Vector2i skillPosition = skillPair.second;
+
         // 스킬 상태 정보 가져오기
         bool isUnlocked = skillManager.isSkillUnlocked(skillName);
         float remainingCooldown = skillManager.getRemainingCooldown(skillName);
 
-        // 사각형 배경
-        skillBoxBackground.setSize(sf::Vector2f(window.getSize().x*3/40, window.getSize().y*9/100));
+        // 사각형 배경 설정
+        skillBoxBackground.setSize(sf::Vector2f(window.getSize().x * 3 / 40, window.getSize().y * 9 / 100));
         skillBoxBackground.setPosition(window.mapPixelToCoords(skillPosition));
         skillBoxBackground.setFillColor(isUnlocked ? sf::Color(50, 50, 50) : sf::Color(100, 100, 100));
         window.draw(skillBoxBackground);
 
-        // 텍스트
+        // 텍스트 설정
+        std::string text;
         if (!isUnlocked) {
-            skillText.setString("Locked");
-            skillText.setFillColor(sf::Color(200, 50, 50)); // 빨간색
+            text = "Locked";
+            skillText.setFillColor(sf::Color(200, 50, 50));
         }
         else if (remainingCooldown > 0) {
-            skillText.setString(skillName + "\n" + std::to_string(static_cast<int>(remainingCooldown)) + "s");
+            text = skillName + "\n" + std::to_string(static_cast<int>(remainingCooldown)) + "s";
             skillText.setFillColor(sf::Color::White);
         }
         else {
-            skillText.setString(skillName + "\nReady");
+            text = skillName + "\nReady";
             skillText.setFillColor(sf::Color::Green);
         }
+
+        skillText.setString(text);
         skillText.setCharacterSize(20);
-        skillText.setPosition(window.mapPixelToCoords(sf::Vector2i(skillPosition.x+10,skillPosition.y+5)));
+        skillText.setPosition(window.mapPixelToCoords(sf::Vector2i(skillPosition.x + 10, skillPosition.y + 5)));
         window.draw(skillText);
     }
 }
 
-// UI 요소를 그리기
+// UI 요소 그리기
 void UIManager::draw(sf::RenderWindow& window) {
     window.draw(characterHealthBarBackground);
     window.draw(characterHealthBarForeground);
