@@ -72,7 +72,7 @@ private:
     float bossExplodeFrameClock;
     int bossExplodeCurrentFrame;
     bool drawingBossExplode;
-
+	bool hitByExplosion;
 public:
     MidBoss(float x, float y, float speed, MonsterType type);
     void update(const sf::Vector2f& CharacterPos, const sf::Vector2f& MainTowerPos, float deltaTime, Character& character, MainTower& mainTower) override;

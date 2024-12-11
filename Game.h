@@ -34,6 +34,8 @@ private:
     bool isBackgroundCached = false;
 
     sf::RenderWindow window;
+	sf::Texture backgroundEdgeTexture;
+	sf::Sprite backgroundEdgeSprite;
 	sf::Texture backgroundTexture;
     sf::Texture bossbackgroundTexture;
 

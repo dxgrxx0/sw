@@ -41,6 +41,8 @@ Game::Game() :
 	pixelFont.loadFromFile("PixelOperator8.ttf");  
 	backgroundTexture.loadFromFile("background.png");
     bossbackgroundTexture.loadFromFile("Bossbackground.png");
+	backgroundEdgeTexture.loadFromFile("backgroundEdge.png");
+	backgroundEdgeSprite.setTexture(backgroundEdgeTexture);
 	backgroundSprite.setTexture(backgroundTexture);
     screenUI.loadResources("StartUi.png", "PixelOperator8.ttf");
     cacheBackground();
@@ -210,10 +212,11 @@ void Game::render() {
 			cacheBackground();
 			isBackgroundCached = true;
         }
-        window.draw(cachedBackgroundSprite);
+        
         
 
         window.setView(mainView);
+        window.draw(cachedBackgroundSprite);
         window.draw(towerSprite);
 
         mainTower.draw(window);
@@ -406,19 +409,68 @@ void Game::loadResources() {
 	rm.loadFont("Pixel", "PixelOperator8.ttf");
 }*/
 void Game::cacheBackground() {
-	backgroundCache.create(4800, 3000);
-	backgroundCache.clear();
-    int horizontalTiles =17;  // 타일 갯수 계산
-    int verticalTiles = 16;
+    // 최종 크기: 5800 x 6000
+    backgroundCache.create(5800, 6000);
+    backgroundCache.clear();
+
+    // 기존 배경 크기: 4800 x 5000
+    // 타일 크기: 300 x 200
+    // 가로 타일 수: 17, 세로 타일 수: 26
+    int horizontalTiles = 17;
+    int verticalTiles = 26;
+
+    // 기존 배경을 중앙에 배치하기 위해 (500, 500) 위치부터 그리기 시작
     for (int i = 0; i < horizontalTiles; ++i) {
         for (int j = 0; j < verticalTiles; ++j) {
-            backgroundSprite.setPosition(i * 300, j * 200);
+            backgroundSprite.setPosition(500 + i * 300, 500 + j * 200);
             backgroundCache.draw(backgroundSprite);
         }
     }
-    backgroundCache.display(); // 렌더링 완료
+
+    // 이제 가장자리에 backgroundEdgeSprite를 배치
+    // backgroundEdgeSprite 크기: 100 x 500
+    // 상단과 하단의 폭: 5800, 따라서 100픽셀짜리 스프라이트 58개 필요
+    int edgeCountHoriz = 5800 / 100; // 58개
+
+    // 상단 가장자리 (y=0)
+    for (int i = 0; i < edgeCountHoriz; ++i) {
+        backgroundEdgeSprite.setPosition(i * 100, 0);
+        backgroundCache.draw(backgroundEdgeSprite);
+    }
+
+    // 하단 가장자리 (y=5500)
+    for (int i = 0; i < edgeCountHoriz; ++i) {
+        backgroundEdgeSprite.setPosition(i * 100, 5500);
+        backgroundCache.draw(backgroundEdgeSprite);
+    }
+
+    // 좌우 가장자리
+    // 전체 높이: 6000, 세로 타일링: 500 픽셀짜리를 12번 (6000/500=12)
+    int edgeCountVert = 6000 / 500; // 12개
+
+    // 왼쪽 가장자리 (x=0)
+    for (int j = 0; j < edgeCountVert; ++j) {
+		for (int i = 0; i < 5; i++) {
+			backgroundEdgeSprite.setPosition(i * 100, j * 500);
+			backgroundCache.draw(backgroundEdgeSprite);
+		}
+    }
+
+    // 오른쪽 가장자리 (x=5700, 5800-100=5700)
+    for (int j = 0; j < edgeCountVert; ++j) {
+        for (int i = 0; i < 5; i++) {
+			backgroundEdgeSprite.setPosition(5300 + i * 100, j * 500);
+			backgroundCache.draw(backgroundEdgeSprite);
+        }
+    }
+
+    // 렌더 완료
+    backgroundCache.display();
 
     // RenderTexture의 텍스처를 Sprite에 설정
     cachedBackgroundSprite.setTexture(backgroundCache.getTexture());
-	cachedBackgroundSprite.setPosition(-1600, -1000);
+
+    // 원래 위치를 감안한 오프셋 설정 (예: 기존 코드처럼)
+    cachedBackgroundSprite.setPosition(-2100, -2500);
 }
+
