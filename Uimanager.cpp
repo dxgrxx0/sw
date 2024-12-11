@@ -42,12 +42,15 @@ UIManager::UIManager(sf::Font& font, Character* character, sf::RenderWindow& win
     timerText.setFillColor(sf::Color::White);
     timerText.setPosition(800, 20);
 
-    // 스킬 텍스트 초기화
-    skillText.setFont(font);
-    skillPositions["BladeWhirl"] = sf::Vector2i(window.getSize().x - 130, 600);
-    skillPositions["BulkUp"] = sf::Vector2i(window.getSize().x - 130, 700);
-    skillPositions["Dash"] = sf::Vector2i(window.getSize().x - 130, 800);
-    skillPositions["Teleport"] = sf::Vector2i(window.getSize().x - 130, 900);
+	QSkillSprite.setTexture(ResourceManager::getInstance().getTexture("QSkillUI"));
+	WSkillSprite.setTexture(ResourceManager::getInstance().getTexture("WSkillUI"));
+	ESkillSprite.setTexture(ResourceManager::getInstance().getTexture("ESkillUI"));
+	RSkillSprite.setTexture(ResourceManager::getInstance().getTexture("RSkillUI"));
+    
+	skillLockSprite.setTexture(ResourceManager::getInstance().getTexture("SkillLock"));
+    skillLockSprite.setColor(sf::Color(255, 255, 255, 128));
+	cooldownOverlay.setFillColor(sf::Color(0, 0, 0, 128));
+    updateSkillIconPositions();
 }
 
 // 캐릭터 체력바 업데이트
@@ -94,41 +97,81 @@ void UIManager::updateTimer(float dt) {
 
 // 스킬 쿨타임 업데이트
 void UIManager::updateSkillCoolTime(SkillManager& skillManager) {
-    for (const auto& skillPair : skillPositions) {
+    std::vector<std::pair<std::string, sf::Sprite*>> skills = {
+        {"BladeWhirl", &QSkillSprite},
+        {"BulkUp", &WSkillSprite},
+        {"Dash", &ESkillSprite},
+        {"Teleport", &RSkillSprite}
+    };
+
+    for (const auto& skillPair : skills) {
         const std::string& skillName = skillPair.first;
-        const sf::Vector2i skillPosition = skillPair.second;
+        sf::Sprite* skillSprite = skillPair.second;
 
         // 스킬 상태 정보 가져오기
         bool isUnlocked = skillManager.isSkillUnlocked(skillName);
         float remainingCooldown = skillManager.getRemainingCooldown(skillName);
+        float maxCooldown = skillManager.getSkillMaxCooldown(skillName); // 스킬 최대 쿨타임
 
-        // 사각형 배경 설정
-        skillBoxBackground.setSize(sf::Vector2f(window.getSize().x * 3 / 40, window.getSize().y * 9 / 100));
-        skillBoxBackground.setPosition(window.mapPixelToCoords(skillPosition));
-        skillBoxBackground.setFillColor(isUnlocked ? sf::Color(50, 50, 50) : sf::Color(100, 100, 100));
-        window.draw(skillBoxBackground);
+        // 스킬 아이콘 그리기
+        window.draw(*skillSprite);
 
-        // 텍스트 설정
-        std::string text;
+        // 스킬이 잠겨있으면 SkillLock 이미지 덮기
         if (!isUnlocked) {
-            text = "Locked";
-            skillText.setFillColor(sf::Color(200, 50, 50));
-        }
-        else if (remainingCooldown > 0) {
-            text = skillName + "\n" + std::to_string(static_cast<int>(remainingCooldown)) + "s";
-            skillText.setFillColor(sf::Color::White);
-        }
-        else {
-            text = skillName + "\nReady";
-            skillText.setFillColor(sf::Color::Green);
+            skillLockSprite.setPosition(skillSprite->getPosition());
+            skillLockSprite.setOrigin(skillLockSprite.getGlobalBounds().width / 2, skillLockSprite.getGlobalBounds().height / 2);
+            skillLockSprite.setScale(skillSprite->getScale()); // 아이콘 크기와 동일하게 설정
+            window.draw(skillLockSprite);
         }
 
-        skillText.setString(text);
-        skillText.setCharacterSize(20);
-        skillText.setPosition(window.mapPixelToCoords(sf::Vector2i(skillPosition.x + 10, skillPosition.y + 5)));
-        window.draw(skillText);
+        // 스킬이 쿨타임 중이면 쿨타임 오버레이 그리기
+        else if (remainingCooldown > 0.0f) {
+            // 쿨타임 비율 계산
+            float cooldownRatio = remainingCooldown / maxCooldown;
+
+            // 쿨타임 오버레이 크기와 위치 설정
+            cooldownOverlay.setSize(sf::Vector2f(
+                skillSprite->getGlobalBounds().width,
+                skillSprite->getGlobalBounds().height * cooldownRatio
+            ));
+            cooldownOverlay.setPosition(
+                skillSprite->getPosition().x - skillSprite->getGlobalBounds().width / 2,
+                skillSprite->getPosition().y - skillSprite->getGlobalBounds().height / 2
+            );
+            window.draw(cooldownOverlay);
+        }
     }
 }
+
+void UIManager::updateSkillIconPositions() {
+    const int numSkills = 4;
+    float skillSpacing = 20.0f; // 스킬 간 간격
+    float totalSkillWidth = 0.0f;
+
+    // 스킬 스프라이트들의 크기 계산
+    std::vector<sf::Sprite*> skills = { &QSkillSprite, &WSkillSprite, &ESkillSprite, &RSkillSprite };
+    for (auto* skill : skills) {
+        skill->setScale(1.0f, 1.0f); // 필요시 크기 조정
+        skill->setOrigin(skill->getLocalBounds().width / 2, skill->getLocalBounds().height / 2); // 중심 설정
+        totalSkillWidth += skill->getGlobalBounds().width;
+    }
+    totalSkillWidth += skillSpacing * (numSkills - 1);
+
+    // 화면의 뷰 중심 계산
+    sf::Vector2f viewCenter = window.getView().getCenter();
+    sf::Vector2f viewSize = window.getView().getSize();
+    float startX = viewCenter.x - totalSkillWidth / 2.0f;
+    float yPos = viewCenter.y + viewSize.y / 2.0f - 100.0f; // 화면 하단에서 100 픽셀 위
+
+    // 각 스킬 위치 설정
+    for (int i = 0; i < numSkills; ++i) {
+        skills[i]->setPosition(
+            startX + skills[i]->getGlobalBounds().width / 2 + i * (skills[i]->getGlobalBounds().width + skillSpacing),
+            yPos
+        );
+    }
+}
+
 
 // UI 요소 그리기
 void UIManager::draw(sf::RenderWindow& window) {

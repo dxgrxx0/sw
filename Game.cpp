@@ -36,7 +36,6 @@ Game::Game() :
     mainBossDefeated(false),
     isVictory(false)
 {
-	loadResources();
     minimap.setPosition(3, 3);  // 기본 미니맵 위치 설정
     font.loadFromFile("arial.ttf");
 	pixelFont.loadFromFile("PixelOperator8.ttf");  
@@ -233,6 +232,7 @@ void Game::render() {
         // 미니맵 그리기
         minimap.draw(window);
         uiManager.draw(window);// UI 그리기
+        uiManager.updateSkillIconPositions();
         uiManager.updateSkillCoolTime(skillManager);
 		
     }
@@ -350,6 +350,7 @@ void Game::onLevelUp() {
     }
     
 }
+/*
 void Game::loadResources() {
     ResourceManager& rm = ResourceManager::getInstance();
     rm.loadTexture("ArrowTower", "ArrowTower.png");
@@ -396,10 +397,14 @@ void Game::loadResources() {
 	rm.loadTexture("UpgradeBladeWhirl", "UpgradeBladeWhirl.png");
 	rm.loadTexture("UpgradeBulkUp", "UpgradeBulkUp.png");
 	rm.loadTexture("UpgradeDash", "UpgradeDash.png");
-
+    rm.loadTexture("QSkillUI", "QSkillUI.png");
+	rm.loadTexture("WSkillUI", "WSkillUI.png");
+	rm.loadTexture("ESkillUI", "ESkillUI.png");
+	rm.loadTexture("RSkillUI", "RSkillUI.png");
+	rm.loadTexture("SkillLock", "SkillLock.png");
     rm.loadFont("Arial", "arial.ttf");
 	rm.loadFont("Pixel", "PixelOperator8.ttf");
-}
+}*/
 void Game::cacheBackground() {
 	backgroundCache.create(4800, 3000);
 	backgroundCache.clear();

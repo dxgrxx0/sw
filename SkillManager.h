@@ -25,6 +25,7 @@ public:
 	float getRemainingCooldown(const std::string& name) const;
     BaseSkill* getSkill(const std::string& skillName);
 	void upgradeSkill(const std::string& skillName);
+    float getSkillMaxCooldown(const std::string& name)const;
 };
 
 #endif // SKILL_MANAGER_H
