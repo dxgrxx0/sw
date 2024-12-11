@@ -12,16 +12,19 @@ protected:
     float attackDamage;      // 공격력
     sf::Clock attackClock;   // 공격 주기 관리
     sf::CircleShape rangeIndicator; // 시각적 범위 표시
-	sf::Texture texture;
-	sf::Sprite sprite;
+    sf::Texture texture;
+    sf::Sprite sprite;
+
 public:
     SubTower(sf::Vector2f position, float range, float attackSpeed, float attackDamage);
-
-    virtual void attack(std::vector<std::unique_ptr<Monster>>& monsters,float deltaTime); // 공격 로직
+    std::string type;
+    virtual void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime); // 공격 로직
     virtual void draw(sf::RenderTarget& target);                         // 타워 그리기
     sf::Vector2f getPosition() const;
     bool isInRange(const sf::Vector2f& targetPosition) const;
+
     virtual ~SubTower() = default;
+    virtual void upgrade() = 0;
 };
 
 #endif // SUBTOWER_H

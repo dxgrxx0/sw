@@ -40,6 +40,7 @@ public:
     BombTower(sf::Vector2f position)
         : SubTower(position, 400.0f, 1.5f, 15.0f) {
         texture.loadFromFile("BombTower.png");
+        type = "BombTower";
         sprite.setTexture(texture);
         sprite.setPosition(position);
         sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
@@ -143,6 +144,11 @@ public:
                 [](const ExplosionEffect& explosion) { return explosion.isExpired(); }),
             activeExplosions.end()
         );
+    }
+    void upgrade() override {
+        attackDamage += 30.0f;
+        range += 5.0f;
+        attackSpeed += 5.0f;
     }
 };
 #endif

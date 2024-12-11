@@ -19,6 +19,7 @@ public:
 		sprite.setPosition(position);
 		sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
 		projectileTexture.loadFromFile("Arrow.png");
+        type = "ArrowTower";
     }
 
     void attack(std::vector<std::unique_ptr<Monster>>& monsters,float deltaTime) override {
@@ -63,6 +64,11 @@ public:
         for (auto& projectile : projectiles) {
             projectile.draw(target);
         }
+    }
+    void upgrade() override {
+        attackDamage += 5.0f;
+        range += 50.0f;
+        attackSpeed = 20.0f;
     }
 };
 

@@ -49,6 +49,7 @@ public:
         elapsedTime = 0;
 		wizardSprite.setOrigin(wizardSprite.getGlobalBounds().width / 2, wizardSprite.getGlobalBounds().height / 2);
 		wizardSprite.setPosition(position.x, position.y - 90);
+        type = "WizardTower";
     }
 
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {
@@ -94,6 +95,10 @@ public:
                 }),
             activeLightning.end()
         );
+    }
+    void upgrade() override {
+        range += 10.0f;
+        attackDamage += 30.0f;
     }
 };
 

@@ -6,7 +6,7 @@
 #include "UpgradeOption.h"
 #include "Character.h"
 #include "MainTower.h"
-
+#include"SubTowerManager.h"
 class UpgradeManager {
 private:
     Character* character;
@@ -14,9 +14,9 @@ private:
     std::map<std::string, UpgradeOption> upgradeOptions; // 업그레이드 상태 저장
     std::vector<UpgradeOption*> currentOptions;// 현재 표시할 옵션
     std::mt19937 rng;
-
+    SubTowerManager* subTowerManager;
 public:
-    UpgradeManager(Character* character, MainTower* mainTower);
+    UpgradeManager(Character* character, MainTower* mainTower, SubTowerManager* subTowerManager);
 
     void generateUpgradeOptions();                  // 업그레이드 옵션 생성
     void applyUpgrade(int choice);                  // 선택된 업그레이드 옵션 적용

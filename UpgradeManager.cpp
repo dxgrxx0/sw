@@ -1,6 +1,6 @@
 #include "UpgradeManager.h"
 #include <iostream>
-UpgradeManager::UpgradeManager(Character* character, MainTower* mainTower)
+UpgradeManager::UpgradeManager(Character* character, MainTower* mainTower, SubTowerManager* subTowerManager)
     : character(character), mainTower(mainTower), rng(std::random_device{}()) {}
 /*
 void UpgradeManager::generateUpgradeOptions() {
@@ -32,6 +32,12 @@ void UpgradeManager::generateUpgradeOptions() {
     addOption("Increase Health", [this]() { character->increaseMaxHealth(20); });
     addOption("Reduce Skill Cooldown", [this]() { character->reduceCooldown(0.1f); });
     addOption("Increase Heroine Speed", [this]() {character->increaseSpeed(30.0f); });
+    addOption("Upgrade subtower", [this]() {subTowerManager->upgradeSubTower("CannonTower"); });
+    addOption("Upgrade subtower", [this]() {subTowerManager->upgradeSubTower("ArrowTower"); });
+    addOption("Upgrade subtower", [this]() {subTowerManager->upgradeSubTower("TrainingTower"); });
+    addOption("Upgrade subtower", [this]() {subTowerManager->upgradeSubTower("WizardTower"); });
+    addOption("Upgrade subtower", [this]() {subTowerManager->upgradeSubTower("BombTower"); });
+
     std::shuffle(currentOptions.begin(), currentOptions.end(), rng);
 
     if (currentOptions.size() > 3) {

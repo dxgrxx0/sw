@@ -218,6 +218,7 @@ public:
         rangeIndicator.setFillColor(sf::Color(0, 255, 0, 10));
         rangeIndicator.setOutlineColor(sf::Color(0, 255, 0, 100));
         rangeIndicator.setOutlineThickness(2.0f);
+        type = "TrainingTower";
     }
 
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {
@@ -277,7 +278,11 @@ private:
         float dy = pos1.y - pos2.y;
         return std::sqrt(dx * dx + dy * dy);
     }
+    void upgrade() override {
+        range += 100.0f;
+    }
 };
+
 
 
 

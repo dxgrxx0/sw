@@ -16,6 +16,7 @@ public:
     CannonTower(sf::Vector2f position)
         : SubTower(position, 500.0f, 1.0f, 30.0f) {
         texture.loadFromFile("cannontower.png");
+        type = "CannonTower";
         sprite.setTexture(texture);
         sprite.setPosition(position);
         sprite.setOrigin(sprite.getGlobalBounds().width / 2, sprite.getGlobalBounds().height / 2);
@@ -64,6 +65,11 @@ public:
         for (auto& projectile : projectiles) {
             projectile.draw(target);
         }
+    }
+    void upgrade() override {
+        attackDamage += 10.0f;
+        range += 20.0f;
+        attackSpeed = 10.0f;
     }
 };
 
