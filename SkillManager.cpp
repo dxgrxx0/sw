@@ -34,7 +34,14 @@ void SkillManager::unlockSkill(const std::string& name) {
         skillStates[name] = true; // 잠금 해제
     }
 }
+float SkillManager::getSkillMaxCooldown(const std::string& name)const {
+	auto it = skills.find(name);
+	if (it != skills.end()) {
+		return it->second->getMaxCool();
+	}
+	return -1.0f;
 
+}
 void SkillManager::activateSkill(sf::Keyboard::Key key) {
     for (const auto& skillPair : skills) { // skills는 std::map<std::string, std::unique_ptr<BaseSkill>>
         const std::string& name = skillPair.first;

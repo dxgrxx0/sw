@@ -30,7 +30,62 @@ public:
 			throw std::runtime_error("Failed to load image: " + filename);
 		}
 	}
+    void loadResources() {
+        // Texture 로드
+        loadTexture("ArrowTower", "ArrowTower.png");
+        loadTexture("WizardTower", "WizardTower.png");
+        loadTexture("TrainingTower", "TrainingTower.png");
+        loadTexture("BombTower", "BombTower.png");
+        loadTexture("CannonTower", "CannonTower.png");
+        loadTexture("SpeedMonster", "speedMonster.png");
+        loadTexture("AttackMonster", "attackMonster.png");
+        loadTexture("BasicMonster", "basicMonster.png");
+        loadTexture("DefenseMonster", "defenseMonster.png");
+        loadTexture("MainBoss", "mainboss.png");
+        loadTexture("MidBoss", "midboss.png");
+        loadTexture("BossExplode", "BossExplode.png");
+        loadTexture("GreenBomb", "greenBomb.png");
+        loadTexture("GreenBombExplode", "greenBombExplode.png");
+        loadTexture("PinkBomb", "pinkBomb.png");
+        loadTexture("PinkBombExplode", "pinkBombExplode.png");
+        loadTexture("YellowBomb", "yellowBomb.png");
+        loadTexture("YellowBombExplode", "yellowBombExplode.png");
+        loadTexture("BlueBomb", "blueBomb.png");
+        loadTexture("BlueBombExplode", "blueBombExplode.png");
+        loadTexture("RedPen", "RedPen.png");
+        loadTexture("OrangePen", "OrangePen.png");
+        loadTexture("YellowPen", "YellowPen.png");
+        loadTexture("GreenPen", "GreenPen.png");
+        loadTexture("BluePen", "BluePen.png");
+        loadTexture("NavyPen", "NavyPen.png");
+        loadTexture("PurplePen", "PurplePen.png");
+        loadTexture("pencil", "pencil.png");
+        loadTexture("MainBossYellowSkill", "MainBossYellowSkill.png");
+        loadTexture("MainBossRedSkill", "MainBossRedSkill.png");
+        loadTexture("MainBossSkillPurple", "MainBossSkillPurple.png");
+        loadTexture("MainBossPencilSkill", "MainBossPencilSkill.png");
+        loadTexture("UpgradeArrowTower", "UpgradeArrowTower.png");
+        loadTexture("UpgradeWizardTower", "UpgradeWizardTower.png");
+        loadTexture("UpgradeTrainingTower", "UpgradeTrainingTower.png");
+        loadTexture("UpgradeBombTower", "UpgradeBombTower.png");
+        loadTexture("UpgradeCannonTower", "UpgradeCannonTower.png");
+        loadTexture("UpgradeAttackPower", "UpgradeAttackPower.png");
+        loadTexture("UpgradeHealth", "UpgradeHealth.png");
+        loadTexture("UpgradeBasicCooldown", "UpgradeBasicCooldown.png");
+        loadTexture("UpgradePlayerSpeed", "UpgradePlayerSpeed.png");
+        loadTexture("UpgradeBladeWhirl", "UpgradeBladeWhirl.png");
+        loadTexture("UpgradeBulkUp", "UpgradeBulkUp.png");
+        loadTexture("UpgradeDash", "UpgradeDash.png");
+        loadTexture("QSkillUI", "QSkillUI.png");
+        loadTexture("WSkillUI", "WSkillUI.png");
+        loadTexture("ESkillUI", "ESkillUI.png");
+        loadTexture("RSkillUI", "RSkillUI.png");
+        loadTexture("SkillLock", "SkillLock.png");
 
+        // Font 로드
+        loadFont("Arial", "arial.ttf");
+        loadFont("Pixel", "PixelOperator8.ttf");
+    }
     sf::Texture& getTexture(const std::string& name) {
         return textures.at(name);  // Using at to get an exception if texture is not found
     }
@@ -42,7 +97,7 @@ public:
 		return images.at(name);  // Using at to get an exception if image is not found
 	}
 private:
-    ResourceManager() {} // Private constructor for singleton pattern
+    ResourceManager() { loadResources(); } // Private constructor for singleton pattern
     std::map<std::string, sf::Texture> textures;
 	std::map<std::string, sf::Font> fonts;
 	std::map<std::string, sf::Image> images;

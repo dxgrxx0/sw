@@ -31,13 +31,18 @@ MainBoss::MainBoss(float x, float y, float speed, MonsterType type) : Monster(x,
         textureName = "MainBoss";
         movementSpeed = 10.0f;
         healthPoint = 5000.0f;
+		maxHealth = healthPoint;
         attackPower = 100.0f;
         defense = 50.0f;
         break;
     default:
         break;
     }
-
+	healthBarBack.setSize(sf::Vector2f(96, 20));
+	healthBarBack.setFillColor(sf::Color::Black);
+	healthBarBack.setOutlineThickness(2);
+	healthBarBack.setOutlineColor(sf::Color::White);
+	healthBar.setFillColor(sf::Color::Red);
     texture = ResourceManager::getInstance().getTexture(textureName);
     sprite.setTexture(texture);
     sprite.setScale(0.2f, 0.2f);
@@ -126,7 +131,10 @@ bool MainBoss::getIsDrawing() {
 void MainBoss::update(const sf::Vector2f& CharacterPos, const sf::Vector2f& MainTowerPos,
     float deltaTime, Character& character, MainTower& mainTower) {
 
-
+	float healthPercentage = healthPoint / maxHealth;
+	healthBarBack.setPosition(sprite.getPosition().x - 48, sprite.getPosition().y - 120);
+	healthBar.setSize(sf::Vector2f(healthPercentage * 92, 16));
+	healthBar.setPosition(healthBarBack.getPosition().x +2, healthBarBack.getPosition().y +2);
     // 기본 공격 타이머 업데이트
     if (!getIsDrawing()) {
         basicAttackTimer += deltaTime;
@@ -154,7 +162,7 @@ void MainBoss::update(const sf::Vector2f& CharacterPos, const sf::Vector2f& Main
                 if (magnitude != 0) {
                     dashDirection = sf::Vector2f(deltaX / magnitude, deltaY / magnitude);
                 }
-                if (distance <= 100) {
+                if (distance <= 200) {
                     isDashing = true;
                 }
             }
@@ -308,8 +316,10 @@ void MainBoss::performBasicAttack(const sf::Vector2f& targetPos) {
 }
 
 void MainBoss::draw(sf::RenderTarget& target) {
+    target.draw(healthBarBack);
+	target.draw(healthBar);
     Monster::draw(target);
-
+	
     for (auto& inst : skillInstances) {
         if (inst.isDrawing || inst.isThrowing) {
             target.draw(inst.drawingVertices);

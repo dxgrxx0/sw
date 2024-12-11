@@ -57,6 +57,20 @@ public:
         sprite.setOrigin(frameWidth / 2.0f, frameHeight / 2.0f);
         sprite.setScale(2.0f, 2.0f);
     }
+    void avoidOverlap(const std::vector<std::unique_ptr<Knight>>& knights, float deltaTime) {
+        for (const auto& other : knights) {
+            if (this == other.get()) continue; // 자기 자신은 스킵
+
+            sf::Vector2f direction = position - other->getPosition();
+            float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+            if (distance < 20.0f && distance > 0.0f) { // 최소 거리(20.0f)를 유지
+                direction /= distance; // 방향 벡터 정규화
+                position += direction * speed * deltaTime * 0.5f; // 겹침 해소를 위해 약간 이동
+                sprite.setPosition(position);
+            }
+        }
+    }
 
     void updateAnimation() {
         float currentTime = animationClock.getElapsedTime().asSeconds();
@@ -136,7 +150,7 @@ public:
         sf::Vector2f direction = towerPos - position;
         float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-        if (distance > 50.0f) {  // 타워 주변 50 반경 내에서 순찰
+        if (distance > 100.0f) {  // 타워 주변 50 반경 내에서 순찰
             direction /= distance;
             position += direction * speed * deltaTime;
             sprite.setPosition(position);
@@ -252,6 +266,8 @@ private:
                 it = knights.erase(it);
                 continue;
             }
+            // 기사 간의 겹침 방지
+            (*it)->avoidOverlap(knights, deltaTime);
 
             // 가장 가까운 몬스터 찾기
             Monster* closestMonster = nullptr;

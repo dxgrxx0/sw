@@ -39,6 +39,9 @@ public:
     float getRemainCool() {
         return (cooldown - cooldownTimer.getElapsedTime().asSeconds())<0?0: cooldown - cooldownTimer.getElapsedTime().asSeconds();
     }
+	float getMaxCool() {
+		return cooldown;
+	}
     virtual void applyEffect() = 0; // 각 스킬 효과 구현
 
     sf::Keyboard::Key getKey() const { return key; }

@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <unordered_map>
 #include "Character.h"
 #include "SkillManager.h"
 #include "ResourceManager.h"
@@ -26,6 +27,8 @@ public:
     void updateSkillCoolTime(SkillManager& skillManager);
     // UI 요소를 렌더링하는 메서드
     void draw(sf::RenderWindow& window);
+    void updateSkillIconPositions();
+
 private:
     float elapsedTime;
     int currentTime;
@@ -44,6 +47,18 @@ private:
     sf::RectangleShape skillBoxBackground;
     sf::Text skillText;
     std::map<std::string, sf::Vector2i> skillPositions;
+
+
+    // 스킬 UI
+    sf::Sprite QSkillSprite;
+    sf::Sprite WSkillSprite;
+    sf::Sprite ESkillSprite;
+    sf::Sprite RSkillSprite;
+    sf::Sprite skillLockSprite;
+    sf::RectangleShape cooldownOverlay;
+    // 스킬 이미지 이름 매핑
+    std::unordered_map<std::string, sf::Sprite*> skillSprites;
+
 
     // 미니맵 위치를 기준으로 계산
     sf::Vector2f minimapPosition;

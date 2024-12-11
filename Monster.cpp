@@ -8,7 +8,7 @@ Monster::Monster(float x, float y, float speed, MonsterType type)
     : movementSpeed(speed), damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f), attackPower(0), defense(0)
     , attackRange(50), monsterType(type)
 {
-    font = ResourceManager::getInstance().getFont("Arial");
+    font = ResourceManager::getInstance().getFont("Pixel");
     damageText.setFont(font);
     healthPoint = 100.0f;
     switch (type) {
@@ -92,6 +92,10 @@ void Monster::update(const sf::Vector2f& heroinePosition, const sf::Vector2f& to
     if (isTakingDamage) {
         damageDisplayTime += deltaTime;
 		sprite.setColor(sf::Color::Red); // 빨간색으로 변경
+		float scale = 1.0f +(damageDisplayDuration-damageDisplayTime); // 크기 조정
+        damageText.setScale(scale, scale);
+		float alpha = (damageDisplayTime / damageDisplayDuration); // 투명도 조정
+        damageText.setFillColor(sf::Color(255,255*alpha,255*alpha));
         if (damageDisplayTime >= damageDisplayDuration) {
             isTakingDamage = false; // 피해 표시 종료
             damageTaken = 0.0f; // 피해량 초기화
@@ -108,8 +112,16 @@ void Monster::draw(sf::RenderTarget& target) {
 
         damageText.setString(std::to_string(static_cast<int>(damageTaken))); // 피해량을 문자열로 변환
         damageText.setCharacterSize(30);
-        damageText.setFillColor(sf::Color::White);
-        damageText.setPosition(sprite.getPosition().x, sprite.getPosition().y - 70); // 위치 조정
+		damageText.setStyle(sf::Text::Bold);
+		damageText.setOutlineColor(sf::Color::Black);
+		damageText.setOutlineThickness(2);
+        sf::FloatRect textRect = damageText.getLocalBounds();
+
+        // 원점을 텍스트의 중앙으로 설정 (가로 중심)
+        damageText.setOrigin(textRect.left + textRect.width / 2.0f, 0);
+        damageText.setPosition(sprite.getPosition().x, sprite.getPosition().y - sprite.getGlobalBounds().height / 2-30); // 위치 조정
+
+
         target.draw(damageText); // 피해량 텍스트 그리기
     }
 
