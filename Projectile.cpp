@@ -90,7 +90,7 @@ bool Projectile::checkCollision(sf::Vector2f pos) {
 }
 
 bool Projectile::isOutofBound() {
-    if (position.x < -1000 || position.x > 3600 || position.y < -1000 || position.y > 2000) {
+    if (position.x < -1600 || position.x > 3200 || position.y < -2000 || position.y > 3000) {
         toBeDestroyed = true;
         return true;
     }

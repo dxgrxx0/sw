@@ -4,7 +4,7 @@
 #include <iostream>
 
 MidBoss::MidBoss(float x, float y, float speed, MonsterType type) : Monster(x, y, speed, type), skillDuration(5.0f), isSkillActive(false), isCloneActive(false)
-, cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f) {
+, cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f),hitByExplosion(false) {
     originalSpeed = speed;
     originalDefense = defense;
     originalAttackPower = attackPower;
@@ -88,6 +88,10 @@ void MidBoss::update(const sf::Vector2f& CharacterPos, const sf::Vector2f& MainT
     }
     if (circularAttacking) {
         updateCircularAttack(deltaTime, playerPosition);
+    }
+    if (hitByExplosion) {
+		character.takeDamage(attackPower * 2.0f);
+		hitByExplosion = false;
     }
 }
 void MidBoss::draw(sf::RenderTarget& target) {
@@ -337,6 +341,9 @@ void MidBoss::updateCircularAttack(float deltaTime, sf::Vector2f playerPosition)
         bossExplodeFrameClock += deltaTime;
     }
     if (bossExplodeFrameClock >= 1.0f / 16.0f) {
+		if (bossExplodeCurrentFrame == 6 && bossExplodeCircle.getGlobalBounds().contains(playerPosition)) {
+			hitByExplosion = true;
+		}
         bossExplodeCurrentFrame++;
         int frameX = (bossExplodeCurrentFrame % 4) * 400;
         int frameY = (bossExplodeCurrentFrame / 4) * 400;

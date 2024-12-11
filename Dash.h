@@ -38,7 +38,8 @@ public:
     void update(float deltaTime) override {
 		if (isActive) {
 			elapsedTime += deltaTime;
-			character->setPosition(character->getPosition() + dashVector * 500.0f * deltaTime);
+			sf::Vector2f pos = character->getPosition();
+			if(pos.x<3200&&pos.x>-1600&&pos.y<3000&&pos.y>-2000)character->setPosition(character->getPosition() + dashVector * 500.0f * deltaTime);
             if (elapsedTime >= duration) {
                 isActive = false;
                 std::cout << name << "dash effect ended." << std::endl;

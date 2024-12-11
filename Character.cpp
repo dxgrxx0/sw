@@ -36,22 +36,23 @@ void Character::handleInput(float deltaTime) {
     // 방향 입력 처리
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
         if (!isSwinging) { currentFrame.top = 97; facingDirection = 270.0f; } // 북쪽
-        sprite.move(0, -movementSpeed * deltaTime);
+		if (sprite.getPosition().y > -2000)sprite.move(0, -movementSpeed * deltaTime);
+        
         
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
         if (!isSwinging) { currentFrame.top = 0; facingDirection = 90.0f; }// 남쪽
-        sprite.move(0, movementSpeed * deltaTime);
+        if(sprite.getPosition().y<3000)sprite.move(0, movementSpeed * deltaTime);
         
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
         if (!isSwinging) { currentFrame.top = 291; facingDirection = 180.0f; } // 서쪽
-        sprite.move(-movementSpeed * deltaTime, 0);
+        if (sprite.getPosition().x >-1600)sprite.move(-movementSpeed * deltaTime, 0);
         
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
         if (!isSwinging) { currentFrame.top = 194; facingDirection = 0.0f; } // 동쪽
-        sprite.move(movementSpeed * deltaTime, 0);
+        if (sprite.getPosition().x<3200)sprite.move(movementSpeed * deltaTime, 0);
     }
 
     // 스페이스바 입력 처리
