@@ -30,7 +30,7 @@ public:
         if (attackClock.getElapsedTime().asSeconds() >= 1.0f / attackSpeed) {
             for (auto& monster : monsters) {
                 if (isInRange(monster->getPosition())) {
-					projectiles.emplace_back(projectileTexture,position, monster->getPosition(),400.0f,attackDamage );
+					projectiles.emplace_back(projectileTexture,position, monster->getPosition(),600.0f,attackDamage );
                     //monster->takeDamage(attackDamage);
                     attackClock.restart();
                     break;

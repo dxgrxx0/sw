@@ -320,7 +320,7 @@ void Game::onLevelUp() {
         experienceToNextLevel *= 1.2;
     }
     level += 1;
-    if (level == 2) {
+    if (level == 3) {
         skillManager.unlockSkill("BladeWhirl");
         skillManager.addSkill("BladeWhirl", std::make_unique<BladeWhirl>(&warrior, monsters));
         /*subTowerManager.addTower(std::make_unique<WizardTower>(sf::Vector2f(350, 326)));
@@ -331,19 +331,19 @@ void Game::onLevelUp() {
         subTowerManager.addTower(std::make_unique<CannonTower>(sf::Vector2f(1050, 846)));*/
     }
 
-    if (level == 4) {
+    if (level == 6) {
         skillManager.unlockSkill("BulkUp");
         skillManager.addSkill("BulkUp", std::make_unique<BulkUp>(&warrior));
     }
-    if (level == 6) {
+    if (level == 9) {
         skillManager.unlockSkill("Dash");
 		skillManager.addSkill("Dash", std::make_unique<Dash>(&warrior));
     }
-    if (level == 8) {
+    if (level == 12) {
         skillManager.unlockSkill("Teleport");
         skillManager.addSkill("Teleport", std::make_unique<Teleport>(&warrior,&mainTower));
     }
-	if (level == 3 || level == 5 || level == 7) {
+	if (level == 3 || level == 7 || level == 11) {
 		upgradeManager.createSubTowerOptions(); // 서브 타워 옵션 생성
 		std::vector<std::string> options = upgradeManager.getUpgradeDescriptions();
 		std::vector<std::string> imagePaths = upgradeManager.getUpgradeImagePaths();

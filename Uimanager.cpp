@@ -15,31 +15,42 @@ UIManager::UIManager(sf::Font& font, Character* character, sf::RenderWindow& win
     levelBarBackground.setSize(sf::Vector2f(window.getSize().x / 2, 30));
     levelBarBackground.setFillColor(sf::Color(50, 50, 50));
     levelBarBackground.setOutlineThickness(2);
-    levelBarBackground.setOutlineColor(sf::Color(101, 67, 33));
+    levelBarBackground.setOutlineColor(sf::Color::White);
+    //levelBarBackground.setOutlineColor(sf::Color(101, 67, 33));
 
     levelText.setFont(font);
     levelText.setCharacterSize(20);
     levelText.setFillColor(sf::Color::White);
+	levelText.setOutlineColor(sf::Color::Black);
+	levelText.setOutlineThickness(1);
+	levelText.setStyle(sf::Text::Bold);
     levelText.setPosition(0, 0);
 
     // 메인 타워 내구도 바 초기화
     mainTowerHealthBarBackground.setSize(sf::Vector2f(window.getSize().x / 2, 30));
     mainTowerHealthBarBackground.setFillColor(sf::Color(50, 50, 50));
     mainTowerHealthBarBackground.setOutlineThickness(2);
-    mainTowerHealthBarBackground.setOutlineColor(sf::Color(101, 67, 33));
+	mainTowerHealthBarBackground.setOutlineColor(sf::Color::White);
+    //mainTowerHealthBarBackground.setOutlineColor(sf::Color(101, 67, 33));
 
     towerText.setFont(font);
     towerText.setCharacterSize(20);
     towerText.setFillColor(sf::Color::White);
     towerText.setString("Main tower HP");
+	towerText.setOutlineColor(sf::Color::Black);
+	towerText.setOutlineThickness(1);
+    towerText.setStyle(sf::Text::Bold);
 
     currentTime = 0;
     elapsedTime = 0;
 
     // 타이머 텍스트 초기화
-    timerText.setFont(font);
-    timerText.setCharacterSize(24);
+    timerText.setFont(ResourceManager::getInstance().getFont("Pixel"));
+    timerText.setCharacterSize(30);
     timerText.setFillColor(sf::Color::White);
+	timerText.setOutlineColor(sf::Color::Black);
+	timerText.setOutlineThickness(2);
+	timerText.setStyle(sf::Text::Bold);
     timerText.setPosition(800, 20);
 
 	QSkillSprite.setTexture(ResourceManager::getInstance().getTexture("QSkillUI"));
@@ -66,7 +77,7 @@ void UIManager::updateLevelBar(int level, float experience, float experienceToNe
     levelBarBackground.setPosition(window.mapPixelToCoords(sf::Vector2i(0, 5)));
     float levelPercentage = experience / experienceToNextLevel;
     levelBarForeground.setSize(sf::Vector2f((window.getSize().x / 2) * levelPercentage, 20));
-    levelBarForeground.setFillColor(sf::Color(135, 206, 250));
+    levelBarForeground.setFillColor(sf::Color(0, 250, 250));
     levelBarForeground.setPosition(levelBarBackground.getPosition().x, levelBarBackground.getPosition().y + 5);
     levelText.setString("Level: " + std::to_string(level));
     levelText.setPosition(levelBarBackground.getPosition().x + 5, levelBarBackground.getPosition().y + 5);
@@ -89,7 +100,7 @@ void UIManager::updateTimer(float dt) {
         currentTime = (int)elapsedTime;
         int minutes = currentTime / 60;
         int seconds = currentTime % 60;
-        timerText.setString("Time: " + std::to_string(minutes) + ":" + (seconds < 10 ? "0" : "") + std::to_string(seconds));
+        timerText.setString(std::to_string(minutes) + ":" + (seconds < 10 ? "0" : "") + std::to_string(seconds));
     }
     float textWidth = timerText.getLocalBounds().width;
     timerText.setPosition(window.mapPixelToCoords(sf::Vector2i(window.getSize().x / 2 - textWidth / 2, 50)));

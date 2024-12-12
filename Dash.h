@@ -36,6 +36,7 @@ public:
         }
     }
     void update(float deltaTime) override {
+        cooldownTime += deltaTime;
 		if (isActive) {
 			elapsedTime += deltaTime;
 			sf::Vector2f pos = character->getPosition();
