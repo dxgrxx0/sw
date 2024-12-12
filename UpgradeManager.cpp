@@ -49,13 +49,14 @@ void UpgradeManager::generateUpgradeOptions() {
     addOption("Increase Health", [this]() { character->increaseMaxHealth(20); },"UpgradeHealth.png");
     addOption("Reduce Skill Cooldown", [this]() { character->reduceCooldown(0.1f); },"UpgradeBasicCooldown.png");
     addOption("Increase Heroine Speed", [this]() {character->increaseSpeed(30.0f); },"UpgradePlayerSpeed.png");
-    if (gameLevel >= 2) {
+    addOption("Upgrade MainTower", [this]() { mainTower->upgrade(); }, "UpgradeMainTower.png");
+    if (gameLevel >= 3) {
         addOption("Upgrade BladeWhirl", [this]() { skillManager->upgradeSkill("BladeWhirl"); }, "UpgradeBladeWhirl.png");
     }
-    if (gameLevel >= 4) {
+    if (gameLevel >= 6) {
 		addOption("Upgrade BulkUp", [this]() { skillManager->upgradeSkill("BulkUp"); }, "UpgradeBulkUp.png");
     }
-    if (gameLevel >= 6) {
+    if (gameLevel >= 9) {
 		addOption("Upgrade Dash", [this]() { skillManager->upgradeSkill("Dash"); }, "UpgradeDash.png");
     }
 	if (subTowerManager->hasTower("WizardTower"))addOption("Upgrade WizardTower", [this]() { subTowerManager->upgradeTower("WizardTower"); }, "UpgradeWizardTower.png");

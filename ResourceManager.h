@@ -64,6 +64,7 @@ public:
         loadImage("MainBossRedSkill", "MainBossRedSkill.png");
         loadImage("MainBossSkillPurple", "MainBossSkillPurple.png");
         loadImage("MainBossPencilSkill", "MainBossPencilSkill.png");
+        loadTexture("UpgradeMainTower", "UpgradeMainTower.png");
         loadTexture("UpgradeArrowTower", "UpgradeArrowTower.png");
         loadTexture("UpgradeWizardTower", "UpgradeWizardTower.png");
         loadTexture("UpgradeTrainingTower", "UpgradeTrainingTower.png");

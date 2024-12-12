@@ -9,7 +9,7 @@ class MainTower {
 public:
     MainTower(const sf::Vector2f& position);
     void healNearbyCharacter(float deltaTime, Character& character);
-    void upgrade(std::vector<SubTower>& subTowers); // 서브 타워 강화
+    void upgrade(); 
     void draw(sf::RenderWindow& window) const;
     const sf::Sprite& getSprite() const; // 스프라이트를 반환하는 메서드 추가
     sf::Vector2f getPosition();

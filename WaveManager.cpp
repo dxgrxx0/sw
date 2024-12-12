@@ -14,7 +14,7 @@ float WaveManager::calculateSpawnInterval() {
     // 거리 비율을 사용해 스폰 간격을 동적으로 계산
     float distanceRatio = distance / maxDistance;
     if (distanceRatio > 1)distanceRatio = 1;
-    float spawnMultiplier =logisticCurve(waveLevel, 7.0f, 0.6f, 5);
+    float spawnMultiplier =0.3f+logisticCurve(waveLevel, 5.0f, 0.6f, 5);
     return (maxSpawnInterval - distanceRatio * (maxSpawnInterval - minSpawnInterval))/spawnMultiplier;
 }
 

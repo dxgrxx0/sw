@@ -20,6 +20,9 @@ public:
     void upgrade() override {
 		cooldown -= 1.0f;
     }
+	void update(float deltaTime) override {
+		cooldownTime += deltaTime;
+	}
 };
 
 #endif // TELEPORT_H

@@ -63,7 +63,7 @@ public:
 
     void update(float deltaTime) override {
         elapsedTime += deltaTime;
-
+        cooldownTime += deltaTime;
         if (isActive) {
             if (currentAngle >= endAngle) {
                 isActive = false;

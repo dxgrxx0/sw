@@ -12,8 +12,9 @@ MidBoss::MidBoss(float x, float y, float speed, MonsterType type) : Monster(x, y
     switch (type) {
     case MonsterType::Mid_Boss: // 미드보스
         textureName = "MidBoss";
-        movementSpeed = 100.0f;
-        healthPoint = 1000.0f;
+        movementSpeed = 50.0f;
+		maxHealth = 2000.0f;
+        healthPoint = maxHealth;
         attackPower = 50.0f;
         defense = 20.0f;
         skillDuration = 5.0f;
@@ -24,25 +25,15 @@ MidBoss::MidBoss(float x, float y, float speed, MonsterType type) : Monster(x, y
         initializeCircularPath(200);
         //shape.setFillColor(sf::Color::Yellow);
         break;
-
-    case MonsterType::Main_Boss: // 메인보스
-        textureName = "MainBoss";
-        movementSpeed = 80.0f;
-        healthPoint = 5000.0f;
-        attackPower = 100.0f;
-        defense = 50.0f;
-        skillDuration = 8.0f;
-        bossExplodeTexture = ResourceManager::getInstance().getTexture("BossExplode");
-        bossExplodeSprite.setTexture(bossExplodeTexture);
-        bossExplodeCircle.setRadius(200);
-        bossExplodeCircle.setTexture(&bossExplodeTexture);
-        initializeCircularPath(200);
-        //shape.setFillColor(sf::Color::Black);
-        break;
     default:
         break;
 
     }
+    healthBarBack.setSize(sf::Vector2f(96, 20));
+    healthBarBack.setFillColor(sf::Color::Black);
+    healthBarBack.setOutlineThickness(2);
+    healthBarBack.setOutlineColor(sf::Color::White);
+    healthBar.setFillColor(sf::Color::Red);
     texture = ResourceManager::getInstance().getTexture(textureName);
     sprite.setTexture(texture);
     sprite.setScale(0.2f, 0.2f);
@@ -51,6 +42,10 @@ MidBoss::MidBoss(float x, float y, float speed, MonsterType type) : Monster(x, y
 }
 void MidBoss::update(const sf::Vector2f& CharacterPos, const sf::Vector2f& MainTowerPos, float deltaTime, Character& character, MainTower& mainTower) {
 	Monster::update(CharacterPos, MainTowerPos, deltaTime, character, mainTower);
+    float healthPercentage = healthPoint / maxHealth;
+    healthBarBack.setPosition(sprite.getPosition().x - 48, sprite.getPosition().y - 120);
+    healthBar.setSize(sf::Vector2f(healthPercentage * 92, 16));
+    healthBar.setPosition(healthBarBack.getPosition().x + 2, healthBarBack.getPosition().y + 2);
     //투사체업데이트
     updateProjectiles(deltaTime, character, mainTower);
     // 메인 스킬 (15초 쿨타임)
@@ -95,6 +90,8 @@ void MidBoss::update(const sf::Vector2f& CharacterPos, const sf::Vector2f& MainT
     }
 }
 void MidBoss::draw(sf::RenderTarget& target) {
+    target.draw(healthBarBack);
+    target.draw(healthBar);
     if (circularAttacking) {
         drawTrails(target); // 흔적 그리기
 

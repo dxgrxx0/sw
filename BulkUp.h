@@ -26,6 +26,7 @@ public:
         character->setScale(scaleBoost);
     }
     void update(float deltaTime) override {
+        cooldownTime += deltaTime;
         if (isActive) {
             elapsedTime += deltaTime;
             if (elapsedTime >= duration) {

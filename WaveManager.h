@@ -21,7 +21,7 @@ private:
     // 스폰 속도 관련 변수
     float spawnInterval;           // 현재 스폰 간격
     float timeSinceLastSpawn = 0.0f;
-    float minSpawnInterval = 0.5f; // 스폰 속도 상한 (예: 0.2초)
+    float minSpawnInterval = 1.0f; // 스폰 속도 상한 (예: 0.2초)
     float maxSpawnInterval = 2.0f; // 스폰 속도 하한 (예: 2초)
 
     bool midBossSpawned;           // Mid-Boss 스폰 여부

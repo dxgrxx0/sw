@@ -29,7 +29,7 @@ MainBoss::MainBoss(float x, float y, float speed, MonsterType type) : Monster(x,
     switch (type) {
     case MonsterType::Main_Boss:
         textureName = "MainBoss";
-        movementSpeed = 10.0f;
+        movementSpeed = 30.0f;
         healthPoint = 5000.0f;
 		maxHealth = healthPoint;
         attackPower = 100.0f;
@@ -140,7 +140,15 @@ void MainBoss::update(const sf::Vector2f& CharacterPos, const sf::Vector2f& Main
         basicAttackTimer += deltaTime;
         if (basicAttackTimer >= basicAttackCooldown) {
             basicAttackTimer = 0.0f;
-            performBasicAttack(CharacterPos); // 캐릭터를 목표로 투사체 발사
+            if (MainTowerPos.x - this->getPosition().x < 500 && MainTowerPos.y - this->getPosition().y < 500) {
+				int random = std::rand() % 2;
+				if (random % 2 == 0) performBasicAttack(MainTowerPos);
+				else performBasicAttack(CharacterPos);
+            }
+			else
+            {
+                performBasicAttack(CharacterPos); // 캐릭터를 목표로 투사체 발사
+            }
         }
         if (isDashing) {
             dashTimeCheck += deltaTime;
