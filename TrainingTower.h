@@ -20,6 +20,7 @@ private:
     sf::Clock attackClock;
     sf::Clock animationClock;
     sf::Clock stateClock;      // 상태 전환을 위한 클럭 추가
+	sf::Vector2f returnPos;	// 본래 위치로 돌아가기 위한 변수 추가
 
     int currentFrame;
     int frameWidth;
@@ -48,6 +49,7 @@ public:
         , facingLeft(false)
         , isAttacking(false)
         , currentTarget(nullptr)
+        , returnPos(startPos)
     {
         if (!texture.loadFromFile("knightbg.png")) {
         }
@@ -125,7 +127,8 @@ public:
         else if (direction.y < 0 && abs(direction.x) < abs(direction.y))facingLeft = 1;
         else if (direction.y > 0 && abs(direction.x) < abs(direction.y))facingLeft = 0;
 
-
+		sf::Vector2f towerMonsterDirection = monster->getPosition() - targetPosition;
+		float towerMonsterDistance = std::sqrt(towerMonsterDirection.x * towerMonsterDirection.x + towerMonsterDirection.y * towerMonsterDirection.y);
         if (distance > attackRange) {
             // 몬스터를 향해 이동
             direction /= distance;
@@ -147,7 +150,7 @@ public:
     }
 
     void patrol(sf::Vector2f towerPos, float deltaTime) {
-        sf::Vector2f direction = towerPos - position;
+        sf::Vector2f direction = returnPos - position;
         float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
         if (distance > 100.0f) {  // 타워 주변 50 반경 내에서 순찰
@@ -186,7 +189,11 @@ public:
     float getRange() const {
         return attackRange;
     }
-
+    void upgradeKnight(float increaseRange, float increaseDamage, float increaseSpeed) {
+		this->attackRange += increaseRange;
+		this->attackDamage += increaseDamage;
+		this->speed += increaseSpeed;
+    }
     void draw(sf::RenderTarget& target) {
         target.draw(sprite);
 
@@ -234,11 +241,11 @@ public:
         rangeIndicator.setOutlineThickness(2.0f);
         type = "TrainingTower";
     }
-	void upgrade() override {
-		range += 50.0f;
-		attackSpeed += 0.5f;
-		attackDamage += 5.0f;
-		maxKnights += 1;
+    void upgrade() override {
+        for (auto& knight : knights){
+            knight->upgradeKnight(50.0f, 30.0f, 20.0f);
+        }
+		maxKnights += 2;
 	}
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {
         if (attackClock.getElapsedTime().asSeconds() >= 1.0f / attackSpeed && knights.size() < maxKnights) {
@@ -257,7 +264,10 @@ public:
 
 private:
     void spawnKnight() {
-        knights.push_back(std::make_unique<Knight>(position, mainTowerPos));
+        sf::Vector2f randomPos;
+		randomPos.x = position.x + rand() % 100 - 50;
+		randomPos.y = position.y + rand() % 100 - 50;
+        knights.push_back(std::make_unique<Knight>(randomPos, mainTowerPos));
     }
 
     void updateKnights(float deltaTime, std::vector<std::unique_ptr<Monster>>& monsters) {

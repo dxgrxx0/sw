@@ -53,7 +53,7 @@ private:
 
 
     std::vector<Projectile> projectiles; // 보스가 발사한 투사체 목록
-    float basicAttackCooldown = 1.0f;    // 기본 공격 쿨다운
+    float basicAttackCooldown = 2.0f;    // 기본 공격 쿨다운
     float basicAttackTimer = 0.0f;       // 기본 공격 타이머
 
     void performBasicAttack(const sf::Vector2f& targetPos); // 기본 공격 함수

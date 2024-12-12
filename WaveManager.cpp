@@ -14,12 +14,17 @@ float WaveManager::calculateSpawnInterval() {
     // 거리 비율을 사용해 스폰 간격을 동적으로 계산
     float distanceRatio = distance / maxDistance;
     if (distanceRatio > 1)distanceRatio = 1;
-    return (maxSpawnInterval - distanceRatio * (maxSpawnInterval - minSpawnInterval));
+    float spawnMultiplier =logisticCurve(waveLevel, 7.0f, 0.6f, 5);
+    return (maxSpawnInterval - distanceRatio * (maxSpawnInterval - minSpawnInterval))/spawnMultiplier;
 }
 
 void WaveManager::update(float deltaTime) {
     gameClock += deltaTime;
-
+	waveLevelUpTime += deltaTime;
+	if (waveLevelUpTime >= 60.0f) {
+		waveLevel++;
+		waveLevelUpTime = 0.0f;
+	}
 
     // Mid-Boss 스폰 (5분에 등장)
     if (gameClock >= 150.0f && !midBossSpawned) {
@@ -44,7 +49,7 @@ void WaveManager::update(float deltaTime) {
     }
     if (mainBossSpawned && mainBoss->isSpawnMidBoss() == true) {
         sf::Vector2f spawnPos = mainBoss->getPosition();
-        auto boss = std::make_unique<MidBoss>(spawnPos.x, spawnPos.y, 50.0f, MonsterType::Mid_Boss);
+        auto boss = std::make_unique<MidBoss>(spawnPos.x, spawnPos.y, 1, MonsterType::Mid_Boss);
         monsters->push_back(std::move(boss));
 		mainBoss->setSpawnMidBoss(false);
         
@@ -92,7 +97,7 @@ void WaveManager::spawnMonsterAtSpecificDistance() {
         else validPosition = false; printf("XXX\n");
     }
     MonsterType type = static_cast<MonsterType>(std::rand() % 4);
-    auto monster = std::make_unique<Monster>(spawnPos.x, spawnPos.y, 50.0f, type);
+    auto monster = std::make_unique<Monster>(spawnPos.x, spawnPos.y, waveLevel, type);
     monsters->push_back(std::move(monster));
     std::cout << "Moster spawned!" << std::endl;
 }
@@ -114,14 +119,14 @@ void WaveManager::spawnBoss(MonsterType bossType) {
     }
 
     sf::Vector2f spawnPos = { 1000.0f, 1000.0f }; // 보스는 스폰 위치
-    float speed = (bossType == MonsterType::Mid_Boss) ? 70.0f : 50.0f;
+    
     
     if (bossType == MonsterType::Mid_Boss) { 
-        auto boss = std::make_unique<MidBoss>(spawnPos.x, spawnPos.y, speed, bossType); 
+        auto boss = std::make_unique<MidBoss>(spawnPos.x, spawnPos.y, 1, bossType); 
         monsters->push_back(std::move(boss));
     }
     else if(bossType==MonsterType::Main_Boss) { 
-        auto boss = std::make_unique<MainBoss>(spawnPos.x, spawnPos.y, speed, bossType); 
+        auto boss = std::make_unique<MainBoss>(spawnPos.x, spawnPos.y, 1, bossType); 
         mainBoss = boss.get();
         monsters->clear();
         monsters->push_back(std::move(boss));

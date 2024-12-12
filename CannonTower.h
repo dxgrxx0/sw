@@ -14,7 +14,7 @@ private:
 
 public:
     CannonTower(sf::Vector2f position)
-        : SubTower(position, 500.0f, 1.0f, 30.0f) {
+        : SubTower(position, 500.0f, 0.5f, 30.0f) {
         texture.loadFromFile("cannontower.png");
         sprite.setTexture(texture);
         sprite.setPosition(position);
@@ -23,9 +23,9 @@ public:
         type = "CannonTower";
     }
     void upgrade() {
-		range += 50.0f;
-		attackSpeed += 0.5f;
-		attackDamage += 5.0f;
+		range += 25.0f;
+		attackSpeed *= 1.1f;
+		attackDamage += 20.0f;
     }
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {
         if (attackClock.getElapsedTime().asSeconds() >= 1.0f / attackSpeed) {
