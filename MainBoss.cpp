@@ -84,7 +84,7 @@ bool MainBoss::initializeDrawingFromImage(DrawingSkillInstance& instance, const 
     }
 
     instance.currentPathIndex = 0;
-    instance.drawingDuration = 1.0f;
+    instance.drawingDuration = 3.0f;
     instance.pointsPerSecond = static_cast<float>(instance.drawingPath.size()) / instance.drawingDuration;
     instance.elapsedDrawingTime = 0.0f;
 

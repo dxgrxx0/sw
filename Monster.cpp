@@ -4,8 +4,8 @@
 #include "MainTower.h"
 #include <iostream>
 // 생성자
-Monster::Monster(float x, float y, float speed, MonsterType type)
-    : movementSpeed(speed), damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f), attackPower(0), defense(0)
+Monster::Monster(float x, float y, int waveLevel, MonsterType type)
+    :  damageTaken(0.0f), isTakingDamage(false), damageDisplayDuration(0.3f), damageDisplayTime(0.0f), attackPower(0), defense(0)
     , attackRange(50), monsterType(type)
 {
     font = ResourceManager::getInstance().getFont("Pixel");
@@ -14,33 +14,33 @@ Monster::Monster(float x, float y, float speed, MonsterType type)
     switch (type) {
     case MonsterType::Speed:  //이속 3배,체력 1/2배
         textureName = ("SpeedMonster");
-        movementSpeed = 150.0f;
-        healthPoint = 50.0f;
-        attackPower = 10.0f;
-        defense = 10.0f;
+        movementSpeed = 150.0f+20.0f*waveLevel;
+        healthPoint = 50.0f+5.0f*waveLevel;
+        attackPower = 10.0f+1.0f*waveLevel;
+        defense = 10.0f+0.5f*waveLevel;
         break;
     case MonsterType::Attack: //공격력 3배
         textureName = ("AttackMonster");
-        movementSpeed = 100.0f;
-        healthPoint = 100.0f;
-        defense = 10.0f;
-        attackPower = 30.0f; // 추가 공격력
+        movementSpeed = 100.0f+10.0f*waveLevel;
+        healthPoint = 100.0f+10.0f*waveLevel;
+        defense = 10.0f+1.0f*waveLevel;
+        attackPower = 20.0f+2.0f*waveLevel; // 추가 공격력
 
         break;
     case MonsterType::Defense: //방어력3배,체력2배
         textureName = ("DefenseMonster");
-        movementSpeed = 50.0f;
-        healthPoint = 200.0f;
-        attackPower = 10.0f;
-        defense = 30.0f; // 방어력 추가
+        movementSpeed = 50.0f+2.5f*waveLevel;
+        healthPoint = 200.0f+25.0f*waveLevel;
+        attackPower = 10.0f+0.5f*waveLevel;
+        defense = 30.0f+2.0f*waveLevel; // 방어력 추가
 
         break;
     case MonsterType::Basic:
 		textureName = ("BasicMonster");
-		movementSpeed = 100.0f;
-		healthPoint = 100.0f;
-		attackPower = 10.0f;
-		defense = 10.0f;
+		movementSpeed = 100.0f+10.0f*waveLevel;
+		healthPoint = 100.0f+10.0f*waveLevel;
+		attackPower = 10.0f+1.0f*waveLevel;
+		defense = 10.0f+1.0f*waveLevel;
 		break;
     default:
         break;

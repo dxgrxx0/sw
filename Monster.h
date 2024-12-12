@@ -17,7 +17,7 @@ enum class MonsterType {
 };
 class Monster {
 public:
-    Monster(float x, float y, float speed,MonsterType type);
+    Monster(float x, float y, int waveLevel,MonsterType type);
 
     virtual void update(const sf::Vector2f& CharacterPos,const sf::Vector2f& MainTowerPos, float deltaTime,Character& character,MainTower& mainTower);
 
@@ -38,6 +38,7 @@ public:
         else
             return MonsterType::Mid_Boss;
     }
+    void upgrade();
     
 protected:
     float movementSpeed; 

@@ -38,7 +38,7 @@ private:
 
 public:
     BombTower(sf::Vector2f position)
-        : SubTower(position, 400.0f, 1.5f, 15.0f) {
+        : SubTower(position, 400.0f, 1.0f, 15.0f) {
         texture.loadFromFile("BombTower.png");
         type = "BombTower";
         sprite.setTexture(texture);
@@ -63,9 +63,9 @@ public:
 		}
     }
     void upgrade() {
-		range += 50.0f;
-		attackSpeed += 0.5f;
-		attackDamage += 5.0f;
+		range += 25.0f;
+		attackSpeed *= 1.1f;
+		attackDamage += 10.0f;
     }
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {
         if (attackClock.getElapsedTime().asSeconds() >= 1.0f / attackSpeed) {

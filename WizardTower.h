@@ -33,6 +33,7 @@ private:
 	sf::IntRect wizardRect;
     float wizardFrameIndex;
 	float elapsedTime;
+    int maxAttackCount;
 public:
     WizardTower(sf::Vector2f position)
 		: SubTower(position, 500.0f, 1.0f, 10.0f), lightningDuration(0.2f) {//위치, 공격범위, 공격속도, 공격력
@@ -50,11 +51,13 @@ public:
 		wizardSprite.setOrigin(wizardSprite.getGlobalBounds().width / 2, wizardSprite.getGlobalBounds().height / 2);
 		wizardSprite.setPosition(position.x, position.y - 90);
 		type = "WizardTower";
+        maxAttackCount = 5;
     }
 	void upgrade() override {
 		range += 50.0f;
-		attackSpeed += 0.5f;
+		attackSpeed *= 1.1f;
 		attackDamage += 5.0f;
+		maxAttackCount += 3;
 	}
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {
         if (attackClock.getElapsedTime().asSeconds() >= 1.0f / attackSpeed) {
@@ -78,7 +81,7 @@ public:
                     //monster->takeDamage(attackDamage);
                     monster->takeDamage(attackDamage);
                     attackCount++;
-                    if (attackCount >= 5) break;
+                    if (attackCount >= maxAttackCount) break;
 
                 }
             }

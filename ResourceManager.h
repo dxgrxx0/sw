@@ -60,10 +60,10 @@ public:
         loadTexture("NavyPen", "NavyPen.png");
         loadTexture("PurplePen", "PurplePen.png");
         loadTexture("pencil", "pencil.png");
-        loadTexture("MainBossYellowSkill", "MainBossYellowSkill.png");
-        loadTexture("MainBossRedSkill", "MainBossRedSkill.png");
-        loadTexture("MainBossSkillPurple", "MainBossSkillPurple.png");
-        loadTexture("MainBossPencilSkill", "MainBossPencilSkill.png");
+        loadImage("MainBossYellowSkill", "MainBossYellowSkill.png");
+        loadImage("MainBossRedSkill", "MainBossRedSkill.png");
+        loadImage("MainBossSkillPurple", "MainBossSkillPurple.png");
+        loadImage("MainBossPencilSkill", "MainBossPencilSkill.png");
         loadTexture("UpgradeArrowTower", "UpgradeArrowTower.png");
         loadTexture("UpgradeWizardTower", "UpgradeWizardTower.png");
         loadTexture("UpgradeTrainingTower", "UpgradeTrainingTower.png");

@@ -27,7 +27,7 @@ Game::Game() :
     experience(0),
     level(1),
     experienceToNextLevel(100),
-    waveManager(&warrior, &mainTower, &monsters, 1600, 1000),
+    waveManager(&warrior, &mainTower, &monsters, 1600, 1600),
     skillManager(),
     upgradeManager(&warrior, &mainTower,&skillManager,&subTowerManager,level),
     upgradeUI(font, sf::Vector2f(window.getSize())),
@@ -162,7 +162,7 @@ void Game::update() {
                     mainBossDefeated = true;  // 메인 보스 처치 표시
                     printf("Main Boss has been defeated!\n");
                 }
-                addExp(100);
+                addExp(30);
             }
             return monster->getHealthPoint() <= 0;
         }),
@@ -313,7 +313,12 @@ void Game::addExp(float exp) {
 }
 void Game::onLevelUp() {
     experience -= experienceToNextLevel;
-    experienceToNextLevel *= 1.2f;
+    if (experienceToNextLevel * 0.2 > 100) {
+        experienceToNextLevel += 100;
+    }
+    else{
+        experienceToNextLevel *= 1.2;
+    }
     level += 1;
     if (level == 2) {
         skillManager.unlockSkill("BladeWhirl");

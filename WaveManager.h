@@ -29,6 +29,13 @@ private:
     float gameClock;           // 게임 시간 트래킹용
     MainBoss* mainBoss = nullptr;
 
+	int waveLevel = 1; // 웨이브 레벨
+	float waveLevelUpTime = 0.0f; // 웨이브 레벨업 시간
+    float logisticCurve(int x, float L, float k, float x0) {
+        // 로지스틱 함수: y = L / (1 + e^(-k(x - x0)))
+        return L / (1 + std::exp(-k * (x - x0)));
+    }
+
 public:
     WaveManager(Character* heroine, MainTower* mainTower, std::vector<std::unique_ptr<Monster>>* monsters, float mapWidth, float mapHeight);
 
