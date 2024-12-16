@@ -5,15 +5,11 @@
 
 MidBoss::MidBoss(float x, float y, float speed, MonsterType type) : Monster(x, y, speed, type), skillDuration(5.0f), isSkillActive(false), isCloneActive(false)
 , cloneDistance(50.0f), cloneRotationAngle(0.0f), cloneRotationSpeed(180.0f),hitByExplosion(false) {
-    originalSpeed = speed;
-    originalDefense = defense;
-    originalAttackPower = attackPower;
-    originalattackRange = attackRange;
     switch (type) {
     case MonsterType::Mid_Boss: // 미드보스
         textureName = "MidBoss";
         movementSpeed = 50.0f;
-		maxHealth = 2000.0f;
+		maxHealth = 10000.0f;
         healthPoint = maxHealth;
         attackPower = 50.0f;
         defense = 20.0f;
@@ -29,6 +25,11 @@ MidBoss::MidBoss(float x, float y, float speed, MonsterType type) : Monster(x, y
         break;
 
     }
+    originalSpeed = speed;
+    originalDefense = defense;
+    originalAttackPower = attackPower;
+    originalattackRange = attackRange;
+
     healthBarBack.setSize(sf::Vector2f(96, 20));
     healthBarBack.setFillColor(sf::Color::Black);
     healthBarBack.setOutlineThickness(2);

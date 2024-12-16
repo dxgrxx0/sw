@@ -37,7 +37,7 @@ public:
         , targetPosition(mainTowerPos)
         , speed(100.0f)
         , attackRange(50.0f)
-        , attackDamage(10.0f)
+        , attackDamage(30.0f)
         , attackSpeed(1.0f)
         , maxHealth(100.0f)
         , currentHealth(100.0f)
@@ -243,7 +243,7 @@ public:
     }
     void upgrade() override {
         for (auto& knight : knights){
-            knight->upgradeKnight(50.0f, 30.0f, 20.0f);
+            knight->upgradeKnight(50.0f, 40.0f, 40.0f);
         }
 		maxKnights += 2;
 	}

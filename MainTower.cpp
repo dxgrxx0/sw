@@ -2,7 +2,7 @@
 //#include "SubTower.h"
 #include "Character.h"
 MainTower::MainTower(const sf::Vector2f& position)
-    : healAmountPerSecond(5.0f),health(800.f),position(position),defense(0),maxHealth(800.0f) {
+    : healAmountPerSecond(7.0f),health(800.f),position(position),defense(0),maxHealth(800.0f) {
     if (!texture.loadFromFile("tower.png")) {
         throw std::runtime_error("Failed to load tower texture");
     }

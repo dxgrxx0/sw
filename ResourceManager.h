@@ -82,7 +82,7 @@ public:
         loadTexture("ESkillUI", "ESkillUI.png");
         loadTexture("RSkillUI", "RSkillUI.png");
         loadTexture("SkillLock", "SkillLock.png");
-
+        loadTexture("UpgradeRange", "UpgradeRange.png");
         // Font 로드
         loadFont("Arial", "arial.ttf");
         loadFont("Pixel", "PixelOperator8.ttf");

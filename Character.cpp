@@ -189,6 +189,7 @@ void Character::increaseAttackPower(float power) {
 }
 void Character::increaseMaxHealth(float hp) {
     maxHealth += hp;
+    health += hp;
 }
 void Character::reduceCooldown(float cooldown) {
     attackCoolDown -= cooldown;

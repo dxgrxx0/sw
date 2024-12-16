@@ -30,7 +30,7 @@ MainBoss::MainBoss(float x, float y, float speed, MonsterType type) : Monster(x,
     case MonsterType::Main_Boss:
         textureName = "MainBoss";
         movementSpeed = 30.0f;
-        healthPoint = 5000.0f;
+        healthPoint = 25000.0f;
 		maxHealth = healthPoint;
         attackPower = 100.0f;
         defense = 50.0f;
@@ -123,9 +123,11 @@ void MainBoss::castSkill() {
 bool MainBoss::getIsDrawing() {
 	for (auto& inst : skillInstances) {
 		if (inst.isDrawing) {
+            movementSpeed = 0.0f;
             return true;
 		}
 	}
+    movementSpeed = 30.0f;
 	return false;
 }
 void MainBoss::update(const sf::Vector2f& CharacterPos, const sf::Vector2f& MainTowerPos,

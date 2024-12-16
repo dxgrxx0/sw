@@ -37,7 +37,7 @@ private:
     bool attackApplied;
 public:
     WizardTower(sf::Vector2f position)
-		: SubTower(position, 500.0f, 1.0f, 10.0f), lightningDuration(0.2f) {//위치, 공격범위, 공격속도, 공격력
+		: SubTower(position, 500.0f, 1.0f, 30.0f), lightningDuration(0.2f) {//위치, 공격범위, 공격속도, 공격력
         texture.loadFromFile("WizardTower.png");
         sprite.setTexture(texture);
         sprite.setPosition(position);
@@ -58,7 +58,7 @@ public:
 	void upgrade() override {
 		range += 50.0f;
 		attackSpeed *= 1.1f;
-		attackDamage += 5.0f;
+		attackDamage += 20.0f;
 		maxAttackCount += 3;
 	}
     void attack(std::vector<std::unique_ptr<Monster>>& monsters, float deltaTime) override {

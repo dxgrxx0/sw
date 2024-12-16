@@ -14,8 +14,12 @@ float WaveManager::calculateSpawnInterval() {
     // 거리 비율을 사용해 스폰 간격을 동적으로 계산
     float distanceRatio = distance / maxDistance;
     if (distanceRatio > 1)distanceRatio = 1;
-    float spawnMultiplier =0.3f+logisticCurve(waveLevel, 5.0f, 0.6f, 5);
-    return (maxSpawnInterval - distanceRatio * (maxSpawnInterval - minSpawnInterval))/spawnMultiplier;
+    //float spawnMultiplier = 1.0f + logisticCurve(waveLevel, 7.0f, 0.8f, 5.0f);
+    for (int i = 0; i < 10; i++) {
+        printf("0min = %lf\n", 0.3f + logisticCurve(waveLevel+i, 5.0f, 0.6f, 5));
+    }
+    return (maxSpawnInterval - distanceRatio * (maxSpawnInterval - minSpawnInterval));
+
 }
 
 void WaveManager::update(float deltaTime) {
@@ -27,13 +31,13 @@ void WaveManager::update(float deltaTime) {
 	}
 
     // Mid-Boss 스폰 (5분에 등장)
-    if (gameClock >= 150.0f && !midBossSpawned) {
+    if (gameClock >= 300.0f && !midBossSpawned) {
         spawnBoss(MonsterType::Mid_Boss);
         midBossSpawned = true;
     } //(10.0f -> 300.0f)
 
     // Main-Boss 스폰 (10분에 등장)
-    if (gameClock >= 300.0f && !mainBossSpawned) {
+    if (gameClock >= 600.0f && !mainBossSpawned) {
         spawnBoss(MonsterType::Main_Boss);
         mainBossSpawned = true;
     } //(20.0f -> 600.0f)

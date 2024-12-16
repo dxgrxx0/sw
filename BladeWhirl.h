@@ -28,7 +28,7 @@ private:
 
 public:
     BladeWhirl(Character* character, std::vector<std::unique_ptr<Monster>>& monsters)
-        : BaseSkill("Blade Whirl", sf::Keyboard::Q, 2.0f),
+        : BaseSkill("Blade Whirl", sf::Keyboard::Q, 5.0f),
         character(character),
         monsters(monsters),
         range(330.0f),
@@ -88,7 +88,7 @@ public:
     }
     void upgrade() override {
 		damage += 20.0f;
-		cooldown -= 0.2f;
+		cooldown -= 0.5f;
     }
 
 private:

@@ -46,10 +46,12 @@ void UpgradeManager::generateUpgradeOptions() {
     };
 
     addOption("Increase Attack Power", [this]() { character->increaseAttackPower(10); },"UpgradeAttackPower.png");
-    addOption("Increase Health", [this]() { character->increaseMaxHealth(20); },"UpgradeHealth.png");
-    addOption("Reduce Skill Cooldown", [this]() { character->reduceCooldown(0.1f); },"UpgradeBasicCooldown.png");
+    addOption("Increase Health", [this]() { character->increaseMaxHealth(150); },"UpgradeHealth.png");
+    addOption("Reduce Skill Cooldown", [this]() { character->reduceCooldown(0.2f); },"UpgradeBasicCooldown.png");
     addOption("Increase Heroine Speed", [this]() {character->increaseSpeed(30.0f); },"UpgradePlayerSpeed.png");
     addOption("Upgrade MainTower", [this]() { mainTower->upgrade(); }, "UpgradeMainTower.png");
+    addOption("Increase Attack Range", [this]() { character->increaseAttackRange(40.0f); }, "UpgradeRange.png");
+
     if (gameLevel >= 3) {
         addOption("Upgrade BladeWhirl", [this]() { skillManager->upgradeSkill("BladeWhirl"); }, "UpgradeBladeWhirl.png");
     }

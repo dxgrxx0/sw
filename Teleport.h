@@ -12,7 +12,7 @@ private:
 
 public:
     Teleport(Character* character, MainTower* mainTower)
-        : BaseSkill("Teleport", sf::Keyboard::R, 15.0f), character(character), mainTower(mainTower) {}
+        : BaseSkill("Teleport", sf::Keyboard::R, 35.0f), character(character), mainTower(mainTower) {}
 
     void applyEffect() override {
         character->setPosition(mainTower->getPosition()); // 타워 위치로 이동

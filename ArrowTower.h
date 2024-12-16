@@ -13,7 +13,7 @@ private:
 
 public:
     ArrowTower(sf::Vector2f position)
-        : SubTower(position, 500.0f, 1.0f, 10.0f) {
+        : SubTower(position, 500.0f, 1.0f, 40.0f) {
 		texture.loadFromFile("ArrowTower.png");
 		sprite.setTexture(texture);
 		sprite.setPosition(position);
@@ -24,7 +24,7 @@ public:
 	void upgrade() override {
 		range += 25.0f;
 		attackSpeed *= 1.5f;
-		attackDamage += 5.0f;
+		attackDamage += 10.0f;
 	}
     void attack(std::vector<std::unique_ptr<Monster>>& monsters,float deltaTime) override {
         if (attackClock.getElapsedTime().asSeconds() >= 1.0f / attackSpeed) {
