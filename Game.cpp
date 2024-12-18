@@ -339,7 +339,7 @@ void Game::onLevelUp() {
         skillManager.unlockSkill("Dash");
 		skillManager.addSkill("Dash", std::make_unique<Dash>(&warrior));
     }
-    if (level == 12) {
+    if (level == 2) {
         skillManager.unlockSkill("Teleport");
         skillManager.addSkill("Teleport", std::make_unique<Teleport>(&warrior,&mainTower));
     }

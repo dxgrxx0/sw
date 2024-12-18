@@ -10,16 +10,22 @@ private:
     float duration;    // 지속 시간
     float elapsedTime; // 경과 시간
 	float powerBoost, speedBoost, rangeBoost,scaleBoost;
-
+    float reducePower, reduceSpeed, reduceRange, reduceScale;
 public:
     BulkUp(Character* character)
         : BaseSkill("Bulk Up", sf::Keyboard::W, 10.0f), character(character),duration(5),elapsedTime(0),powerBoost(20),
-        speedBoost(50),rangeBoost(100),scaleBoost(2) {}
+        speedBoost(50),rangeBoost(100),scaleBoost(2),reducePower(0),reduceSpeed(0),reduceRange(0),reduceScale(0) {}
 
     void applyEffect() override {
         isActive = true;
         std::cout << name << "w start" << std::endl;
         elapsedTime = 0.0f;
+
+        reducePower = powerBoost;
+        reduceSpeed = speedBoost;
+        reduceRange = rangeBoost;
+        reduceScale = scaleBoost;
+
         character->increaseAttackPower(powerBoost);
         character->increaseSpeed(speedBoost);
         character->increaseAttackRange(rangeBoost);
@@ -33,10 +39,15 @@ public:
                 isActive = false;
                 std::cout << name << " effect ended." << std::endl;
                 // 히로인의 스탯 원상 복구
-                character->increaseAttackPower(-powerBoost);
-                character->increaseSpeed(-speedBoost);
-                character->increaseAttackRange(-rangeBoost);
+                character->increaseAttackPower(-reducePower);
+                character->increaseSpeed(-reduceSpeed);
+                character->increaseAttackRange(-reduceRange);
                 character->setScale(1);
+
+                reducePower = 0;
+                reduceSpeed = 0;
+                reduceRange = 0;
+                reduceScale = 0;
             }
         }
     }
