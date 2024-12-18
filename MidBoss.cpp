@@ -145,7 +145,7 @@ void MidBoss::updateProjectiles(float deltaTime, Character& character, MainTower
         if (calculateDistance(projectilePos, mainTower.getPosition()) < collisionRadius) {
             mainTower.takeDamage(projectile.damage);
             projectile.active = false;
-            printf("Tower hit by projectile!\n"); // 디버깅용 메시지 추가
+           // printf("Tower hit by projectile!\n"); // 디버깅용 메시지 추가
             continue;
         }
 
@@ -182,7 +182,7 @@ void MidBoss::Fir_useSkill(Character& character, MainTower& mainTower) {
 
         // 시각적 효과
         sprite.setColor(sf::Color::Black);
-        printf("Mid Boss uses Berserk!\n");
+        //printf("Mid Boss uses Berserk!\n");
     }
     else if (textureName == "MainBoss") {
         // 메인보스 스킬: "절대방어" - 방어력 대폭 증가,주변 광역 공격
@@ -202,7 +202,7 @@ void MidBoss::Fir_useSkill(Character& character, MainTower& mainTower) {
 
         // 시각적 효과
         sprite.setColor(sf::Color::Blue);
-        printf("Main Boss uses Absolute Defense!\n");
+        //printf("Main Boss uses Absolute Defense!\n");
     }
 
     isSkillActive = true;
@@ -218,7 +218,7 @@ void MidBoss::Sec_useSkill(Character& character, MainTower& mainTower) {
             sf::Vector2f targetPos = sprite.getPosition() + direction * 100.f;
             shootProjectile(targetPos);
         }
-        printf("Mid Boss uses Ranged Attack!\n");
+        //printf("Mid Boss uses Ranged Attack!\n");
     }
     else if (textureName == "MainBoss") {
         // 메인보스의 원거리 공격
@@ -255,7 +255,7 @@ void MidBoss::Sec_useSkill(Character& character, MainTower& mainTower) {
                 projectiles.push_back(projectile);
             }
         }
-        printf("Main Boss uses Ranged Attack!\n");
+        //printf("Main Boss uses Ranged Attack!\n");
     }
 }
 void MidBoss::Third_useSkill(Character& character) {
@@ -288,7 +288,7 @@ void MidBoss::updateThirdSkill(float deltaTime, Character& character) {
             sf::Vector2f teleportPosition = character.getPosition() + teleportOffset;
 
             sprite.setPosition(teleportPosition); // 순간이동
-            printf("Boss teleports to position: (%f, %f)\n", teleportPosition.x, teleportPosition.y);
+            //printf("Boss teleports to position: (%f, %f)\n", teleportPosition.x, teleportPosition.y);
             circularAttacking = false;
             CircularAttack(character);
 
