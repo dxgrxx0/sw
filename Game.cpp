@@ -14,7 +14,7 @@
 #include <iostream>
 #include <chrono>
 Game::Game() :
-    window(sf::VideoMode(1600, 1000), "Warrior and Monsters"),
+    window(sf::VideoMode(1600, 1000), "Sejong Defense"),
     warrior("knight.png", 600, 500, 1.0f, 100.0f),
     uiManager(font, &warrior, window),
     minimap(600, 600, 0.4f),
@@ -89,8 +89,8 @@ void Game::update() {
     }
     // Game Over 조건
     if (mainTower.getHealth() <= 0 || warrior.getHealth() <= 0) {
-        //isGameOver = true;
-       // screenUI.setGameOver(true);
+        isGameOver = true;
+        screenUI.setGameOver(true);
     }
     else if (mainBossDefeated) {
         isVictory = true;
@@ -160,7 +160,7 @@ void Game::update() {
             if (monster->getHealthPoint() <= 0) {
                 if (monster->getBossMonsterType() == MonsterType::Main_Boss) {
                     mainBossDefeated = true;  // 메인 보스 처치 표시
-                    printf("Main Boss has been defeated!\n");
+                    //printf("Main Boss has been defeated!\n");
                 }
                 addExp(30);
             }

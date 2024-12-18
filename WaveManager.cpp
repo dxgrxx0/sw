@@ -16,7 +16,7 @@ float WaveManager::calculateSpawnInterval() {
     if (distanceRatio > 1)distanceRatio = 1;
     //float spawnMultiplier = 1.0f + logisticCurve(waveLevel, 7.0f, 0.8f, 5.0f);
     for (int i = 0; i < 10; i++) {
-        printf("0min = %lf\n", 0.3f + logisticCurve(waveLevel+i, 5.0f, 0.6f, 5));
+        //printf("0min = %lf\n", 0.3f + logisticCurve(waveLevel+i, 5.0f, 0.6f, 5));
     }
     return (maxSpawnInterval - distanceRatio * (maxSpawnInterval - minSpawnInterval));
 
@@ -98,7 +98,7 @@ void WaveManager::spawnMonsterAtSpecificDistance() {
             std::abs(calculateDistance(spawnPos, towerPos) - 1000) < 1.0f) {
             validPosition = true;
         }*/
-        else validPosition = false; printf("XXX\n");
+        else validPosition = false; //printf("XXX\n");
     }
     MonsterType type = static_cast<MonsterType>(std::rand() % 4);
     auto monster = std::make_unique<Monster>(spawnPos.x, spawnPos.y, waveLevel, type);

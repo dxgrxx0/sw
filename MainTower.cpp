@@ -35,7 +35,7 @@ sf::Vector2f MainTower::getPosition() {
 void MainTower::takeDamage(float attackPower) {
     float damageAmount = attackPower * (100 - defense) / 100;
     health -= damageAmount;
-    if (health < 0)health = 0;
+    //if (health < 0)health = 0;
 }
 float MainTower::getHealth() {
     return health;
